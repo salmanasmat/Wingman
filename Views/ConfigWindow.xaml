@@ -1,6 +1,6 @@
 <Window x:Class="Wingman.Views.ConfigWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2000/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2000/xaml"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="SYSTEM CONFIGURATION" Height="520" Width="720"
         WindowStartupLocation="CenterOwner"
         Background="{StaticResource BgMainBrush}">

@@ -1,0 +1,11 @@
+D:\Reports\Scripting\Antigravity\Wingman\obj\Debug\net8.0-windows\Wingman.csproj.AssemblyReference.cache
+D:\Reports\Scripting\Antigravity\Wingman\obj\Debug\net8.0-windows\Themes\DarkTheme.baml
+D:\Reports\Scripting\Antigravity\Wingman\obj\Debug\net8.0-windows\Themes\LightTheme.baml
+D:\Reports\Scripting\Antigravity\Wingman\obj\Debug\net8.0-windows\Views\LogViewerWindow.baml
+D:\Reports\Scripting\Antigravity\Wingman\obj\Debug\net8.0-windows\App.baml
+D:\Reports\Scripting\Antigravity\Wingman\obj\Debug\net8.0-windows\Views\LogViewerWindow.g.cs
+D:\Reports\Scripting\Antigravity\Wingman\obj\Debug\net8.0-windows\Views\MainWindow.g.cs
+D:\Reports\Scripting\Antigravity\Wingman\obj\Debug\net8.0-windows\App.g.cs
+D:\Reports\Scripting\Antigravity\Wingman\obj\Debug\net8.0-windows\GeneratedInternalTypeHelper.g.cs
+D:\Reports\Scripting\Antigravity\Wingman\obj\Debug\net8.0-windows\Wingman_MarkupCompile.cache
+D:\Reports\Scripting\Antigravity\Wingman\obj\Debug\net8.0-windows\Wingman_MarkupCompile.lref

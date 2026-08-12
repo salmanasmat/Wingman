@@ -1,5 +1,5 @@
-<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2000/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2000/xaml">
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <!-- Light Mode Color Palette -->
     <Color x:Key="BgMainColor">#F8FAFC</Color>
@@ -13,6 +13,10 @@
     <Color x:Key="AccentWarnColor">#F59E0B</Color>
     <Color x:Key="AccentCritColor">#EF4444</Color>
 
+    <Color x:Key="ButtonBgColor">#F1F5F9</Color>
+    <Color x:Key="ButtonHoverColor">#E2E8F0</Color>
+    <Color x:Key="InputBgColor">#F8FAFC</Color>
+
     <!-- Brushes -->
     <SolidColorBrush x:Key="BgMainBrush" Color="{StaticResource BgMainColor}" />
     <SolidColorBrush x:Key="BgCardBrush" Color="{StaticResource BgCardColor}" />
@@ -25,9 +29,9 @@
     <SolidColorBrush x:Key="AccentWarnBrush" Color="{StaticResource AccentWarnColor}" />
     <SolidColorBrush x:Key="AccentCritBrush" Color="{StaticResource AccentCritColor}" />
 
-    <SolidColorBrush x:Key="ButtonBgBrush" Color="#F1F5F9" />
-    <SolidColorBrush x:Key="ButtonHoverBrush" Color="#E2E8F0" />
-    <SolidColorBrush x:Key="InputBgBrush" Color="#F8FAFC" />
+    <SolidColorBrush x:Key="ButtonBgBrush" Color="{StaticResource ButtonBgColor}" />
+    <SolidColorBrush x:Key="ButtonHoverBrush" Color="{StaticResource ButtonHoverColor}" />
+    <SolidColorBrush x:Key="InputBgBrush" Color="{StaticResource InputBgColor}" />
 
     <!-- Card Style -->
     <Style x:Key="CardStyle" TargetType="Border">
@@ -38,7 +42,7 @@
         <Setter Property="Padding" Value="12" />
         <Setter Property="Effect">
             <Setter.Value>
-                <DropShadowEffect BlurRadius="10" ShadowDepth="2" Direction="270" Color="#0F172A" Opacity="0.04" />
+                <DropShadowEffect BlurRadius="10" ShadowDepth="2" Direction="270" Color="{StaticResource FgPrimaryColor}" Opacity="0.04" />
             </Setter.Value>
         </Setter>
     </Style>
