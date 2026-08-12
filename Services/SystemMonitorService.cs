@@ -25,9 +25,6 @@ namespace Wingman.Services
         private long _lastNetBytesRecv = 0;
         private DateTime _lastNetTime = DateTime.Now;
 
-        private long _lastDiskReadCount = 0;
-        private long _lastDiskWriteCount = 0;
-
         private int _pollCount = 0;
         private bool _fetchingNetInfo = false;
 
@@ -74,56 +71,65 @@ namespace Wingman.Services
             _netIntelService = new NetworkIntelService();
             _pingService = new PingService();
 
-            InitStaticSpecs();
+            // Run static specs initialization asynchronously in background to keep UI thread instant!
+            Task.Run(() => InitStaticSpecs());
         }
 
         private void InitStaticSpecs()
         {
-            _state.SysOs = $"{Environment.OSVersion.Platform} {Environment.OSVersion.Version}";
             try
             {
-                using var searcher = new ManagementObjectSearcher("SELECT Caption FROM Win32_OperatingSystem");
-                foreach (var os in searcher.Get())
+                string osName = $"{Environment.OSVersion.Platform} {Environment.OSVersion.Version}";
+                try
                 {
-                    if (os["Caption"] != null)
+                    using var searcher = new ManagementObjectSearcher("SELECT Caption FROM Win32_OperatingSystem");
+                    foreach (var os in searcher.Get())
                     {
-                        _state.SysOs = os["Caption"].ToString() ?? _state.SysOs;
-                        break;
+                        if (os["Caption"] != null)
+                        {
+                            osName = os["Caption"].ToString() ?? osName;
+                            break;
+                        }
                     }
                 }
-            }
-            catch { }
+                catch { }
 
-            _state.SysUser = Environment.UserName;
-
-            int logicalCores = Environment.ProcessorCount;
-            int physicalCores = logicalCores / 2 > 0 ? logicalCores / 2 : logicalCores;
-            try
-            {
-                using var searcher = new ManagementObjectSearcher("SELECT NumberOfCores FROM Win32_Processor");
-                int phys = 0;
-                foreach (var item in searcher.Get())
+                int logicalCores = Environment.ProcessorCount;
+                int physicalCores = logicalCores / 2 > 0 ? logicalCores / 2 : logicalCores;
+                try
                 {
-                    if (item["NumberOfCores"] != null)
+                    using var searcher = new ManagementObjectSearcher("SELECT NumberOfCores FROM Win32_Processor");
+                    int phys = 0;
+                    foreach (var item in searcher.Get())
                     {
-                        phys += Convert.ToInt32(item["NumberOfCores"]);
+                        if (item["NumberOfCores"] != null)
+                        {
+                            phys += Convert.ToInt32(item["NumberOfCores"]);
+                        }
                     }
+                    if (phys > 0) physicalCores = phys;
                 }
-                if (phys > 0) physicalCores = phys;
-            }
-            catch { }
+                catch { }
 
-            _state.SysCores = $"{physicalCores}P / {logicalCores}L";
+                string ramStr = "N/A";
+                var memStatus = new MEMORYSTATUSEX();
+                if (GlobalMemoryStatusEx(memStatus))
+                {
+                    double totalGb = (double)memStatus.ullTotalPhys / (1024 * 1024 * 1024);
+                    ramStr = $"{Math.Round(totalGb, 1)} GB";
+                }
 
-            var memStatus = new MEMORYSTATUSEX();
-            if (GlobalMemoryStatusEx(memStatus))
-            {
-                double totalGb = (double)memStatus.ullTotalPhys / (1024 * 1024 * 1024);
-                _state.SysRamTotal = $"{Math.Round(totalGb, 1)} GB";
+                lock (_state.Lock)
+                {
+                    _state.SysOs = osName;
+                    _state.SysUser = Environment.UserName;
+                    _state.SysCores = $"{physicalCores}P / {logicalCores}L";
+                    _state.SysRamTotal = ramStr;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                _state.SysRamTotal = "N/A";
+                LoggingService.WriteLog($"InitStaticSpecs Error: {ex.Message}", "ERROR");
             }
         }
 
@@ -143,14 +149,31 @@ namespace Wingman.Services
             int targetIndex = 0;
             _pingService.SyncTargets(_state, _configService.Current.Targets);
 
-            using var cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
-            try { cpuCounter.NextValue(); } catch { }
+            PerformanceCounter? cpuCounter = null;
+            PerformanceCounter? diskReadCounter = null;
+            PerformanceCounter? diskWriteCounter = null;
+
+            try
+            {
+                cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
+                cpuCounter.NextValue();
+            }
+            catch { }
+
+            try
+            {
+                diskReadCounter = new PerformanceCounter("PhysicalDisk", "Disk Reads/sec", "_Total");
+                diskReadCounter.NextValue();
+                diskWriteCounter = new PerformanceCounter("PhysicalDisk", "Disk Writes/sec", "_Total");
+                diskWriteCounter.NextValue();
+            }
+            catch { }
 
             while (!token.IsCancellationRequested)
             {
                 try
                 {
-                    PollResources(cpuCounter);
+                    PollResources(cpuCounter, diskReadCounter, diskWriteCounter);
 
                     if (_pollCount % 15 == 0 && !_fetchingNetInfo)
                     {
@@ -192,23 +215,26 @@ namespace Wingman.Services
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Monitor Loop Exception: {ex.Message}");
+                    LoggingService.WriteLog($"Monitor Loop Exception: {ex.Message}", "ERROR");
                 }
 
                 int interval = Math.Max(200, _configService.Current.UpdateIntervalDataMs);
                 await Task.Delay(interval, token);
             }
+
+            cpuCounter?.Dispose();
+            diskReadCounter?.Dispose();
+            diskWriteCounter?.Dispose();
         }
 
-        private void PollResources(PerformanceCounter cpuCounter)
+        private void PollResources(PerformanceCounter? cpuCounter, PerformanceCounter? diskReadCounter, PerformanceCounter? diskWriteCounter)
         {
             // 1. CPU
             float cpu = 0;
-            try
+            if (cpuCounter != null)
             {
-                cpu = cpuCounter.NextValue();
+                try { cpu = cpuCounter.NextValue(); } catch { }
             }
-            catch { }
 
             // 2. RAM
             double ramPercent = 0;
@@ -224,7 +250,8 @@ namespace Wingman.Services
             }
 
             // 3. Process Count
-            int procCount = Process.GetProcesses().Length;
+            int procCount = 0;
+            try { procCount = Process.GetProcesses().Length; } catch { }
 
             // 4. Uptime
             long tickMs = Environment.TickCount64;
@@ -284,20 +311,20 @@ namespace Wingman.Services
                 catch { }
             }
 
-            // 8. Disk IO Activity
+            // 8. Disk IO Activity (Fast Performance Counters instead of slow WMI query)
             bool isRead = false;
             bool isWrite = false;
             try
             {
-                using var searcher = new ManagementObjectSearcher("SELECT ReadsPerSec, WritesPerSec FROM Win32_PerfRawData_PerfDisk_PhysicalDisk WHERE Name='_Total'");
-                foreach (var disk in searcher.Get())
+                if (diskReadCounter != null)
                 {
-                    long reads = Convert.ToInt64(disk["ReadsPerSec"]);
-                    long writes = Convert.ToInt64(disk["WritesPerSec"]);
-                    isRead = reads > _lastDiskReadCount;
-                    isWrite = writes > _lastDiskWriteCount;
-                    _lastDiskReadCount = reads;
-                    _lastDiskWriteCount = writes;
+                    float reads = diskReadCounter.NextValue();
+                    isRead = reads > 0.5f;
+                }
+                if (diskWriteCounter != null)
+                {
+                    float writes = diskWriteCounter.NextValue();
+                    isWrite = writes > 0.5f;
                 }
             }
             catch { }

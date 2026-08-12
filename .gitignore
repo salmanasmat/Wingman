@@ -1,0 +1,45 @@
+## ===== .NET / C# / WPF =====
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+[Lg]og/
+[Lg]ogs/
+
+# User-specific & Runtime generated files
+notes.txt
+*.log
+
+# Visual Studio / VS Code / IDE
+.vs/
+.vscode/
+*.user
+*.userosv
+*.suo
+*.userprefs
+*.sln.docstates
+
+# NuGet
+*.nupkg
+*.snupkg
+packages/
+project.lock.json
+project.assets.json
+
+# Rider / JetBrains
+.idea/
+*.sln.iml
+
+## ===== Windows OS =====
+Thumbs.db
+Desktop.ini
+ehthumbs.db
+$RECYCLE.BIN/
+
+## ===== Python / PyInstaller (Legacy) =====
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+build/
+dist/
+*.egg-info/

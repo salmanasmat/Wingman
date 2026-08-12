@@ -96,7 +96,6 @@ namespace Wingman.ViewModels
         private bool _diskWriteActive;
         private string _batteryText = "POWER: AC";
         private Brush _batteryBrush = Brushes.Gray;
-        private ObservableCollection<string> _topProcesses = new ObservableCollection<string>();
 
         private string _localIp = "...";
         private string _publicIp = "...";
@@ -118,6 +117,7 @@ namespace Wingman.ViewModels
 
         public ObservableCollection<WatchtowerItemViewModel> WatchtowerItems { get; } = new ObservableCollection<WatchtowerItemViewModel>();
         public ObservableCollection<LaunchpadCategoryViewModel> LaunchpadCategories { get; } = new ObservableCollection<LaunchpadCategoryViewModel>();
+        public ObservableCollection<string> TopProcesses { get; } = new ObservableCollection<string>();
 
         public ICommand OpenConfigCommand { get; }
         public ICommand ShowLogsCommand { get; }
@@ -140,7 +140,6 @@ namespace Wingman.ViewModels
         public bool DiskWriteActive { get => _diskWriteActive; set => SetProperty(ref _diskWriteActive, value); }
         public string BatteryText { get => _batteryText; set => SetProperty(ref _batteryText, value); }
         public Brush BatteryBrush { get => _batteryBrush; set => SetProperty(ref _batteryBrush, value); }
-        public ObservableCollection<string> TopProcesses { get => _topProcesses; set => SetProperty(ref _topProcesses, value); }
 
         public string LocalIp { get => _localIp; set => SetProperty(ref _localIp, value); }
         public string PublicIp { get => _publicIp; set => SetProperty(ref _publicIp, value); }
@@ -193,9 +192,11 @@ namespace Wingman.ViewModels
 
             _monitorService.Start();
 
+            // Smooth UI timer: update UI every 250ms (4 FPS) to keep UI ultra responsive
+            int uiInterval = Math.Max(250, _configService.Current.UpdateIntervalUiMs);
             _uiTimer = new DispatcherTimer
             {
-                Interval = TimeSpan.FromMilliseconds(_configService.Current.UpdateIntervalUiMs)
+                Interval = TimeSpan.FromMilliseconds(uiInterval)
             };
             _uiTimer.Tick += OnUiTimerTick;
             _uiTimer.Start();
@@ -241,7 +242,15 @@ namespace Wingman.ViewModels
                     BatteryBrush = Brushes.Gray;
                 }
 
-                TopProcesses = new ObservableCollection<string>(_state.TopProcs);
+                // Update TopProcesses in-place to prevent unnecessary collection allocations
+                if (!TopProcesses.SequenceEqual(_state.TopProcs))
+                {
+                    TopProcesses.Clear();
+                    foreach (var p in _state.TopProcs)
+                    {
+                        TopProcesses.Add(p);
+                    }
+                }
 
                 LocalIp = _state.LocalIp;
                 PublicIp = _state.PublicIp;
@@ -296,9 +305,12 @@ namespace Wingman.ViewModels
             {
                 if (_state.Pings.TryGetValue(item.Name, out var status))
                 {
-                    item.LastMs = status.LastMs;
-                    item.Status = status.Status;
-                    item.History = new List<double>(status.History);
+                    if (item.LastMs != status.LastMs || item.Status != status.Status)
+                    {
+                        item.LastMs = status.LastMs;
+                        item.Status = status.Status;
+                        item.History = new List<double>(status.History);
+                    }
                 }
             }
         }
