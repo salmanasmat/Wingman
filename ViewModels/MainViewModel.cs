@@ -156,8 +156,8 @@ namespace Wingman.ViewModels
 
         public ICommand OpenConfigCommand { get; }
         public ICommand ShowLogsCommand { get; }
-        public ICommand FlushDnsCommand { get; }
-        public ICommand RestartExplorerCommand { get; }
+        public ICommand LaunchTaskManagerCommand { get; }
+        public ICommand LaunchDiskCleanupCommand { get; }
         public ICommand EmptyRecycleBinCommand { get; }
         public ICommand LockWorkstationCommand { get; }
         public ICommand RunTerminalCommand { get; }
@@ -233,8 +233,8 @@ namespace Wingman.ViewModels
             OpenConfigCommand = new RelayCommand(openConfigDialogAction);
             ShowLogsCommand = new RelayCommand(showLogsDialogAction);
 
-            FlushDnsCommand = new RelayCommand(ExecuteFlushDns);
-            RestartExplorerCommand = new RelayCommand(ExecuteRestartExplorer);
+            LaunchTaskManagerCommand = new RelayCommand(ExecuteLaunchTaskManager);
+            LaunchDiskCleanupCommand = new RelayCommand(ExecuteLaunchDiskCleanup);
             EmptyRecycleBinCommand = new RelayCommand(ExecuteEmptyRecycleBin);
             LockWorkstationCommand = new RelayCommand(ExecuteLockWorkstation);
             RunTerminalCommand = new RelayCommand(ExecuteTerminalCommand);
@@ -403,34 +403,29 @@ namespace Wingman.ViewModels
             }
         }
 
-        private void ExecuteFlushDns()
+        private void ExecuteLaunchTaskManager()
         {
             try
             {
-                Process.Start(new ProcessStartInfo { FileName = "ipconfig", Arguments = "/flushdns", CreateNoWindow = true, UseShellExecute = false });
-                MessageBox.Show("DNS Resolver Cache flushed successfully.", "Flush DNS", MessageBoxButton.OK, MessageBoxImage.Information);
-                LoggingService.WriteLog("Flushed DNS Resolver Cache", "UTIL");
+                Process.Start("taskmgr.exe");
+                LoggingService.WriteLog("Launched Windows Task Manager", "UTIL");
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Flush DNS error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Task Manager error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        private void ExecuteRestartExplorer()
+        private void ExecuteLaunchDiskCleanup()
         {
             try
             {
-                foreach (var p in Process.GetProcessesByName("explorer"))
-                {
-                    p.Kill();
-                }
-                Process.Start("explorer.exe");
-                LoggingService.WriteLog("Restarted Windows Explorer", "UTIL");
+                Process.Start("cleanmgr.exe");
+                LoggingService.WriteLog("Launched Windows Disk Cleanup", "UTIL");
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Restart Explorer error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Disk Cleanup error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

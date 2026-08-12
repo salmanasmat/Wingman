@@ -366,7 +366,7 @@ namespace Wingman.Services
             }
             catch { }
 
-            // 8. Top CPU & RAM Processes Detailed (Every 3s)
+            // 8. Top 10 CPU & RAM Processes Detailed (Every 3s)
             List<string> topProcs = _state.TopProcs;
             List<ProcessInfoModel> topProcDetails = _state.TopProcDetails;
 
@@ -391,14 +391,14 @@ namespace Wingman.Services
                         })
                         .Where(x => x != null)
                         .OrderByDescending(x => x!.RamMb)
-                        .Take(6)
+                        .Take(10) // Updated to Top 10!
                         .Cast<ProcessInfoModel>()
                         .ToList();
 
                     if (procs.Count > 0)
                     {
                         topProcDetails = procs;
-                        topProcs = procs.Take(3).Select(x => $"{x.Name} ({x.RamMb:F0}MB)").ToList();
+                        topProcs = procs.Select(x => $"{x.Name} ({x.RamMb:F0}MB)").ToList();
                     }
                 }
                 catch { }
