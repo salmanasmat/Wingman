@@ -53,6 +53,20 @@ namespace Wingman.Services
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool GlobalMemoryStatusEx([In, Out] MEMORYSTATUSEX lpBuffer);
 
+        [StructLayout(LayoutKind.Sequential)]
+        private struct SYSTEM_POWER_STATUS
+        {
+            public byte ACLineStatus;
+            public byte BatteryFlag;
+            public byte BatteryLifePercent;
+            public byte SystemStatusFlag;
+            public uint BatteryLifeTime;
+            public uint BatteryFullLifeTime;
+        }
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern bool GetSystemPowerStatus(out SYSTEM_POWER_STATUS sps);
+
         public SystemMonitorService(SystemState state, ConfigService configService)
         {
             _state = state;
@@ -218,10 +232,15 @@ namespace Wingman.Services
             string uptimeStr = $"System Up Time: {uptimeSpan.Days}d {uptimeSpan.Hours}h {uptimeSpan.Minutes}m";
 
             // 5. Battery
-            var powerStatus = System.Windows.Forms.SystemInformation.PowerStatus;
-            bool hasBat = powerStatus.BatteryChargeStatus != System.Windows.Forms.BatteryChargeStatus.NoSystemBattery;
-            double batPercent = powerStatus.BatteryLifePercent * 100;
-            bool batPlugged = powerStatus.PowerLineStatus == System.Windows.Forms.PowerLineStatus.Online;
+            bool hasBat = false;
+            double batPercent = 100;
+            bool batPlugged = true;
+            if (GetSystemPowerStatus(out var sps))
+            {
+                hasBat = sps.BatteryFlag != 128 && sps.ACLineStatus != 255;
+                batPercent = sps.BatteryLifePercent != 255 ? sps.BatteryLifePercent : 100;
+                batPlugged = sps.ACLineStatus == 1;
+            }
 
             // 6. OS Drive Capacity (fast check every 10s)
             double diskPercent = _state.DiskPercent;

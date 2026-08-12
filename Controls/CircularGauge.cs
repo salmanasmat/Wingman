@@ -2,6 +2,9 @@ using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Media;
+using Brush = System.Windows.Media.Brush;
+using Pen = System.Windows.Media.Pen;
+using Point = System.Windows.Point;
 
 namespace Wingman.Controls
 {

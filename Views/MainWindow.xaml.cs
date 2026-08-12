@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Input;
 using Wingman.Services;
 using Wingman.ViewModels;
+using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 
 namespace Wingman.Views
 {

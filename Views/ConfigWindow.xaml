@@ -134,7 +134,7 @@ HOW TO CONFIGURE WINGMAN
    - Command: The system command or file path to execute.
    - Browse (...): Click the button next to Command to select a file directly.
 
-FEATURES & TIPS
+FEATURES &amp; TIPS
 ===============
 > Run as Administrator: Right-click any Launchpad button to run it with elevated privileges.
 > Script Safety: Scripts added to the "Scripts" category will ask for confirmation before running.
