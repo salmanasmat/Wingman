@@ -161,7 +161,7 @@ namespace Wingman.ViewModels
 
         private string _notesText = string.Empty;
         private string _terminalInput = string.Empty;
-        private string _terminalOutput = "Wingman Power Terminal v1.6 ready.\nType a command (e.g. ping 8.8.8.8) and press Run.\n";
+        private string _terminalOutput = "Wingman Power Terminal v1.0 ready.\nType a command (e.g. ping 8.8.8.8) and press Run.\n";
 
         public ObservableCollection<WatchtowerItemViewModel> WatchtowerItems { get; } = new ObservableCollection<WatchtowerItemViewModel>();
         public ObservableCollection<LaunchpadCategoryViewModel> LaunchpadCategories { get; } = new ObservableCollection<LaunchpadCategoryViewModel>();
