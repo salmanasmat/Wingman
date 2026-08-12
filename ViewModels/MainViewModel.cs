@@ -129,6 +129,7 @@ namespace Wingman.ViewModels
         private double _cpuPercent;
         private double _ramPercent;
         private double _diskPercent;
+        private double _diskCapacityPercent;
         private double _diskUsedGb;
         private double _diskTotalGb;
         private string _diskLabel = "C: 0GB / 0GB";
@@ -187,6 +188,7 @@ namespace Wingman.ViewModels
         public double CpuPercent { get => _cpuPercent; set => SetProperty(ref _cpuPercent, value); }
         public double RamPercent { get => _ramPercent; set => SetProperty(ref _ramPercent, value); }
         public double DiskPercent { get => _diskPercent; set => SetProperty(ref _diskPercent, value); }
+        public double DiskCapacityPercent { get => _diskCapacityPercent; set => SetProperty(ref _diskCapacityPercent, value); }
         public double DiskUsedGb { get => _diskUsedGb; set => SetProperty(ref _diskUsedGb, value); }
         public double DiskTotalGb { get => _diskTotalGb; set => SetProperty(ref _diskTotalGb, value); }
         public string DiskLabel { get => _diskLabel; set => SetProperty(ref _diskLabel, value); }
@@ -286,7 +288,8 @@ namespace Wingman.ViewModels
             {
                 CpuPercent = _state.CpuPercent;
                 RamPercent = _state.RamPercent;
-                DiskPercent = _state.DiskPercent;
+                DiskPercent = _state.DiskPercent;                   // Dynamic Real-time Physical Disk Active Load %
+                DiskCapacityPercent = _state.DiskCapacityPercent;   // OS Drive Storage Space Capacity % (e.g. 69%)
                 DiskUsedGb = _state.DiskUsedGb;
                 DiskTotalGb = _state.DiskTotalGb;
 

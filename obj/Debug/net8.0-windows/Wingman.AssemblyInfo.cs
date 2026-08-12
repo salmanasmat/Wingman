@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Wingman")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a1902a0b09c6ed5bedf8f86285a0b713a684a831")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9aec0012c339351876ced673f26b7c45600a113a")]
 [assembly: System.Reflection.AssemblyProductAttribute("Wingman")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Wingman")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

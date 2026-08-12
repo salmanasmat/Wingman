@@ -8,6 +8,7 @@ using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using Wingman.Models;
 
 namespace Wingman.Services
@@ -100,77 +101,55 @@ namespace Wingman.Services
                     using (var searcher = new ManagementObjectSearcher("SELECT Caption FROM Win32_OperatingSystem"))
                     using (var collection = searcher.Get())
                     {
-                        foreach (var os in collection)
+                        foreach (ManagementObject obj in collection)
                         {
-                            if (os["Caption"] != null)
-                            {
-                                osName = os["Caption"].ToString() ?? osName;
-                                break;
-                            }
+                            osName = obj["Caption"]?.ToString() ?? osName;
+                            break;
                         }
                     }
                 }
                 catch { }
 
-                int logicalCores = Environment.ProcessorCount;
-                int physicalCores = logicalCores / 2 > 0 ? logicalCores / 2 : logicalCores;
+                double totalStorage = 0;
                 try
                 {
-                    using (var searcher = new ManagementObjectSearcher("SELECT NumberOfCores FROM Win32_Processor"))
-                    using (var collection = searcher.Get())
+                    foreach (var drive in DriveInfo.GetDrives())
                     {
-                        int phys = 0;
-                        foreach (var item in collection)
+                        if (drive.IsReady && drive.DriveType == DriveType.Fixed)
                         {
-                            if (item["NumberOfCores"] != null)
-                            {
-                                phys += Convert.ToInt32(item["NumberOfCores"]);
-                            }
+                            totalStorage += (double)drive.TotalSize / (1024 * 1024 * 1024);
                         }
-                        if (phys > 0) physicalCores = phys;
                     }
                 }
                 catch { }
 
-                string ramStr = "N/A";
-                var memStatus = new MEMORYSTATUSEX();
-                if (GlobalMemoryStatusEx(memStatus))
-                {
-                    double totalGb = (double)memStatus.ullTotalPhys / (1024 * 1024 * 1024);
-                    ramStr = $"{Math.Round(totalGb, 1)} GB";
-                }
-
-                // GPU & Display Query
                 string gpuName = "Integrated Graphics";
-                double vramTotalMb = 0;
+                double vramMb = 0;
                 try
                 {
                     using (var searcher = new ManagementObjectSearcher("SELECT Name, AdapterRAM FROM Win32_VideoController"))
                     using (var collection = searcher.Get())
                     {
-                        foreach (var item in collection)
+                        foreach (ManagementObject obj in collection)
                         {
-                            if (item["Name"] != null)
+                            gpuName = obj["Name"]?.ToString() ?? gpuName;
+                            if (obj["AdapterRAM"] != null && double.TryParse(obj["AdapterRAM"].ToString(), out var bytes))
                             {
-                                gpuName = item["Name"].ToString() ?? gpuName;
-                                if (item["AdapterRAM"] != null)
-                                {
-                                    ulong bytes = Convert.ToUInt64(item["AdapterRAM"]);
-                                    vramTotalMb = bytes / (1024 * 1024);
-                                }
-                                break;
+                                vramMb = bytes / (1024 * 1024);
                             }
+                            break;
                         }
                     }
                 }
                 catch { }
 
-                string displayRes = "1920x1080";
+                string primaryRes = "1920x1080";
                 try
                 {
-                    var primaryScreen = System.Windows.SystemParameters.PrimaryScreenWidth;
-                    var primaryHeight = System.Windows.SystemParameters.PrimaryScreenHeight;
-                    displayRes = $"{(int)primaryScreen}x{(int)primaryHeight}";
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        primaryRes = $"{SystemParameters.PrimaryScreenWidth}x{SystemParameters.PrimaryScreenHeight}";
+                    });
                 }
                 catch { }
 
@@ -178,19 +157,16 @@ namespace Wingman.Services
                 {
                     _state.SysOs = osName;
                     _state.SysUser = Environment.UserName;
-                    _state.SysCores = $"{physicalCores}P / {logicalCores}L";
-                    _state.SysRamTotal = ramStr;
+                    _state.SysCores = $"{Environment.ProcessorCount} Threads";
+                    _state.TotalStorageGb = totalStorage;
                     _state.GpuName = gpuName;
-                    _state.VramTotalMb = vramTotalMb;
-                    _state.DisplayRes = displayRes;
+                    _state.VramTotalMb = vramMb;
+                    _state.DisplayRes = primaryRes;
                 }
-
-                // Trim memory immediately after initial WMI load
-                TrimWorkingSet();
             }
             catch (Exception ex)
             {
-                LoggingService.WriteLog($"InitStaticSpecs Error: {ex.Message}", "ERROR");
+                LoggingService.WriteLog($"Static Specs Init Error: {ex.Message}", "ERROR");
             }
         }
 
@@ -198,11 +174,18 @@ namespace Wingman.Services
         {
             _cts = new CancellationTokenSource();
             _monitorTask = Task.Run(() => MonitorLoopAsync(_cts.Token));
+            LoggingService.WriteLog("System Monitor Polling Engine Started.", "SYSTEM");
         }
 
         public void Stop()
         {
             _cts?.Cancel();
+            try
+            {
+                _monitorTask?.Wait(1000);
+            }
+            catch { }
+            LoggingService.WriteLog("System Monitor Polling Engine Stopped.", "SYSTEM");
         }
 
         private async Task MonitorLoopAsync(CancellationToken token)
@@ -211,6 +194,7 @@ namespace Wingman.Services
             _pingService.SyncTargets(_state, _configService.Current.Targets);
 
             PerformanceCounter? cpuCounter = null;
+            PerformanceCounter? diskTimeCounter = null;
             PerformanceCounter? diskReadCounter = null;
             PerformanceCounter? diskWriteCounter = null;
 
@@ -218,6 +202,13 @@ namespace Wingman.Services
             {
                 cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
                 cpuCounter.NextValue(); // First dummy read
+            }
+            catch { }
+
+            try
+            {
+                diskTimeCounter = new PerformanceCounter("PhysicalDisk", "% Disk Time", "_Total");
+                diskTimeCounter.NextValue();
             }
             catch { }
 
@@ -237,7 +228,7 @@ namespace Wingman.Services
             {
                 try
                 {
-                    PollResources(cpuCounter, diskReadCounter, diskWriteCounter);
+                    PollResources(cpuCounter, diskTimeCounter, diskReadCounter, diskWriteCounter);
 
                     if (_pollCount % 15 == 0 && !_fetchingNetInfo)
                     {
@@ -288,11 +279,12 @@ namespace Wingman.Services
             }
 
             cpuCounter?.Dispose();
+            diskTimeCounter?.Dispose();
             diskReadCounter?.Dispose();
             diskWriteCounter?.Dispose();
         }
 
-        private void PollResources(PerformanceCounter? cpuCounter, PerformanceCounter? diskReadCounter, PerformanceCounter? diskWriteCounter)
+        private void PollResources(PerformanceCounter? cpuCounter, PerformanceCounter? diskTimeCounter, PerformanceCounter? diskReadCounter, PerformanceCounter? diskWriteCounter)
         {
             // 1. CPU
             float cpu = 0;
@@ -301,7 +293,14 @@ namespace Wingman.Services
                 try { cpu = cpuCounter.NextValue(); } catch { }
             }
 
-            // 2. RAM
+            // 2. Real-Time Physical Disk Load % (Active Time)
+            float diskLoad = 0;
+            if (diskTimeCounter != null)
+            {
+                try { diskLoad = Math.Min(100.0f, diskTimeCounter.NextValue()); } catch { }
+            }
+
+            // 3. RAM
             double ramPercent = 0;
             double ramUsedGb = 0;
             double ramTotalGb = 0;
@@ -314,7 +313,7 @@ namespace Wingman.Services
                 ramPercent = memStatus.dwMemoryLoad;
             }
 
-            // 3. Process Count
+            // 4. Process Count
             int procCount = _state.ProcCount;
             if (_pollCount % 10 == 0)
             {
@@ -327,12 +326,12 @@ namespace Wingman.Services
                 catch { }
             }
 
-            // 4. Uptime
+            // 5. Uptime
             long tickMs = Environment.TickCount64;
             var uptimeSpan = TimeSpan.FromMilliseconds(tickMs);
             string uptimeStr = $"System Up Time: {uptimeSpan.Days}d {uptimeSpan.Hours}h {uptimeSpan.Minutes}m";
 
-            // 5. Battery
+            // 6. Battery
             bool hasBat = false;
             double batPercent = 100;
             bool batPlugged = true;
@@ -343,14 +342,14 @@ namespace Wingman.Services
                 batPlugged = sps.ACLineStatus == 1;
             }
 
-            // 6. OS Drive & Multi-Drive Monitor (Every 10s)
-            double diskPercent = _state.DiskPercent;
+            // 7. OS Drive & Multi-Drive Monitor (Every 5s)
+            double diskCapacityPercent = _state.DiskCapacityPercent;
             double diskUsedGb = _state.DiskUsedGb;
             double diskTotalGb = _state.DiskTotalGb;
             double totalStorageGb = _state.TotalStorageGb;
             List<DriveInfoModel> drivesList = _state.Drives;
 
-            if (_pollCount % 20 == 0)
+            if (_pollCount % 10 == 0 || drivesList.Count == 0)
             {
                 try
                 {
@@ -369,7 +368,7 @@ namespace Wingman.Services
                             {
                                 diskTotalGb = total;
                                 diskUsedGb = used;
-                                diskPercent = pct;
+                                diskCapacityPercent = pct;
                             }
 
                             updatedDrives.Add(new DriveInfoModel
@@ -388,7 +387,7 @@ namespace Wingman.Services
                 catch { }
             }
 
-            // 7. Disk IO Activity
+            // 8. Disk IO Activity
             bool isRead = false;
             bool isWrite = false;
             try
@@ -406,7 +405,7 @@ namespace Wingman.Services
             }
             catch { }
 
-            // 8. Top 10 CPU & RAM Processes Detailed (Every 6s, disposing process handles)
+            // 9. Top 10 CPU & RAM Processes Detailed (Every 3s, disposing process handles)
             List<string> topProcs = _state.TopProcs;
             List<ProcessInfoModel> topProcDetails = _state.TopProcDetails;
 
@@ -449,9 +448,9 @@ namespace Wingman.Services
                 catch { }
             }
 
-            // 9. Active Network Connections & Open Ports (Every 20s)
+            // 10. Active Network Connections & Open Ports (Every 10s)
             List<NetConnInfoModel> netConns = _state.ActiveConnections;
-            if (_pollCount % 40 == 0)
+            if (_pollCount % 20 == 0)
             {
                 try
                 {
@@ -472,7 +471,7 @@ namespace Wingman.Services
                 catch { }
             }
 
-            // 10. Network Speed
+            // 11. Network Speed
             double sentSpeed = 0;
             double recvSpeed = 0;
             try
@@ -509,7 +508,10 @@ namespace Wingman.Services
                 _state.RamPercent = Math.Round(ramPercent, 1);
                 _state.RamUsedGb = Math.Round(ramUsedGb, 1);
                 _state.RamTotalGb = Math.Round(ramTotalGb, 1);
-                _state.DiskPercent = Math.Round(diskPercent, 1);
+
+                _state.DiskPercent = Math.Round(diskLoad, 1);                     // Real-Time Physical Disk Active Load %
+                _state.DiskCapacityPercent = Math.Round(diskCapacityPercent, 1); // OS Storage Capacity Used %
+
                 _state.DiskUsedGb = Math.Round(diskUsedGb, 1);
                 _state.DiskTotalGb = Math.Round(diskTotalGb, 1);
                 _state.TotalStorageGb = Math.Round(totalStorageGb, 1);
@@ -527,10 +529,11 @@ namespace Wingman.Services
                 _state.HasBattery = hasBat;
                 _state.ProcCount = procCount;
 
-                // Dynamically re-evaluate alerts every cycle (clear stale alerts!)
+                // Dynamically evaluate system status alerts
                 _state.Alerts.Clear();
-                if (cpu > 95) _state.AddAlert($"High CPU Load: {cpu:F1}%", "crit");
-                if (ramPercent > 95) _state.AddAlert($"Memory Critical: {ramPercent:F1}%", "crit");
+                if (cpu > 90) _state.AddAlert($"High CPU Load ({cpu:F0}%)", "CRIT");
+                if (ramPercent > 90) _state.AddAlert($"High Memory Usage ({ramPercent:F0}%)", "CRIT");
+                if (diskLoad > 90) _state.AddAlert($"High Disk Activity ({diskLoad:F0}%)", "WARN");
             }
         }
     }

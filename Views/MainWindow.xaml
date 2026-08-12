@@ -165,13 +165,13 @@
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,8">
                                 <controls:CircularGauge Value="{Binding CpuPercent}" Title="CPU LOAD" GaugeColor="{StaticResource AccentCyanBrush}" Width="145" Height="145" Margin="0,0,10,0" ToolTip="Real-Time Total Processor Load Percentage"/>
                                 <controls:CircularGauge Value="{Binding RamPercent}" Title="MEMORY" GaugeColor="{StaticResource AccentWarnBrush}" Width="145" Height="145" Margin="0,0,10,0" ToolTip="Real-Time Physical Memory (RAM) Utilization"/>
-                                <controls:CircularGauge Value="{Binding DiskPercent}" Title="DISK LOAD" GaugeColor="{StaticResource AccentGreenBrush}" Width="145" Height="145" ToolTip="OS Disk Capacity &amp; Real-Time Storage Utilization"/>
+                                <controls:CircularGauge Value="{Binding DiskPercent}" Title="DISK LOAD" GaugeColor="{StaticResource AccentGreenBrush}" Width="145" Height="145" ToolTip="Real-Time Physical Disk Active Load Percentage"/>
                             </StackPanel>
 
                             <!-- OS Drive Capacity Bar Under Gauges -->
                             <StackPanel HorizontalAlignment="Center" Width="430" Margin="0,0,0,8" ToolTip="Primary System OS Drive Space Usage">
                                 <TextBlock Text="OS DRIVE CAPACITY" Style="{StaticResource SectionTextStyle}" FontSize="11.5" Margin="0,0,0,2" HorizontalAlignment="Center"/>
-                                <controls:LinearGauge Value="{Binding DiskPercent}" Label="{Binding DiskLabel}" BarColor="{StaticResource AccentCyanBrush}" Height="25" Width="430"/>
+                                <controls:LinearGauge Value="{Binding DiskCapacityPercent}" Label="{Binding DiskLabel}" BarColor="{StaticResource AccentCyanBrush}" Height="25" Width="430"/>
                             </StackPanel>
 
                             <!-- Network & Disk IO Row -->

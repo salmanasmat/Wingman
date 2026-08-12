@@ -1,6 +1,7 @@
 # WINGMAN v1.0 🚀
 
 ![Version](https://img.shields.io/badge/Version-1.0-0284C7?style=for-the-badge)
+![License](https://img.shields.io/badge/License-GPL%203.0-blue?style=for-the-badge&logo=gnu)
 ![.NET 8.0](https://img.shields.io/badge/.NET-8.0-512BD4?style=for-the-badge&logo=dotnet)
 ![WPF](https://img.shields.io/badge/WPF-Windows-0078D6?style=for-the-badge&logo=windows)
 ![Theme](https://img.shields.io/badge/Theme-Light%20Mode-0284C7?style=for-the-badge)
@@ -14,7 +15,7 @@
 ## 🌟 Key Features
 
 ### ⚡ 1. Reactor Core (System Health)
-- **3 Circular Arc Gauges**: Enlarged real-time WPF custom rendered circular gauges (145x145) for **CPU LOAD** (Cyan), **MEMORY** (Amber), and **DISK LOAD** (Green).
+- **3 Circular Arc Gauges**: Enlarged real-time WPF custom rendered circular gauges (145x145) for **CPU LOAD** (Cyan), **MEMORY** (Amber), and **DISK LOAD** (Green - real-time active physical disk load %).
 - **OS Drive Capacity Bar**: Linear progress bar displaying OS drive space utilization.
 - **Network Speeds**: Real-time Upload (`UP: X.X MB/s`) and Download (`DN: X.X MB/s`) throughput.
 - **Disk I/O & Power**: Real-time `READ` (Green) and `WRITE` (Amber) physical disk badges alongside battery/AC power telemetry.
@@ -67,6 +68,7 @@ Wingman is fully optimized for High-DPI and scaled displays (125%, 150%, 200%):
 Wingman/
 ├── App.xaml / App.xaml.cs          # Global application entry & unhandled exception handlers
 ├── Wingman.csproj                  # .NET 8.0 WPF project definition (Version 1.0.0)
+├── LICENSE                         # GNU General Public License v3.0 (GPL 3.0)
 ├── dashboard_config.json           # User configuration (targets, launchers, intervals)
 ├── notes.txt                       # Auto-saved scratchpad notes
 ├── Controls/
@@ -124,4 +126,4 @@ dotnet run --project Wingman.csproj
 ---
 
 ## 📄 License
-Internal / Proprietary Utility - **v1.0**
+Distributed under the **GNU General Public License v3.0 (GPL 3.0)**. See [`LICENSE`](LICENSE) for details.
