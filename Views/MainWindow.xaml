@@ -19,7 +19,7 @@
         </Grid.RowDefinitions>
 
         <!-- 1. TOP HEADER BAR -->
-        <Border Grid.Row="0" Margin="0,0,0,10" Padding="14,10" Style="{StaticResource CardStyle}">
+        <Border Grid.Row="0" Margin="0,0,0,10" Padding="14,10" Style="{StaticResource CardStyle}" ToolTip="System Header Bar">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -29,21 +29,21 @@
 
                 <!-- Left Machine Info -->
                 <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                    <Border Background="{StaticResource AccentCyanBrush}" CornerRadius="4" Padding="8,3" Margin="0,0,12,0">
+                    <Border Background="{StaticResource AccentCyanBrush}" CornerRadius="4" Padding="8,3" Margin="0,0,12,0" ToolTip="Wingman WPF System Dashboard v1.6">
                         <TextBlock Text="WINGMAN v1.6" FontSize="12" FontWeight="Bold" Foreground="White"/>
                     </Border>
-                    <TextBlock Text="{Binding HostnameText}" FontSize="17" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" Margin="0,0,18,0"/>
-                    <TextBlock Text="{Binding UptimeText}" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource FgMutedBrush}"/>
+                    <TextBlock Text="{Binding HostnameText}" FontSize="17" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" Margin="0,0,18,0" ToolTip="Current Computer Name / Hostname"/>
+                    <TextBlock Text="{Binding UptimeText}" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource FgMutedBrush}" ToolTip="System Up Time since last Windows reboot"/>
                 </StackPanel>
 
                 <!-- Center System Clock -->
                 <TextBlock Grid.Column="1" Text="{Binding ClockText}" HorizontalAlignment="Center" VerticalAlignment="Center"
-                           FontFamily="Consolas" FontSize="18" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}"/>
+                           FontFamily="Consolas" FontSize="18" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" ToolTip="Current System Date &amp; Time"/>
 
                 <!-- Right Config -->
                 <StackPanel Grid.Column="2" Orientation="Horizontal">
                     <Button Content="[ CONFIGURATION ]" Command="{Binding OpenConfigCommand}"
-                            Style="{StaticResource ActionButtonStyle}" FontSize="13" Foreground="{StaticResource AccentCyanBrush}"/>
+                            Style="{StaticResource ActionButtonStyle}" FontSize="13" Foreground="{StaticResource AccentCyanBrush}" ToolTip="Open Dashboard Configuration &amp; Target Host Settings"/>
                 </StackPanel>
             </Grid>
         </Border>
@@ -52,7 +52,7 @@
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="1.5*"/>
+                <ColumnDefinition Width="1.55*"/>
                 <ColumnDefinition Width="1.3*"/>
                 <ColumnDefinition Width="1.1*"/>
             </Grid.ColumnDefinitions>
@@ -64,18 +64,18 @@
                     <RowDefinition Height="1*"/>
                 </Grid.RowDefinitions>
 
-                <!-- TOP CARD 1: MULTI-DRIVES MONITOR (DOUBLE CLICK TO OPEN DRIVE) -->
-                <Border Grid.Row="0" Style="{StaticResource CardStyle}" Margin="0,0,0,8">
+                <!-- TOP CARD 1: MULTI-DRIVES MONITOR -->
+                <Border Grid.Row="0" Style="{StaticResource CardStyle}" Margin="0,0,0,8" ToolTip="Connected Local, Fixed, Removable and External USB Storage Drives">
                     <DockPanel>
                         <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
-                            <TextBlock Text="MULTI-DRIVES" Style="{StaticResource HeaderTextStyle}" FontSize="18" DockPanel.Dock="Left"/>
+                            <TextBlock Text="MULTI-DRIVES" Style="{StaticResource HeaderTextStyle}" FontSize="18" DockPanel.Dock="Left" ToolTip="Storage Drives List"/>
                             <TextBlock Text="STORAGE" FontSize="11" FontWeight="Bold" Foreground="{StaticResource FgMutedBrush}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                         </DockPanel>
                         <ScrollViewer VerticalScrollBarVisibility="Auto">
                             <ItemsControl ItemsSource="{Binding DrivesList}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Border Margin="0,0,0,8" Padding="8" Background="{StaticResource InputBgBrush}" CornerRadius="6" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1" Cursor="Hand" ToolTip="Double-click to open in Explorer">
+                                        <Border Margin="0,0,0,8" Padding="8" Background="{StaticResource InputBgBrush}" CornerRadius="6" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1" Cursor="Hand" ToolTip="Double-click to open drive in Windows Explorer | Right-click for context menu">
                                             <Border.InputBindings>
                                                 <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding OpenDriveCommand}"/>
                                             </Border.InputBindings>
@@ -102,10 +102,10 @@
                 </Border>
 
                 <!-- BOTTOM CARD 1: LAUNCHPAD -->
-                <Border Grid.Row="1" Style="{StaticResource CardStyle}">
+                <Border Grid.Row="1" Style="{StaticResource CardStyle}" ToolTip="Quick Application &amp; Administrative Script Launcher">
                     <DockPanel>
                         <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
-                            <TextBlock Text="LAUNCHPAD" Style="{StaticResource HeaderTextStyle}" FontSize="18" DockPanel.Dock="Left"/>
+                            <TextBlock Text="LAUNCHPAD" Style="{StaticResource HeaderTextStyle}" FontSize="18" DockPanel.Dock="Left" ToolTip="Application Launchpad"/>
                             <TextBlock Text="QUICK APPS" FontSize="11" FontWeight="Bold" Foreground="{StaticResource FgMutedBrush}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                         </DockPanel>
                         <ScrollViewer VerticalScrollBarVisibility="Auto">
@@ -122,7 +122,7 @@
                                                 </ItemsControl.ItemsPanel>
                                                 <ItemsControl.ItemTemplate>
                                                     <DataTemplate>
-                                                        <Button Content="{Binding Label}" Command="{Binding LaunchCommand}" Style="{StaticResource ActionButtonStyle}" Margin="2" FontSize="12.5" Padding="8,6">
+                                                        <Button Content="{Binding Label}" Command="{Binding LaunchCommand}" Style="{StaticResource ActionButtonStyle}" Margin="2" FontSize="12.5" Padding="8,6" ToolTip="Click to launch application | Right-click to Run as Administrator">
                                                             <Button.ContextMenu>
                                                                 <ContextMenu>
                                                                     <MenuItem Header="Run as Administrator" Command="{Binding LaunchAdminCommand}"/>
@@ -141,31 +141,32 @@
                 </Border>
             </Grid>
 
-            <!-- ================= COLUMN 2 (CENTER-LEFT: REACTOR CORE & PROCESSES) ================= -->
+            <!-- ================= COLUMN 2 (CENTER-LEFT: REACTOR CORE WITH 3 GAUGES) ================= -->
             <Grid Grid.Column="1" Margin="5,0,5,0">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="1.15*"/>
+                    <RowDefinition Height="1.18*"/>
                     <RowDefinition Height="1*"/>
                 </Grid.RowDefinitions>
 
-                <!-- TOP HERO CARD: REACTOR CORE -->
-                <Border Grid.Row="0" Style="{StaticResource CardStyle}" Margin="0,0,0,8" Padding="12">
+                <!-- TOP HERO CARD: REACTOR CORE (3 CIRCULAR GAUGES: CPU, MEMORY & DISK LOAD) -->
+                <Border Grid.Row="0" Style="{StaticResource CardStyle}" Margin="0,0,0,8" Padding="12" ToolTip="Core System Telemetry &amp; Vital Metrics">
                     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                         <StackPanel>
                             <!-- Header -->
                             <DockPanel Margin="0,0,0,4">
-                                <TextBlock Text="REACTOR CORE" Style="{StaticResource HeaderTextStyle}" FontSize="18" DockPanel.Dock="Left" Margin="0,0,0,4"/>
+                                <TextBlock Text="REACTOR CORE" Style="{StaticResource HeaderTextStyle}" FontSize="18" DockPanel.Dock="Left" Margin="0,0,0,4" ToolTip="Reactor Core Engine"/>
                                 <TextBlock Text="SYSTEM METRICS" FontSize="11" FontWeight="Bold" Foreground="{StaticResource FgMutedBrush}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                             </DockPanel>
 
-                            <!-- Gauges Above (Compact Side-by-Side Centered) -->
+                            <!-- 3 GAUGES ABOVE: CPU LOAD, MEMORY & DISK LOAD -->
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,6">
-                                <controls:CircularGauge Value="{Binding CpuPercent}" Title="CPU LOAD" GaugeColor="{StaticResource AccentCyanBrush}" Width="135" Height="135" Margin="0,0,14,0"/>
-                                <controls:CircularGauge Value="{Binding RamPercent}" Title="MEMORY" GaugeColor="{StaticResource AccentWarnBrush}" Width="135" Height="135"/>
+                                <controls:CircularGauge Value="{Binding CpuPercent}" Title="CPU LOAD" GaugeColor="{StaticResource AccentCyanBrush}" Width="120" Height="120" Margin="0,0,8,0" ToolTip="Real-Time Total Processor Load Percentage"/>
+                                <controls:CircularGauge Value="{Binding RamPercent}" Title="MEMORY" GaugeColor="{StaticResource AccentWarnBrush}" Width="120" Height="120" Margin="0,0,8,0" ToolTip="Real-Time Physical Memory (RAM) Utilization"/>
+                                <controls:CircularGauge Value="{Binding DiskPercent}" Title="DISK LOAD" GaugeColor="{StaticResource AccentGreenBrush}" Width="120" Height="120" ToolTip="OS Disk Capacity &amp; Real-Time Storage Utilization"/>
                             </StackPanel>
 
                             <!-- OS Drive Capacity Bar Under Gauges -->
-                            <StackPanel HorizontalAlignment="Center" Width="400" Margin="0,0,0,8">
+                            <StackPanel HorizontalAlignment="Center" Width="400" Margin="0,0,0,8" ToolTip="Primary System OS Drive Space Usage">
                                 <TextBlock Text="OS DRIVE CAPACITY" Style="{StaticResource SectionTextStyle}" FontSize="11.5" Margin="0,0,0,2" HorizontalAlignment="Center"/>
                                 <controls:LinearGauge Value="{Binding DiskPercent}" Label="{Binding DiskLabel}" BarColor="{StaticResource AccentCyanBrush}" Height="24" Width="400"/>
                             </StackPanel>
@@ -178,17 +179,17 @@
                                 </Grid.ColumnDefinitions>
 
                                 <!-- Column 1: Network Speed -->
-                                <StackPanel Grid.Column="0" Margin="0,0,6,0">
+                                <StackPanel Grid.Column="0" Margin="0,0,6,0" ToolTip="Real-Time Network Upload &amp; Download Throughput">
                                     <TextBlock Text="NET SPEED" Style="{StaticResource SectionTextStyle}" FontSize="11" Margin="0,0,0,2"/>
-                                    <TextBlock Text="{Binding NetUpText}" FontFamily="Consolas" FontSize="12" FontWeight="Bold" Foreground="{StaticResource AccentCyanBrush}"/>
-                                    <TextBlock Text="{Binding NetDownText}" FontFamily="Consolas" FontSize="12" FontWeight="Bold" Foreground="{StaticResource AccentGreenBrush}"/>
+                                    <TextBlock Text="{Binding NetUpText}" FontFamily="Consolas" FontSize="12" FontWeight="Bold" Foreground="{StaticResource AccentCyanBrush}" ToolTip="Upload Transfer Rate"/>
+                                    <TextBlock Text="{Binding NetDownText}" FontFamily="Consolas" FontSize="12" FontWeight="Bold" Foreground="{StaticResource AccentGreenBrush}" ToolTip="Download Transfer Rate"/>
                                 </StackPanel>
 
                                 <!-- Column 2: Disk IO Badges & Power -->
                                 <StackPanel Grid.Column="1" HorizontalAlignment="Right">
                                     <TextBlock Text="DISK IO &amp; POWER" Style="{StaticResource SectionTextStyle}" FontSize="11" Margin="0,0,0,2"/>
-                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,3">
-                                        <Border Padding="5,2" CornerRadius="4" Margin="0,0,4,0">
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,3" ToolTip="Physical Disk Read &amp; Write Activity Indicators">
+                                        <Border Padding="5,2" CornerRadius="4" Margin="0,0,4,0" ToolTip="Disk Read Activity Indicator">
                                             <Border.Style>
                                                 <Style TargetType="Border">
                                                     <Setter Property="Background" Value="{StaticResource ButtonBgBrush}"/>
@@ -202,7 +203,7 @@
                                             <TextBlock Text="READ" FontFamily="Consolas" FontSize="10" FontWeight="Bold" Foreground="White"/>
                                         </Border>
 
-                                        <Border Padding="5,2" CornerRadius="4">
+                                        <Border Padding="5,2" CornerRadius="4" ToolTip="Disk Write Activity Indicator">
                                             <Border.Style>
                                                 <Style TargetType="Border">
                                                     <Setter Property="Background" Value="{StaticResource ButtonBgBrush}"/>
@@ -216,12 +217,12 @@
                                             <TextBlock Text="WRITE" FontFamily="Consolas" FontSize="10" FontWeight="Bold" Foreground="White"/>
                                         </Border>
                                     </StackPanel>
-                                    <TextBlock Text="{Binding BatteryText}" Foreground="{Binding BatteryBrush}" FontFamily="Consolas" FontSize="11" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding BatteryText}" Foreground="{Binding BatteryBrush}" FontFamily="Consolas" FontSize="11" FontWeight="Bold" ToolTip="System Power Source &amp; Battery Telemetry"/>
                                 </StackPanel>
                             </Grid>
 
                             <!-- TOP 10 PROCESSES SHIFTED HORIZONTALLY BELOW -->
-                            <Border BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="0,1.5,0,0" Padding="0,6,0,0" Margin="0,4,0,0">
+                            <Border BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="0,1.5,0,0" Padding="0,6,0,0" Margin="0,4,0,0" ToolTip="Top 10 Processes by RAM/CPU Consumption">
                                 <StackPanel>
                                     <DockPanel Margin="0,0,0,4">
                                         <TextBlock Text="TOP 10 ACTIVE PROCESSES" Style="{StaticResource SectionTextStyle}" FontSize="11.5" DockPanel.Dock="Left"/>
@@ -234,7 +235,7 @@
                                         </ItemsControl.ItemsPanel>
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <Border Background="{StaticResource InputBgBrush}" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1" CornerRadius="5" Padding="6,3" Margin="3">
+                                                <Border Background="{StaticResource InputBgBrush}" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1" CornerRadius="5" Padding="6,3" Margin="3" ToolTip="Active Process Name &amp; Memory Footprint">
                                                     <TextBlock Text="{Binding}" FontFamily="Consolas" FontSize="10.5" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}"/>
                                                 </Border>
                                             </DataTemplate>
@@ -247,17 +248,17 @@
                 </Border>
 
                 <!-- BOTTOM CARD: PROCESS MANAGER -->
-                <Border Grid.Row="1" Style="{StaticResource CardStyle}">
+                <Border Grid.Row="1" Style="{StaticResource CardStyle}" ToolTip="Live Top Memory Processes with One-Click Termination">
                     <DockPanel>
                         <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
-                            <TextBlock Text="PROCESS MANAGER" Style="{StaticResource HeaderTextStyle}" FontSize="18" DockPanel.Dock="Left"/>
+                            <TextBlock Text="PROCESS MANAGER" Style="{StaticResource HeaderTextStyle}" FontSize="18" DockPanel.Dock="Left" ToolTip="Process Manager Engine"/>
                             <TextBlock Text="RAM TOP 10" FontSize="11" FontWeight="Bold" Foreground="{StaticResource FgMutedBrush}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                         </DockPanel>
                         <ScrollViewer VerticalScrollBarVisibility="Auto">
                             <ItemsControl ItemsSource="{Binding DetailedProcesses}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Border Margin="0,0,0,5" Padding="6,4" Background="{StaticResource InputBgBrush}" CornerRadius="4" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1">
+                                        <Border Margin="0,0,0,5" Padding="6,4" Background="{StaticResource InputBgBrush}" CornerRadius="4" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1" ToolTip="Process ID, Name, and Memory Working Set">
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="Auto"/>
@@ -266,16 +267,16 @@
                                                     <ColumnDefinition Width="Auto"/>
                                                 </Grid.ColumnDefinitions>
 
-                                                <TextBlock Grid.Column="0" Text="{Binding Pid}" FontFamily="Consolas" FontSize="11" Foreground="{StaticResource FgMutedBrush}" Width="48" VerticalAlignment="Center"/>
-                                                <TextBlock Grid.Column="1" Text="{Binding Name}" FontSize="12.5" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" VerticalAlignment="Center"/>
-                                                <TextBlock Grid.Column="2" FontFamily="Consolas" FontSize="11.5" FontWeight="Bold" Foreground="{StaticResource AccentCyanBrush}" Margin="0,0,8,0" VerticalAlignment="Center">
+                                                <TextBlock Grid.Column="0" Text="{Binding Pid}" FontFamily="Consolas" FontSize="11" Foreground="{StaticResource FgMutedBrush}" Width="48" VerticalAlignment="Center" ToolTip="Process Identifier (PID)"/>
+                                                <TextBlock Grid.Column="1" Text="{Binding Name}" FontSize="12.5" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" VerticalAlignment="Center" ToolTip="Executable Process Name"/>
+                                                <TextBlock Grid.Column="2" FontFamily="Consolas" FontSize="11.5" FontWeight="Bold" Foreground="{StaticResource AccentCyanBrush}" Margin="0,0,8,0" VerticalAlignment="Center" ToolTip="RAM Working Set Memory in MB">
                                                     <TextBlock.Text>
                                                         <MultiBinding StringFormat="{}{0:F0} MB">
                                                             <Binding Path="RamMb"/>
                                                         </MultiBinding>
                                                     </TextBlock.Text>
                                                 </TextBlock>
-                                                <Button Grid.Column="3" Content="KILL" Command="{Binding KillCommand}" Padding="6,2" FontSize="10" FontWeight="Bold" Foreground="White" Background="{StaticResource AccentCritBrush}" BorderThickness="0" Cursor="Hand"/>
+                                                <Button Grid.Column="3" Content="KILL" Command="{Binding KillCommand}" Padding="6,2" FontSize="10" FontWeight="Bold" Foreground="White" Background="{StaticResource AccentCritBrush}" BorderThickness="0" Cursor="Hand" ToolTip="Safely terminate this process (Requires Confirmation)"/>
                                             </Grid>
                                         </Border>
                                     </DataTemplate>
@@ -294,21 +295,21 @@
                 </Grid.RowDefinitions>
 
                 <!-- TOP CARD: WATCHTOWER PING MONITOR -->
-                <Border Grid.Row="0" Style="{StaticResource CardStyle}" Margin="0,0,0,8">
+                <Border Grid.Row="0" Style="{StaticResource CardStyle}" Margin="0,0,0,8" ToolTip="Network Host Ping &amp; Latency Monitoring Engine">
                     <DockPanel>
                         <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
-                            <TextBlock Text="WATCHTOWER" Style="{StaticResource HeaderTextStyle}" FontSize="18" DockPanel.Dock="Left"/>
+                            <TextBlock Text="WATCHTOWER" Style="{StaticResource HeaderTextStyle}" FontSize="18" DockPanel.Dock="Left" ToolTip="Host Latency Monitor"/>
                             <TextBlock Text="HOST LATENCY" FontSize="11" FontWeight="Bold" Foreground="{StaticResource FgMutedBrush}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                         </DockPanel>
                         <ScrollViewer VerticalScrollBarVisibility="Auto">
                             <ItemsControl ItemsSource="{Binding WatchtowerItems}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Border Margin="0,0,0,6" Padding="8" Background="{StaticResource InputBgBrush}" CornerRadius="6" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1">
+                                        <Border Margin="0,0,0,6" Padding="8" Background="{StaticResource InputBgBrush}" CornerRadius="6" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1" ToolTip="20-Sample Real-Time Host Ping Latency Sparkline Graph">
                                             <StackPanel>
                                                 <Grid Margin="0,0,0,3">
                                                     <TextBlock Text="{Binding Name}" FontSize="13.5" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}"/>
-                                                    <TextBlock HorizontalAlignment="Right" FontFamily="Consolas" FontSize="12.5" FontWeight="Bold" Foreground="{StaticResource FgMutedBrush}">
+                                                    <TextBlock HorizontalAlignment="Right" FontFamily="Consolas" FontSize="12.5" FontWeight="Bold" Foreground="{StaticResource FgMutedBrush}" ToolTip="Last Ping Response Latency in Milliseconds">
                                                         <TextBlock.Text>
                                                             <MultiBinding StringFormat="{}{0}ms">
                                                                 <Binding Path="LastMs"/>
@@ -326,8 +327,8 @@
                     </DockPanel>
                 </Border>
 
-                <!-- BOTTOM CARD: POWER UTILITIES (THIS PC BUTTON) & LIGHT SLATE TERMINAL -->
-                <Border Grid.Row="1" Style="{StaticResource CardStyle}">
+                <!-- BOTTOM CARD: POWER UTILITIES & LIGHT SLATE TERMINAL -->
+                <Border Grid.Row="1" Style="{StaticResource CardStyle}" ToolTip="System Administration Utilities &amp; Embedded Command Runner">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -338,19 +339,19 @@
 
                         <!-- Header -->
                         <DockPanel Grid.Row="0" Margin="0,0,0,6">
-                            <TextBlock Text="POWER UTILS &amp; TERMINAL" Style="{StaticResource HeaderTextStyle}" FontSize="17" DockPanel.Dock="Left"/>
+                            <TextBlock Text="POWER UTILS &amp; TERMINAL" Style="{StaticResource HeaderTextStyle}" FontSize="17" DockPanel.Dock="Left" ToolTip="Power Utilities &amp; CLI Drawer"/>
                         </DockPanel>
 
-                        <!-- Useful Action Buttons (THIS PC replaces Task Mgr) -->
+                        <!-- Action Buttons -->
                         <UniformGrid Grid.Row="1" Columns="4" Margin="0,0,0,6">
-                            <Button Content="THIS PC" Command="{Binding LaunchThisPcCommand}" Style="{StaticResource ActionButtonStyle}" Margin="1" FontSize="10" Padding="3"/>
-                            <Button Content="DISK CLEAN" Command="{Binding LaunchDiskCleanupCommand}" Style="{StaticResource ActionButtonStyle}" Margin="1" FontSize="10" Padding="3"/>
-                            <Button Content="EMPTY BIN" Command="{Binding EmptyRecycleBinCommand}" Style="{StaticResource ActionButtonStyle}" Margin="1" FontSize="10" Padding="3"/>
-                            <Button Content="LOCK PC" Command="{Binding LockWorkstationCommand}" Style="{StaticResource ActionButtonStyle}" Margin="1" FontSize="10" Padding="3"/>
+                            <Button Content="THIS PC" Command="{Binding LaunchThisPcCommand}" Style="{StaticResource ActionButtonStyle}" Margin="1" FontSize="10" Padding="3" ToolTip="Open Windows 'This PC' System Folder in Explorer"/>
+                            <Button Content="DISK CLEAN" Command="{Binding LaunchDiskCleanupCommand}" Style="{StaticResource ActionButtonStyle}" Margin="1" FontSize="10" Padding="3" ToolTip="Launch Windows Disk Cleanup Utility (cleanmgr.exe)"/>
+                            <Button Content="EMPTY BIN" Command="{Binding EmptyRecycleBinCommand}" Style="{StaticResource ActionButtonStyle}" Margin="1" FontSize="10" Padding="3" ToolTip="Empty Windows Recycle Bin (SHEmptyRecycleBin)"/>
+                            <Button Content="LOCK PC" Command="{Binding LockWorkstationCommand}" Style="{StaticResource ActionButtonStyle}" Margin="1" FontSize="10" Padding="3" ToolTip="Lock Current Windows User Session (LockWorkStation)"/>
                         </UniformGrid>
 
                         <!-- Light Slate-Grey Terminal Output -->
-                        <Border Grid.Row="2" Background="{StaticResource InputBgBrush}" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1.5" CornerRadius="6" Padding="6" Margin="0,0,0,4">
+                        <Border Grid.Row="2" Background="{StaticResource InputBgBrush}" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1.5" CornerRadius="6" Padding="6" Margin="0,0,0,4" ToolTip="Command Output Console Window (Redirects stdout and stderr)">
                             <TextBox Text="{Binding TerminalOutput, Mode=OneWay}" IsReadOnly="True"
                                      AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"
                                      FontFamily="Consolas" FontSize="11.5" Foreground="{StaticResource FgPrimaryBrush}" Background="Transparent" BorderThickness="0"/>
@@ -363,8 +364,8 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <TextBox Grid.Column="0" Text="{Binding TerminalInput, UpdateSourceTrigger=PropertyChanged}"
-                                     FontFamily="Consolas" FontSize="11.5" Padding="5" Background="{StaticResource InputBgBrush}" Foreground="{StaticResource FgPrimaryBrush}" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1.5" Margin="0,0,4,0"/>
-                            <Button Grid.Column="1" Content="RUN" Command="{Binding RunTerminalCommand}" Style="{StaticResource ActionButtonStyle}" FontSize="11" Padding="10,3"/>
+                                     FontFamily="Consolas" FontSize="11.5" Padding="5" Background="{StaticResource InputBgBrush}" Foreground="{StaticResource FgPrimaryBrush}" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1.5" Margin="0,0,4,0" ToolTip="Type a PowerShell or CMD command to execute"/>
+                            <Button Grid.Column="1" Content="RUN" Command="{Binding RunTerminalCommand}" Style="{StaticResource ActionButtonStyle}" FontSize="11" Padding="10,3" ToolTip="Execute command asynchronously in background"/>
                         </Grid>
                     </Grid>
                 </Border>
@@ -378,25 +379,25 @@
                 </Grid.RowDefinitions>
 
                 <!-- TOP CARD 4: GPU INTEL, SPECS & SECURITY -->
-                <Border Grid.Row="0" Style="{StaticResource CardStyle}" Margin="0,0,0,8">
+                <Border Grid.Row="0" Style="{StaticResource CardStyle}" Margin="0,0,0,8" ToolTip="Graphics Hardware Specs &amp; Windows Security Compliance Badges">
                     <ScrollViewer VerticalScrollBarVisibility="Auto">
                         <StackPanel>
-                            <TextBlock Text="SECURITY &amp; GPU" Style="{StaticResource HeaderTextStyle}" FontSize="20" Margin="0,0,0,8"/>
+                            <TextBlock Text="SECURITY &amp; GPU" Style="{StaticResource HeaderTextStyle}" FontSize="20" Margin="0,0,0,8" ToolTip="Security &amp; GPU Hardware Intel"/>
 
                             <!-- GPU Intel -->
                             <TextBlock Text="GPU GRAPHICS" Style="{StaticResource SectionTextStyle}" FontSize="13" Margin="0,0,0,2"/>
-                            <TextBlock FontSize="14" FontFamily="Consolas" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" Text="{Binding GpuName}" Margin="0,0,0,6"/>
+                            <TextBlock FontSize="14" FontFamily="Consolas" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" Text="{Binding GpuName}" Margin="0,0,0,6" ToolTip="Graphics Adapter Hardware Name"/>
 
                             <Grid Margin="0,0,0,8">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                <StackPanel Grid.Column="0">
+                                <StackPanel Grid.Column="0" ToolTip="Total Dedicated Video RAM (VRAM) in MB">
                                     <TextBlock FontSize="11" Foreground="{StaticResource FgMutedBrush}" Text="VRAM TOTAL:"/>
                                     <TextBlock FontSize="14" FontFamily="Consolas" FontWeight="Bold" Foreground="{StaticResource AccentCyanBrush}" Text="{Binding VramText}"/>
                                 </StackPanel>
-                                <StackPanel Grid.Column="1">
+                                <StackPanel Grid.Column="1" ToolTip="Primary Display Screen Resolution">
                                     <TextBlock FontSize="11" Foreground="{StaticResource FgMutedBrush}" Text="DISPLAY:"/>
                                     <TextBlock FontSize="14" FontFamily="Consolas" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" Text="{Binding DisplayRes}"/>
                                 </StackPanel>
@@ -405,32 +406,32 @@
                             <!-- Network Details -->
                             <TextBlock Text="NETWORK SPECS" Style="{StaticResource SectionTextStyle}" FontSize="13" Margin="0,4,0,2"/>
                             <TextBlock FontSize="11" Foreground="{StaticResource FgMutedBrush}" Text="LOCAL IP:"/>
-                            <TextBlock FontSize="14" FontFamily="Consolas" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" Text="{Binding LocalIp}" Margin="0,0,0,4"/>
+                            <TextBlock FontSize="14" FontFamily="Consolas" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" Text="{Binding LocalIp}" Margin="0,0,0,4" ToolTip="Local Area Network IPv4 Address"/>
 
                             <TextBlock FontSize="11" Foreground="{StaticResource FgMutedBrush}" Text="WAN IP:"/>
-                            <TextBlock FontSize="14" FontFamily="Consolas" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" Text="{Binding PublicIp}" Margin="0,0,0,4"/>
+                            <TextBlock FontSize="14" FontFamily="Consolas" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" Text="{Binding PublicIp}" Margin="0,0,0,4" ToolTip="Public Internet WAN IP Address"/>
 
                             <TextBlock FontSize="11" Foreground="{StaticResource FgMutedBrush}" Text="MAC ADDR:"/>
-                            <TextBlock FontSize="14" FontFamily="Consolas" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" Text="{Binding Mac}" Margin="0,0,0,8"/>
+                            <TextBlock FontSize="14" FontFamily="Consolas" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" Text="{Binding Mac}" Margin="0,0,0,8" ToolTip="Network Hardware MAC Address"/>
 
                             <!-- Security Badges -->
-                            <Border BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="0,1.5,0,0" Padding="0,8,0,0">
+                            <Border BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="0,1.5,0,0" Padding="0,8,0,0" ToolTip="Windows Security &amp; Compliance Status Badges">
                                 <StackPanel>
                                     <TextBlock Text="SECURITY COMPLIANCE" Style="{StaticResource SectionTextStyle}" FontSize="13" Margin="0,0,0,6"/>
                                     <UniformGrid Columns="3">
-                                        <Border Background="{StaticResource InputBgBrush}" CornerRadius="6" Padding="6,4" Margin="2" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1">
+                                        <Border Background="{StaticResource InputBgBrush}" CornerRadius="6" Padding="6,4" Margin="2" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1" ToolTip="Windows Defender Antivirus Protection Status">
                                             <StackPanel HorizontalAlignment="Center">
                                                 <TextBlock Text="DEFENDER" FontSize="11" FontWeight="Bold" Foreground="{StaticResource FgMutedBrush}" HorizontalAlignment="Center"/>
                                                 <TextBlock Text="ACTIVE" FontSize="12" FontWeight="Bold" Foreground="{StaticResource AccentGreenBrush}" HorizontalAlignment="Center"/>
                                             </StackPanel>
                                         </Border>
-                                        <Border Background="{StaticResource InputBgBrush}" CornerRadius="6" Padding="6,4" Margin="2" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1">
+                                        <Border Background="{StaticResource InputBgBrush}" CornerRadius="6" Padding="6,4" Margin="2" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1" ToolTip="Windows Firewall Protection State">
                                             <StackPanel HorizontalAlignment="Center">
                                                 <TextBlock Text="FIREWALL" FontSize="11" FontWeight="Bold" Foreground="{StaticResource FgMutedBrush}" HorizontalAlignment="Center"/>
                                                 <TextBlock Text="ENABLED" FontSize="12" FontWeight="Bold" Foreground="{StaticResource AccentCyanBrush}" HorizontalAlignment="Center"/>
                                             </StackPanel>
                                         </Border>
-                                        <Border Background="{StaticResource InputBgBrush}" CornerRadius="6" Padding="6,4" Margin="2" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1">
+                                        <Border Background="{StaticResource InputBgBrush}" CornerRadius="6" Padding="6,4" Margin="2" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1" ToolTip="Windows Update Compliance Status">
                                             <StackPanel HorizontalAlignment="Center">
                                                 <TextBlock Text="UPDATES" FontSize="11" FontWeight="Bold" Foreground="{StaticResource FgMutedBrush}" HorizontalAlignment="Center"/>
                                                 <TextBlock Text="CURRENT" FontSize="12" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" HorizontalAlignment="Center"/>
@@ -444,17 +445,17 @@
                 </Border>
 
                 <!-- BOTTOM CARD 4: QUICK NOTES -->
-                <Border Grid.Row="1" Style="{StaticResource CardStyle}">
+                <Border Grid.Row="1" Style="{StaticResource CardStyle}" ToolTip="Persistent Auto-Saving Scratchpad">
                     <DockPanel>
                         <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
-                            <TextBlock Text="QUICK NOTES" Style="{StaticResource HeaderTextStyle}" FontSize="18" DockPanel.Dock="Left"/>
+                            <TextBlock Text="QUICK NOTES" Style="{StaticResource HeaderTextStyle}" FontSize="18" DockPanel.Dock="Left" ToolTip="Auto-Saving Scratchpad"/>
                             <TextBlock Text="AUTO-SAVED" FontSize="11" FontWeight="Bold" Foreground="{StaticResource AccentGreenBrush}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                         </DockPanel>
                         <Border Background="{StaticResource InputBgBrush}" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1" CornerRadius="6" Padding="6">
                             <TextBox Text="{Binding NotesText, UpdateSourceTrigger=PropertyChanged}"
                                      AcceptsReturn="True" AcceptsTab="True" TextWrapping="Wrap"
                                      VerticalScrollBarVisibility="Auto" FontFamily="Consolas" FontSize="13"
-                                     Foreground="{StaticResource FgPrimaryBrush}" Background="Transparent" BorderThickness="0"/>
+                                     Foreground="{StaticResource FgPrimaryBrush}" Background="Transparent" BorderThickness="0" ToolTip="Type notes here - changes auto-save instantly to notes.txt"/>
                         </Border>
                     </DockPanel>
                 </Border>
@@ -462,10 +463,10 @@
         </Grid>
 
         <!-- 3. BOTTOM STATUS TICKER -->
-        <Border Grid.Row="2" Margin="0,8,0,0" Padding="12,6" Style="{StaticResource CardStyle}" Cursor="Hand" MouseLeftButtonDown="BottomBar_MouseLeftButtonDown">
+        <Border Grid.Row="2" Margin="0,8,0,0" Padding="12,6" Style="{StaticResource CardStyle}" Cursor="Hand" MouseLeftButtonDown="BottomBar_MouseLeftButtonDown" ToolTip="Click to open interactive Event Log Viewer">
             <Grid>
-                <TextBlock Text="{Binding StatusText}" Foreground="{Binding StatusBrush}" FontFamily="Consolas" FontSize="13" FontWeight="Bold" VerticalAlignment="Center"/>
-                <TextBlock Text="[ VIEW SYSTEM EVENT LOGS ]" Foreground="{StaticResource AccentCyanBrush}" FontSize="13" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding StatusText}" Foreground="{Binding StatusBrush}" FontFamily="Consolas" FontSize="13" FontWeight="Bold" VerticalAlignment="Center" ToolTip="Live System Telemetry Alert Status"/>
+                <TextBlock Text="[ VIEW SYSTEM EVENT LOGS ]" Foreground="{StaticResource AccentCyanBrush}" FontSize="13" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center" ToolTip="Open System Event Log Viewer Window"/>
             </Grid>
         </Border>
     </Grid>
