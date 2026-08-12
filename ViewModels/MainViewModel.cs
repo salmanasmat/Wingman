@@ -23,6 +23,7 @@ namespace Wingman.ViewModels
         public double Percent { get; set; }
         public string Label { get; set; } = string.Empty;
         public string DriveType { get; set; } = "Fixed";
+        public ICommand OpenDriveCommand { get; set; } = null!;
     }
 
     public class ProcessItemViewModel : ObservableObject
@@ -156,7 +157,7 @@ namespace Wingman.ViewModels
 
         public ICommand OpenConfigCommand { get; }
         public ICommand ShowLogsCommand { get; }
-        public ICommand LaunchTaskManagerCommand { get; }
+        public ICommand LaunchThisPcCommand { get; }
         public ICommand LaunchDiskCleanupCommand { get; }
         public ICommand EmptyRecycleBinCommand { get; }
         public ICommand LockWorkstationCommand { get; }
@@ -233,7 +234,7 @@ namespace Wingman.ViewModels
             OpenConfigCommand = new RelayCommand(openConfigDialogAction);
             ShowLogsCommand = new RelayCommand(showLogsDialogAction);
 
-            LaunchTaskManagerCommand = new RelayCommand(ExecuteLaunchTaskManager);
+            LaunchThisPcCommand = new RelayCommand(ExecuteLaunchThisPc);
             LaunchDiskCleanupCommand = new RelayCommand(ExecuteLaunchDiskCleanup);
             EmptyRecycleBinCommand = new RelayCommand(ExecuteEmptyRecycleBin);
             LockWorkstationCommand = new RelayCommand(ExecuteLockWorkstation);
@@ -309,18 +310,21 @@ namespace Wingman.ViewModels
                     }
                 }
 
-                // Update Multi-Drive List
+                // Update Multi-Drive List with OpenDriveCommand
                 DrivesList.Clear();
                 foreach (var drive in _state.Drives)
                 {
-                    DrivesList.Add(new DriveItemViewModel
+                    string driveName = drive.Name;
+                    var driveVm = new DriveItemViewModel
                     {
                         Name = drive.Name,
                         VolumeLabel = drive.VolumeLabel,
                         Percent = drive.Percent,
                         Label = $"{drive.Name} {(int)drive.UsedGb}GB / {(int)drive.TotalGb}GB",
-                        DriveType = drive.DriveType
-                    });
+                        DriveType = drive.DriveType,
+                    };
+                    driveVm.OpenDriveCommand = new RelayCommand(() => OpenDrive(driveName));
+                    DrivesList.Add(driveVm);
                 }
 
                 // Update Detailed Process List with Kill Command
@@ -385,6 +389,20 @@ namespace Wingman.ViewModels
             }
         }
 
+        private void OpenDrive(string driveName)
+        {
+            try
+            {
+                string targetPath = driveName.EndsWith("\\") ? driveName : driveName + "\\";
+                Process.Start("explorer.exe", targetPath);
+                LoggingService.WriteLog($"Opened Drive in Explorer: {targetPath}", "DRIVE");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to open drive: {ex.Message}", "Drive Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
         private void KillProcess(int pid, string name)
         {
             var res = MessageBox.Show($"Are you sure you want to terminate process '{name}' (PID: {pid})?",
@@ -403,16 +421,16 @@ namespace Wingman.ViewModels
             }
         }
 
-        private void ExecuteLaunchTaskManager()
+        private void ExecuteLaunchThisPc()
         {
             try
             {
-                Process.Start("taskmgr.exe");
-                LoggingService.WriteLog("Launched Windows Task Manager", "UTIL");
+                Process.Start("explorer.exe", "shell:MyComputerFolder");
+                LoggingService.WriteLog("Launched Windows This PC Folder", "UTIL");
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Task Manager error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"This PC launch error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

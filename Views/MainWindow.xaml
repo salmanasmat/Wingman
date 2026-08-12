@@ -64,7 +64,7 @@
                     <RowDefinition Height="1*"/>
                 </Grid.RowDefinitions>
 
-                <!-- TOP CARD 1: MULTI-DRIVES MONITOR -->
+                <!-- TOP CARD 1: MULTI-DRIVES MONITOR (DOUBLE CLICK TO OPEN DRIVE) -->
                 <Border Grid.Row="0" Style="{StaticResource CardStyle}" Margin="0,0,0,8">
                     <DockPanel>
                         <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
@@ -75,7 +75,15 @@
                             <ItemsControl ItemsSource="{Binding DrivesList}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Border Margin="0,0,0,8" Padding="8" Background="{StaticResource InputBgBrush}" CornerRadius="6" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1">
+                                        <Border Margin="0,0,0,8" Padding="8" Background="{StaticResource InputBgBrush}" CornerRadius="6" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1" Cursor="Hand" ToolTip="Double-click to open in Explorer">
+                                            <Border.InputBindings>
+                                                <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding OpenDriveCommand}"/>
+                                            </Border.InputBindings>
+                                            <Border.ContextMenu>
+                                                <ContextMenu>
+                                                    <MenuItem Header="Open Drive in Explorer" Command="{Binding OpenDriveCommand}"/>
+                                                </ContextMenu>
+                                            </Border.ContextMenu>
                                             <StackPanel>
                                                 <Grid Margin="0,0,0,3">
                                                     <TextBlock FontSize="13" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}">
@@ -140,7 +148,7 @@
                     <RowDefinition Height="1*"/>
                 </Grid.RowDefinitions>
 
-                <!-- TOP HERO CARD: REACTOR CORE (TOP 10 PROCESSES HORIZONTALLY ON A NEW LINE) -->
+                <!-- TOP HERO CARD: REACTOR CORE -->
                 <Border Grid.Row="0" Style="{StaticResource CardStyle}" Margin="0,0,0,8" Padding="12">
                     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                         <StackPanel>
@@ -212,7 +220,7 @@
                                 </StackPanel>
                             </Grid>
 
-                            <!-- NEW LINE: TOP 10 PROCESSES SHIFTED HORIZONTALLY BELOW -->
+                            <!-- TOP 10 PROCESSES SHIFTED HORIZONTALLY BELOW -->
                             <Border BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="0,1.5,0,0" Padding="0,6,0,0" Margin="0,4,0,0">
                                 <StackPanel>
                                     <DockPanel Margin="0,0,0,4">
@@ -238,7 +246,7 @@
                     </ScrollViewer>
                 </Border>
 
-                <!-- BOTTOM CARD: PROCESS MANAGER (DETAILED WITH KILL BUTTON) -->
+                <!-- BOTTOM CARD: PROCESS MANAGER -->
                 <Border Grid.Row="1" Style="{StaticResource CardStyle}">
                     <DockPanel>
                         <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
@@ -318,7 +326,7 @@
                     </DockPanel>
                 </Border>
 
-                <!-- BOTTOM CARD: REPLACED POWER UTILITIES (TASK MGR & DISK CLEAN) & LIGHT SLATE TERMINAL -->
+                <!-- BOTTOM CARD: POWER UTILITIES (THIS PC BUTTON) & LIGHT SLATE TERMINAL -->
                 <Border Grid.Row="1" Style="{StaticResource CardStyle}">
                     <Grid>
                         <Grid.RowDefinitions>
@@ -333,9 +341,9 @@
                             <TextBlock Text="POWER UTILS &amp; TERMINAL" Style="{StaticResource HeaderTextStyle}" FontSize="17" DockPanel.Dock="Left"/>
                         </DockPanel>
 
-                        <!-- Useful Action Buttons (TASK MGR & DISK CLEAN replace Restart Exp & Flush DNS) -->
+                        <!-- Useful Action Buttons (THIS PC replaces Task Mgr) -->
                         <UniformGrid Grid.Row="1" Columns="4" Margin="0,0,0,6">
-                            <Button Content="TASK MGR" Command="{Binding LaunchTaskManagerCommand}" Style="{StaticResource ActionButtonStyle}" Margin="1" FontSize="10" Padding="3"/>
+                            <Button Content="THIS PC" Command="{Binding LaunchThisPcCommand}" Style="{StaticResource ActionButtonStyle}" Margin="1" FontSize="10" Padding="3"/>
                             <Button Content="DISK CLEAN" Command="{Binding LaunchDiskCleanupCommand}" Style="{StaticResource ActionButtonStyle}" Margin="1" FontSize="10" Padding="3"/>
                             <Button Content="EMPTY BIN" Command="{Binding EmptyRecycleBinCommand}" Style="{StaticResource ActionButtonStyle}" Margin="1" FontSize="10" Padding="3"/>
                             <Button Content="LOCK PC" Command="{Binding LockWorkstationCommand}" Style="{StaticResource ActionButtonStyle}" Margin="1" FontSize="10" Padding="3"/>
