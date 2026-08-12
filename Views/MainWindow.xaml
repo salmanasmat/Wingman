@@ -60,11 +60,11 @@
                 <ColumnDefinition Width="1.1*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- ================= COLUMN 1 (FAR LEFT: 20%) ================= -->
+            <!-- ================= COLUMN 1 (FAR LEFT: MULTI-DRIVES & PROCESS MANAGER) ================= -->
             <Grid Grid.Column="0" Margin="0,0,5,0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1.1*"/>
-                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1.2*"/>
                 </Grid.RowDefinitions>
 
                 <!-- TOP CARD 1: MULTI-DRIVES MONITOR -->
@@ -104,38 +104,38 @@
                     </DockPanel>
                 </Border>
 
-                <!-- BOTTOM CARD 1: LAUNCHPAD -->
-                <Border Grid.Row="1" Style="{StaticResource CardStyle}">
+                <!-- BOTTOM CARD 1: PROCESS MANAGER (SWAPPED HERE FROM COLUMN 2) -->
+                <Border Grid.Row="1" Style="{StaticResource CardStyle}" ToolTip="Live Top Memory Processes with One-Click Termination">
                     <DockPanel>
                         <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
-                            <TextBlock Text="LAUNCHPAD" Style="{StaticResource HeaderTextStyle}" FontSize="18" DockPanel.Dock="Left" ToolTip="Application Launchpad"/>
-                            <TextBlock Text="QUICK APPS" FontSize="11" FontWeight="Bold" Foreground="{StaticResource FgMutedBrush}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            <TextBlock Text="PROCESS MANAGER" Style="{StaticResource HeaderTextStyle}" FontSize="18" DockPanel.Dock="Left" ToolTip="Process Manager Engine"/>
+                            <TextBlock Text="RAM TOP 10" FontSize="11" FontWeight="Bold" Foreground="{StaticResource FgMutedBrush}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                         </DockPanel>
                         <ScrollViewer VerticalScrollBarVisibility="Auto">
-                            <ItemsControl ItemsSource="{Binding LaunchpadCategories}">
+                            <ItemsControl ItemsSource="{Binding DetailedProcesses}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <StackPanel Margin="0,0,0,10">
-                                            <TextBlock Text="{Binding Category}" Style="{StaticResource SectionTextStyle}" FontSize="13" Margin="0,2,0,4"/>
-                                            <ItemsControl ItemsSource="{Binding Items}">
-                                                <ItemsControl.ItemsPanel>
-                                                    <ItemsPanelTemplate>
-                                                        <UniformGrid Columns="2"/>
-                                                    </ItemsPanelTemplate>
-                                                </ItemsControl.ItemsPanel>
-                                                <ItemsControl.ItemTemplate>
-                                                    <DataTemplate>
-                                                        <Button Content="{Binding Label}" Command="{Binding LaunchCommand}" Style="{StaticResource ActionButtonStyle}" Margin="2" FontSize="12.5" Padding="8,6" ToolTip="Click to launch application | Right-click to Run as Administrator">
-                                                            <Button.ContextMenu>
-                                                                <ContextMenu>
-                                                                    <MenuItem Header="Run as Administrator" Command="{Binding LaunchAdminCommand}"/>
-                                                                </ContextMenu>
-                                                            </Button.ContextMenu>
-                                                        </Button>
-                                                    </DataTemplate>
-                                                </ItemsControl.ItemTemplate>
-                                            </ItemsControl>
-                                        </StackPanel>
+                                        <Border Margin="0,0,0,5" Padding="6,4" Background="{StaticResource InputBgBrush}" CornerRadius="4" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1" ToolTip="Process ID, Name, and Memory Working Set">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <TextBlock Grid.Column="0" Text="{Binding Pid}" FontFamily="Consolas" FontSize="11" Foreground="{StaticResource FgMutedBrush}" Width="48" VerticalAlignment="Center" ToolTip="Process Identifier (PID)"/>
+                                                <TextBlock Grid.Column="1" Text="{Binding Name}" FontSize="12.5" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" VerticalAlignment="Center" ToolTip="Executable Process Name"/>
+                                                <TextBlock Grid.Column="2" FontFamily="Consolas" FontSize="11.5" FontWeight="Bold" Foreground="{StaticResource AccentCyanBrush}" Margin="0,0,8,0" VerticalAlignment="Center" ToolTip="RAM Working Set Memory in MB">
+                                                    <TextBlock.Text>
+                                                        <MultiBinding StringFormat="{}{0:F0} MB">
+                                                            <Binding Path="RamMb"/>
+                                                        </MultiBinding>
+                                                    </TextBlock.Text>
+                                                </TextBlock>
+                                                <Button Grid.Column="3" Content="KILL" Command="{Binding KillCommand}" Padding="6,2" FontSize="10" FontWeight="Bold" Foreground="White" Background="{StaticResource AccentCritBrush}" BorderThickness="0" Cursor="Hand" ToolTip="Safely terminate this process (Requires Confirmation)"/>
+                                            </Grid>
+                                        </Border>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
@@ -144,14 +144,14 @@
                 </Border>
             </Grid>
 
-            <!-- ================= COLUMN 2 (CENTER-LEFT: REACTOR CORE WITH ENLARGED GAUGES) ================= -->
+            <!-- ================= COLUMN 2 (CENTER-LEFT: REACTOR CORE & LAUNCHPAD) ================= -->
             <Grid Grid.Column="1" Margin="5,0,5,0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1.25*"/>
                     <RowDefinition Height="1*"/>
                 </Grid.RowDefinitions>
 
-                <!-- TOP HERO CARD: REACTOR CORE (3 ENLARGED CIRCULAR GAUGES: 145x145 EACH) -->
+                <!-- TOP HERO CARD: REACTOR CORE -->
                 <Border Grid.Row="0" Style="{StaticResource CardStyle}" Margin="0,0,0,8" Padding="12">
                     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                         <StackPanel>
@@ -250,38 +250,38 @@
                     </ScrollViewer>
                 </Border>
 
-                <!-- BOTTOM CARD: PROCESS MANAGER -->
-                <Border Grid.Row="1" Style="{StaticResource CardStyle}">
+                <!-- BOTTOM CARD 2: LAUNCHPAD (SWAPPED HERE FROM COLUMN 1) -->
+                <Border Grid.Row="1" Style="{StaticResource CardStyle}" ToolTip="Quick Application &amp; Administrative Script Launcher">
                     <DockPanel>
                         <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
-                            <TextBlock Text="PROCESS MANAGER" Style="{StaticResource HeaderTextStyle}" FontSize="18" DockPanel.Dock="Left" ToolTip="Process Manager Engine"/>
-                            <TextBlock Text="RAM TOP 10" FontSize="11" FontWeight="Bold" Foreground="{StaticResource FgMutedBrush}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            <TextBlock Text="LAUNCHPAD" Style="{StaticResource HeaderTextStyle}" FontSize="18" DockPanel.Dock="Left" ToolTip="Application Launchpad"/>
+                            <TextBlock Text="QUICK APPS" FontSize="11" FontWeight="Bold" Foreground="{StaticResource FgMutedBrush}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                         </DockPanel>
                         <ScrollViewer VerticalScrollBarVisibility="Auto">
-                            <ItemsControl ItemsSource="{Binding DetailedProcesses}">
+                            <ItemsControl ItemsSource="{Binding LaunchpadCategories}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Border Margin="0,0,0,5" Padding="6,4" Background="{StaticResource InputBgBrush}" CornerRadius="4" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1" ToolTip="Process ID, Name, and Memory Working Set">
-                                            <Grid>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                    <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                </Grid.ColumnDefinitions>
-
-                                                <TextBlock Grid.Column="0" Text="{Binding Pid}" FontFamily="Consolas" FontSize="11" Foreground="{StaticResource FgMutedBrush}" Width="48" VerticalAlignment="Center" ToolTip="Process Identifier (PID)"/>
-                                                <TextBlock Grid.Column="1" Text="{Binding Name}" FontSize="12.5" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" VerticalAlignment="Center" ToolTip="Executable Process Name"/>
-                                                <TextBlock Grid.Column="2" FontFamily="Consolas" FontSize="11.5" FontWeight="Bold" Foreground="{StaticResource AccentCyanBrush}" Margin="0,0,8,0" VerticalAlignment="Center" ToolTip="RAM Working Set Memory in MB">
-                                                    <TextBlock.Text>
-                                                        <MultiBinding StringFormat="{}{0:F0} MB">
-                                                            <Binding Path="RamMb"/>
-                                                        </MultiBinding>
-                                                    </TextBlock.Text>
-                                                </TextBlock>
-                                                <Button Grid.Column="3" Content="KILL" Command="{Binding KillCommand}" Padding="6,2" FontSize="10" FontWeight="Bold" Foreground="White" Background="{StaticResource AccentCritBrush}" BorderThickness="0" Cursor="Hand" ToolTip="Safely terminate this process (Requires Confirmation)"/>
-                                            </Grid>
-                                        </Border>
+                                        <StackPanel Margin="0,0,0,10">
+                                            <TextBlock Text="{Binding Category}" Style="{StaticResource SectionTextStyle}" FontSize="13" Margin="0,2,0,4"/>
+                                            <ItemsControl ItemsSource="{Binding Items}">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <UniformGrid Columns="3"/>
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Button Content="{Binding Label}" Command="{Binding LaunchCommand}" Style="{StaticResource ActionButtonStyle}" Margin="2" FontSize="12.5" Padding="8,6" ToolTip="Click to launch application | Right-click to Run as Administrator">
+                                                            <Button.ContextMenu>
+                                                                <ContextMenu>
+                                                                    <MenuItem Header="Run as Administrator" Command="{Binding LaunchAdminCommand}"/>
+                                                                </ContextMenu>
+                                                            </Button.ContextMenu>
+                                                        </Button>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </StackPanel>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
