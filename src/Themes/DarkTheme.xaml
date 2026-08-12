@@ -1,0 +1,32 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2000/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2000/xaml">
+
+    <!-- Dark Mode Color Palette (Prepared for future dark mode toggle) -->
+    <Color x:Key="BgMainColor">#121212</Color>
+    <Color x:Key="BgCardColor">#1E1E1E</Color>
+    <Color x:Key="CardBorderColor">#2C2C2C</Color>
+    <Color x:Key="FgPrimaryColor">#E0E0E0</Color>
+    <Color x:Key="FgMutedColor">#888888</Color>
+
+    <Color x:Key="AccentCyanColor">#00E5FF</Color>
+    <Color x:Key="AccentGreenColor">#00C853</Color>
+    <Color x:Key="AccentWarnColor">#FFD600</Color>
+    <Color x:Key="AccentCritColor">#D50000</Color>
+
+    <!-- Brushes -->
+    <SolidColorBrush x:Key="BgMainBrush" Color="{StaticResource BgMainColor}" />
+    <SolidColorBrush x:Key="BgCardBrush" Color="{StaticResource BgCardColor}" />
+    <SolidColorBrush x:Key="CardBorderBrush" Color="{StaticResource CardBorderColor}" />
+    <SolidColorBrush x:Key="FgPrimaryBrush" Color="{StaticResource FgPrimaryColor}" />
+    <SolidColorBrush x:Key="FgMutedBrush" Color="{StaticResource FgMutedColor}" />
+
+    <SolidColorBrush x:Key="AccentCyanBrush" Color="{StaticResource AccentCyanColor}" />
+    <SolidColorBrush x:Key="AccentGreenBrush" Color="{StaticResource AccentGreenColor}" />
+    <SolidColorBrush x:Key="AccentWarnBrush" Color="{StaticResource AccentWarnColor}" />
+    <SolidColorBrush x:Key="AccentCritBrush" Color="{StaticResource AccentCritColor}" />
+
+    <SolidColorBrush x:Key="ButtonBgBrush" Color="#2C2C2C" />
+    <SolidColorBrush x:Key="ButtonHoverBrush" Color="#3A3A3A" />
+    <SolidColorBrush x:Key="InputBgBrush" Color="#111111" />
+
+</ResourceDictionary>

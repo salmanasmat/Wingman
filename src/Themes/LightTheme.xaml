@@ -1,0 +1,96 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2000/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2000/xaml">
+
+    <!-- Light Mode Color Palette -->
+    <Color x:Key="BgMainColor">#F8FAFC</Color>
+    <Color x:Key="BgCardColor">#FFFFFF</Color>
+    <Color x:Key="CardBorderColor">#E2E8F0</Color>
+    <Color x:Key="FgPrimaryColor">#0F172A</Color>
+    <Color x:Key="FgMutedColor">#64748B</Color>
+
+    <Color x:Key="AccentCyanColor">#0284C7</Color>
+    <Color x:Key="AccentGreenColor">#10B981</Color>
+    <Color x:Key="AccentWarnColor">#F59E0B</Color>
+    <Color x:Key="AccentCritColor">#EF4444</Color>
+
+    <!-- Brushes -->
+    <SolidColorBrush x:Key="BgMainBrush" Color="{StaticResource BgMainColor}" />
+    <SolidColorBrush x:Key="BgCardBrush" Color="{StaticResource BgCardColor}" />
+    <SolidColorBrush x:Key="CardBorderBrush" Color="{StaticResource CardBorderColor}" />
+    <SolidColorBrush x:Key="FgPrimaryBrush" Color="{StaticResource FgPrimaryColor}" />
+    <SolidColorBrush x:Key="FgMutedBrush" Color="{StaticResource FgMutedColor}" />
+
+    <SolidColorBrush x:Key="AccentCyanBrush" Color="{StaticResource AccentCyanColor}" />
+    <SolidColorBrush x:Key="AccentGreenBrush" Color="{StaticResource AccentGreenColor}" />
+    <SolidColorBrush x:Key="AccentWarnBrush" Color="{StaticResource AccentWarnColor}" />
+    <SolidColorBrush x:Key="AccentCritBrush" Color="{StaticResource AccentCritColor}" />
+
+    <SolidColorBrush x:Key="ButtonBgBrush" Color="#F1F5F9" />
+    <SolidColorBrush x:Key="ButtonHoverBrush" Color="#E2E8F0" />
+    <SolidColorBrush x:Key="InputBgBrush" Color="#F8FAFC" />
+
+    <!-- Card Style -->
+    <Style x:Key="CardStyle" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource BgCardBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource CardBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Padding" Value="12" />
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect BlurRadius="10" ShadowDepth="2" Direction="270" Color="#0F172A" Opacity="0.04" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Header Text Style -->
+    <Style x:Key="HeaderTextStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="Segoe UI" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Foreground" Value="{StaticResource AccentCyanBrush}" />
+        <Setter Property="Margin" Value="0,0,0,8" />
+    </Style>
+
+    <!-- Section Text Style -->
+    <Style x:Key="SectionTextStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="Segoe UI" />
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Foreground" Value="{StaticResource FgMutedBrush}" />
+        <Setter Property="Margin" Value="0,8,0,4" />
+    </Style>
+
+    <!-- Action Button Style -->
+    <Style x:Key="ActionButtonStyle" TargetType="Button">
+        <Setter Property="Background" Value="{StaticResource ButtonBgBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource FgPrimaryBrush}" />
+        <Setter Property="FontFamily" Value="Segoe UI" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Padding" Value="10,6" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderBrush" Value="{StaticResource CardBorderBrush}" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="6"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="{StaticResource ButtonHoverBrush}" />
+                            <Setter Property="Foreground" Value="{StaticResource AccentCyanBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

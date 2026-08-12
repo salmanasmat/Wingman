@@ -1,0 +1,30 @@
+<Window x:Class="Wingman.Views.LogViewerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2000/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2000/xaml"
+        Title="EVENT HISTORY" Height="500" Width="700"
+        WindowStartupLocation="CenterOwner"
+        Background="{StaticResource BgMainBrush}">
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <TextBlock Text="{Binding LogTitle}" Style="{StaticResource HeaderTextStyle}" FontSize="16" Margin="0,0,0,10"/>
+
+        <!-- Log Text Area -->
+        <Border Grid.Row="1" Background="{StaticResource BgCardBrush}" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1" CornerRadius="6" Padding="10">
+            <TextBox Text="{Binding LogContent, Mode=OneWay}"
+                     IsReadOnly="True"
+                     TextWrapping="Wrap"
+                     VerticalScrollBarVisibility="Auto"
+                     HorizontalScrollBarVisibility="Auto"
+                     FontFamily="Consolas"
+                     FontSize="12"
+                     Foreground="{StaticResource FgPrimaryBrush}"
+                     Background="Transparent"
+                     BorderThickness="0"/>
+        </Border>
+    </Grid>
+</Window>

@@ -1,0 +1,168 @@
+<Window x:Class="Wingman.Views.ConfigWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2000/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2000/xaml"
+        Title="SYSTEM CONFIGURATION" Height="520" Width="720"
+        WindowStartupLocation="CenterOwner"
+        Background="{StaticResource BgMainBrush}">
+    <Window.Resources>
+        <Style TargetType="TabItem">
+            <Setter Property="FontFamily" Value="Segoe UI" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="Padding" Value="12,6" />
+            <Setter Property="Foreground" Value="{StaticResource FgMutedBrush}" />
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Foreground" Value="{StaticResource AccentCyanBrush}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="12">
+        <TabControl Background="{StaticResource BgCardBrush}" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1" Padding="12">
+            <!-- 1. MONITORS TAB -->
+            <TabItem Header="MONITORS">
+                <Grid Margin="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="3*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Left: List -->
+                    <DockPanel Grid.Column="0" Margin="0,0,10,0">
+                        <StackPanel DockPanel.Dock="Bottom" Margin="0,10,0,0">
+                            <Button Content="EDIT SELECTED" Command="{Binding EditTargetCommand}" Style="{StaticResource ActionButtonStyle}" Margin="0,0,0,5"/>
+                            <Button Content="REMOVE SELECTED" Command="{Binding DeleteTargetCommand}" Style="{StaticResource ActionButtonStyle}" Foreground="{StaticResource AccentCritBrush}"/>
+                        </StackPanel>
+                        <ListBox ItemsSource="{Binding TargetListItems}" SelectedIndex="{Binding SelectedTargetIndex}"
+                                 Background="{StaticResource InputBgBrush}" BorderBrush="{StaticResource CardBorderBrush}"
+                                 Foreground="{StaticResource FgPrimaryBrush}" FontFamily="Consolas"/>
+                    </DockPanel>
+
+                    <!-- Right: Add/Edit Form -->
+                    <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                        <TextBlock Text="NAME" Style="{StaticResource SectionTextStyle}"/>
+                        <TextBox Text="{Binding TargetName, UpdateSourceTrigger=PropertyChanged}" Padding="6" Margin="0,0,0,10" Background="{StaticResource InputBgBrush}"/>
+
+                        <TextBlock Text="HOST / IP" Style="{StaticResource SectionTextStyle}"/>
+                        <TextBox Text="{Binding TargetHost, UpdateSourceTrigger=PropertyChanged}" Padding="6" Margin="0,0,0,20" Background="{StaticResource InputBgBrush}"/>
+
+                        <Button Content="{Binding TargetAddButtonText}" Command="{Binding AddTargetCommand}" Style="{StaticResource ActionButtonStyle}"
+                                Background="{StaticResource AccentCyanBrush}" Foreground="White" Padding="0,10"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+
+            <!-- 2. LAUNCHPAD TAB -->
+            <TabItem Header="LAUNCHPAD">
+                <Grid Margin="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="3*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Left: List -->
+                    <DockPanel Grid.Column="0" Margin="0,0,10,0">
+                        <StackPanel DockPanel.Dock="Bottom" Margin="0,10,0,0">
+                            <Button Content="EDIT SELECTED" Command="{Binding EditLaunchCommand}" Style="{StaticResource ActionButtonStyle}" Margin="0,0,0,5"/>
+                            <Button Content="REMOVE SELECTED" Command="{Binding DeleteLaunchCommand}" Style="{StaticResource ActionButtonStyle}" Foreground="{StaticResource AccentCritBrush}"/>
+                        </StackPanel>
+                        <ListBox ItemsSource="{Binding LaunchpadListItems}" SelectedItem="{Binding SelectedLaunchpadItemRaw}"
+                                 Background="{StaticResource InputBgBrush}" BorderBrush="{StaticResource CardBorderBrush}"
+                                 Foreground="{StaticResource FgPrimaryBrush}" FontFamily="Segoe UI"/>
+                    </DockPanel>
+
+                    <!-- Right: Add/Edit Form -->
+                    <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                        <TextBlock Text="CATEGORY" Style="{StaticResource SectionTextStyle}"/>
+                        <ComboBox ItemsSource="{Binding Categories}" SelectedItem="{Binding SelectedCategory}" Margin="0,0,0,10" Padding="6"/>
+
+                        <TextBlock Text="LABEL" Style="{StaticResource SectionTextStyle}"/>
+                        <TextBox Text="{Binding LaunchLabel, UpdateSourceTrigger=PropertyChanged}" Padding="6" Margin="0,0,0,10" Background="{StaticResource InputBgBrush}"/>
+
+                        <TextBlock Text="COMMAND" Style="{StaticResource SectionTextStyle}"/>
+                        <Grid Margin="0,0,0,20">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox Text="{Binding LaunchCmd, UpdateSourceTrigger=PropertyChanged}" Padding="6" Background="{StaticResource InputBgBrush}"/>
+                            <Button Grid.Column="1" Content="..." Command="{Binding BrowseFileCommand}" Width="30" Margin="5,0,0,0" Style="{StaticResource ActionButtonStyle}"/>
+                        </Grid>
+
+                        <Button Content="{Binding LaunchAddButtonText}" Command="{Binding AddLaunchCommand}" Style="{StaticResource ActionButtonStyle}"
+                                Background="{StaticResource AccentCyanBrush}" Foreground="White" Padding="0,10"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+
+            <!-- 3. SETTINGS TAB -->
+            <TabItem Header="SETTINGS">
+                <StackPanel Margin="20">
+                    <TextBlock Text="INTERFACE THEME" Style="{StaticResource HeaderTextStyle}" Margin="0,0,0,15"/>
+
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,25">
+                        <TextBlock Text="Primary Accent Color:" VerticalAlignment="Center" Margin="0,0,15,0" Foreground="{StaticResource FgPrimaryBrush}" FontWeight="SemiBold"/>
+                        <ComboBox ItemsSource="{Binding ThemeNames}" SelectedItem="{Binding SelectedThemeName}" Width="180" Padding="6"/>
+                    </StackPanel>
+
+                    <TextBlock Text="BEHAVIOR" Style="{StaticResource HeaderTextStyle}" Margin="0,0,0,15"/>
+                    <CheckBox Content="Prevent Sleep in Fullscreen" IsChecked="{Binding PreventSleep}" Foreground="{StaticResource FgPrimaryBrush}" FontWeight="SemiBold" Margin="0,0,0,30"/>
+
+                    <Button Content="APPLY SETTINGS" Command="{Binding ApplySettingsCommand}" Style="{StaticResource ActionButtonStyle}"
+                            Background="{StaticResource AccentCyanBrush}" Foreground="White" Width="180" HorizontalAlignment="Left" Padding="0,10"/>
+                </StackPanel>
+            </TabItem>
+
+            <!-- 4. HOW TO USE TAB -->
+            <TabItem Header="HOW TO USE">
+                <ScrollViewer Margin="10" VerticalScrollBarVisibility="Auto">
+                    <TextBlock FontFamily="Consolas" FontSize="11" Foreground="{StaticResource FgPrimaryBrush}" TextWrapping="Wrap" LineHeight="18">
+HOW TO CONFIGURE WINGMAN
+========================
+
+1. MONITORS TAB
+   Add critical servers or devices you want to ping constantly.
+   - Name: Short display name (e.g. 'Gateway').
+   - Host: IP Address (192.168.1.1) or Hostname (google.com).
+
+2. LAUNCHPAD TAB
+   Add shortcuts to your favorite tools, scripts, or apps.
+   - Category: Choose which section the button appears in (Utilities, Apps, Scripts).
+   - Label: The text displayed on the button.
+   - Command: The system command or file path to execute.
+   - Browse (...): Click the button next to Command to select a file directly.
+
+FEATURES & TIPS
+===============
+> Run as Administrator: Right-click any Launchpad button to run it with elevated privileges.
+> Script Safety: Scripts added to the "Scripts" category will ask for confirmation before running.
+> Interactive Logs: Click the bottom status bar (or "VIEW LOGS") to see the full event history for today.
+> Notes: Right-click the Notes area to Cut/Copy/Paste/Clear text.
+> Fullscreen: Press F5 to toggle fullscreen. Press ESC to exit fullscreen.
+> Prevent Sleep: Check "Prevent Sleep" in Settings to keep screen on while in fullscreen.
+                    </TextBlock>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- 5. ABOUT TAB -->
+            <TabItem Header="ABOUT">
+                <Grid Margin="20">
+                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <TextBlock Text="WINGMAN" FontSize="28" FontWeight="Bold" Foreground="{StaticResource AccentCyanBrush}" HorizontalAlignment="Center"/>
+                        <TextBlock Text="SYSTEM MONITOR DASHBOARD" FontSize="12" FontWeight="Bold" Foreground="{StaticResource FgMutedBrush}" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+
+                        <TextBlock Text="Version 1.0 (.NET WPF)" FontSize="13" Foreground="{StaticResource FgPrimaryBrush}" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                        <TextBlock Text="Production Grade IT Tool" FontSize="11" Foreground="{StaticResource FgMutedBrush}" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+
+                        <TextBlock Text="Salman Asmat" FontSize="13" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" HorizontalAlignment="Center"/>
+                        <TextBlock Text="salmanasmat@outlook.com" FontSize="11" Foreground="{StaticResource FgMutedBrush}" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+
+                        <TextBlock Text="Local-Only. Lightweight. Fast." FontSize="11" Foreground="{StaticResource FgMutedBrush}" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>

@@ -1,0 +1,12 @@
+<Application x:Class="Wingman.App"
+             xmlns="http://schemas.microsoft.com/winfx/2000/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2000/xaml"
+             StartupUri="Views/MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Themes/LightTheme.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

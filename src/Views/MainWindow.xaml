@@ -1,0 +1,290 @@
+<Window x:Class="Wingman.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2000/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2000/xaml"
+        xmlns:controls="clr-namespace:Wingman.Controls"
+        Title="WINGMAN" Height="680" Width="1100"
+        WindowState="Maximized"
+        Background="{StaticResource BgMainBrush}"
+        KeyDown="Window_KeyDown">
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- 1. TOP BAR -->
+        <Border Grid.Row="0" Margin="0,0,0,10" Padding="10,5">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Left Info -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding HostnameText}" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" Margin="0,0,15,0"/>
+                    <TextBlock Text="{Binding UptimeText}" Foreground="{StaticResource FgMutedBrush}"/>
+                </StackPanel>
+
+                <!-- Center Clock -->
+                <TextBlock Grid.Column="1" Text="{Binding ClockText}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                           FontFamily="Consolas" FontSize="14" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}"/>
+
+                <!-- Right Config -->
+                <Button Grid.Column="2" Content="[CONFIG]" Command="{Binding OpenConfigCommand}"
+                        Background="Transparent" BorderThickness="0" Foreground="{StaticResource FgMutedBrush}"
+                        FontWeight="Bold" Cursor="Hand">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <TextBlock Text="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}" FontWeight="Bold" VerticalAlignment="Center"/>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Foreground" Value="{StaticResource AccentCyanBrush}"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </Grid>
+        </Border>
+
+        <!-- 2. MAIN CONTENT GRID -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="260"/>
+                <ColumnDefinition Width="260"/>
+                <ColumnDefinition Width="300"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Column 1: WATCHTOWER -->
+            <Border Grid.Column="0" Style="{StaticResource CardStyle}" Margin="0,0,5,0">
+                <DockPanel>
+                    <TextBlock Text="WATCHTOWER" Style="{StaticResource HeaderTextStyle}" DockPanel.Dock="Top"/>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <ItemsControl ItemsSource="{Binding WatchtowerItems}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Margin="0,0,0,8" Padding="6" Background="{StaticResource InputBgBrush}" CornerRadius="6" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1">
+                                        <StackPanel>
+                                            <Grid Margin="0,0,0,4">
+                                                <TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}"/>
+                                                <TextBlock HorizontalAlignment="Right" FontFamily="Consolas" FontSize="11" Foreground="{StaticResource FgMutedBrush}">
+                                                    <TextBlock.Text>
+                                                        <MultiBinding StringFormat="{}{0}ms">
+                                                            <Binding Path="LastMs"/>
+                                                        </MultiBinding>
+                                                    </TextBlock.Text>
+                                                </TextBlock>
+                                            </Grid>
+                                            <controls:SparklineChart History="{Binding History}" Status="{Binding Status}" Height="28"/>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </DockPanel>
+            </Border>
+
+            <!-- Column 2: REACTOR CORE -->
+            <Border Grid.Column="1" Style="{StaticResource CardStyle}" Margin="5,0,5,0">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel HorizontalAlignment="Center">
+                        <TextBlock Text="REACTOR CORE" Style="{StaticResource HeaderTextStyle}" HorizontalAlignment="Left"/>
+
+                        <!-- CPU & RAM Gauges -->
+                        <controls:CircularGauge Value="{Binding CpuPercent}" Title="CPU LOAD" GaugeColor="{StaticResource AccentCyanBrush}" Width="150" Height="150" Margin="0,0,0,10"/>
+                        <controls:CircularGauge Value="{Binding RamPercent}" Title="MEMORY" GaugeColor="{StaticResource AccentWarnBrush}" Width="150" Height="150" Margin="0,0,0,10"/>
+
+                        <!-- OS Drive Bar -->
+                        <controls:LinearGauge Value="{Binding DiskPercent}" Label="{Binding DiskLabel}" BarColor="{StaticResource AccentCyanBrush}" Width="210" Height="22" Margin="0,0,0,12"/>
+
+                        <!-- Network Speeds -->
+                        <StackPanel Margin="0,0,0,10" HorizontalAlignment="Center">
+                            <TextBlock Text="{Binding NetUpText}" FontFamily="Consolas" FontSize="11" FontWeight="Bold" Foreground="{StaticResource AccentCyanBrush}" HorizontalAlignment="Center"/>
+                            <TextBlock Text="{Binding NetDownText}" FontFamily="Consolas" FontSize="11" FontWeight="Bold" Foreground="{StaticResource AccentGreenBrush}" HorizontalAlignment="Center"/>
+                        </StackPanel>
+
+                        <!-- Disk IO Badges -->
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,12">
+                            <Border Padding="6,2" CornerRadius="4" Margin="0,0,5,0">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Background" Value="{StaticResource ButtonBgBrush}"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding DiskReadActive}" Value="True">
+                                                <Setter Property="Background" Value="{StaticResource AccentGreenBrush}"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <TextBlock Text=" READ " FontFamily="Consolas" FontSize="10" FontWeight="Bold" Foreground="White"/>
+                            </Border>
+
+                            <Border Padding="6,2" CornerRadius="4">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Background" Value="{StaticResource ButtonBgBrush}"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding DiskWriteActive}" Value="True">
+                                                <Setter Property="Background" Value="{StaticResource AccentWarnBrush}"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <TextBlock Text=" WRITE " FontFamily="Consolas" FontSize="10" FontWeight="Bold" Foreground="White"/>
+                            </Border>
+                        </StackPanel>
+
+                        <!-- Battery -->
+                        <TextBlock Text="{Binding BatteryText}" Foreground="{Binding BatteryBrush}" FontFamily="Consolas" FontSize="11" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,12"/>
+
+                        <!-- Top Processes -->
+                        <TextBlock Text="TOP LOAD" Style="{StaticResource SectionTextStyle}" HorizontalAlignment="Center"/>
+                        <ItemsControl ItemsSource="{Binding TopProcesses}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding}" FontFamily="Consolas" FontSize="11" Foreground="{StaticResource FgPrimaryBrush}" HorizontalAlignment="Center"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+
+            <!-- Column 3: LAUNCHPAD -->
+            <Border Grid.Column="2" Style="{StaticResource CardStyle}" Margin="5,0,5,0">
+                <DockPanel>
+                    <TextBlock Text="LAUNCHPAD" Style="{StaticResource HeaderTextStyle}" DockPanel.Dock="Top"/>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <ItemsControl ItemsSource="{Binding LaunchpadCategories}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Margin="0,0,0,12">
+                                        <TextBlock Text="{Binding Category}" Style="{StaticResource SectionTextStyle}"/>
+                                        <ItemsControl ItemsSource="{Binding Items}">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <UniformGrid Columns="2"/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Button Content="{Binding Label}" Command="{Binding LaunchCommand}" Style="{StaticResource ActionButtonStyle}" Margin="2">
+                                                        <Button.ContextMenu>
+                                                            <ContextMenu>
+                                                                <MenuItem Header="Run as Administrator" Command="{Binding LaunchAdminCommand}"/>
+                                                            </ContextMenu>
+                                                        </Button.ContextMenu>
+                                                    </Button>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </DockPanel>
+            </Border>
+
+            <!-- Column 4: AUXILIARY (Intel, Specs, Notes) -->
+            <Border Grid.Column="3" Style="{StaticResource CardStyle}" Margin="5,0,0,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Network Intel -->
+                    <StackPanel Grid.Row="0" Margin="0,0,0,12">
+                        <TextBlock Text="NETWORK INTEL" Style="{StaticResource HeaderTextStyle}"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock FontSize="10" Foreground="{StaticResource FgMutedBrush}" Text="LOCAL IP:"/>
+                                <TextBlock FontSize="11" FontFamily="Consolas" Foreground="{StaticResource FgPrimaryBrush}" Text="{Binding LocalIp}" Margin="0,0,0,4"/>
+                                <TextBlock FontSize="10" Foreground="{StaticResource FgMutedBrush}" Text="WAN IP:"/>
+                                <TextBlock FontSize="11" FontFamily="Consolas" Foreground="{StaticResource FgPrimaryBrush}" Text="{Binding PublicIp}" Margin="0,0,0,4"/>
+                                <TextBlock FontSize="10" Foreground="{StaticResource FgMutedBrush}" Text="MAC ADDR:"/>
+                                <TextBlock FontSize="11" FontFamily="Consolas" Foreground="{StaticResource FgPrimaryBrush}" Text="{Binding Mac}" Margin="0,0,0,4"/>
+                                <TextBlock FontSize="10" Foreground="{StaticResource FgMutedBrush}" Text="GATEWAY:"/>
+                                <TextBlock FontSize="11" FontFamily="Consolas" Foreground="{StaticResource FgPrimaryBrush}" Text="{Binding Gateway}"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock FontSize="10" Foreground="{StaticResource FgMutedBrush}" Text="WIFI SSID:"/>
+                                <TextBlock FontSize="11" FontFamily="Consolas" Foreground="{StaticResource FgPrimaryBrush}" Text="{Binding WifiSsid}" Margin="0,0,0,4"/>
+                                <TextBlock FontSize="10" Foreground="{StaticResource FgMutedBrush}" Text="SIGNAL:"/>
+                                <TextBlock FontSize="11" FontFamily="Consolas" Foreground="{StaticResource FgPrimaryBrush}" Text="{Binding WifiSignal}" Margin="0,0,0,4"/>
+                                <TextBlock FontSize="10" Foreground="{StaticResource FgMutedBrush}" Text="RADIO:"/>
+                                <TextBlock FontSize="11" FontFamily="Consolas" Foreground="{StaticResource FgPrimaryBrush}" Text="{Binding WifiRadio}" Margin="0,0,0,4"/>
+                                <TextBlock FontSize="10" Foreground="{StaticResource FgMutedBrush}" Text="AUTH:"/>
+                                <TextBlock FontSize="11" FontFamily="Consolas" Foreground="{StaticResource FgPrimaryBrush}" Text="{Binding WifiAuth}"/>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+
+                    <!-- System Specs -->
+                    <StackPanel Grid.Row="1" Margin="0,0,0,12">
+                        <TextBlock Text="SYSTEM SPECS" Style="{StaticResource HeaderTextStyle}"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock FontSize="10" Foreground="{StaticResource FgMutedBrush}" Text="OS:"/>
+                                <TextBlock FontSize="11" FontFamily="Consolas" Foreground="{StaticResource FgPrimaryBrush}" Text="{Binding SysOs}" Margin="0,0,0,4"/>
+                                <TextBlock FontSize="10" Foreground="{StaticResource FgMutedBrush}" Text="USER:"/>
+                                <TextBlock FontSize="11" FontFamily="Consolas" Foreground="{StaticResource FgPrimaryBrush}" Text="{Binding SysUser}" Margin="0,0,0,4"/>
+                                <TextBlock FontSize="10" Foreground="{StaticResource FgMutedBrush}" Text="RAM:"/>
+                                <TextBlock FontSize="11" FontFamily="Consolas" Foreground="{StaticResource FgPrimaryBrush}" Text="{Binding SysRamTotal}"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock FontSize="10" Foreground="{StaticResource FgMutedBrush}" Text="CORES:"/>
+                                <TextBlock FontSize="11" FontFamily="Consolas" Foreground="{StaticResource FgPrimaryBrush}" Text="{Binding SysCores}" Margin="0,0,0,4"/>
+                                <TextBlock FontSize="10" Foreground="{StaticResource FgMutedBrush}" Text="HDD CAP:"/>
+                                <TextBlock FontSize="11" FontFamily="Consolas" Foreground="{StaticResource FgPrimaryBrush}" Text="{Binding SysDiskCap}" Margin="0,0,0,4"/>
+                                <TextBlock FontSize="10" Foreground="{StaticResource FgMutedBrush}" Text="PROCS:"/>
+                                <TextBlock FontSize="11" FontFamily="Consolas" Foreground="{StaticResource FgPrimaryBrush}" Text="{Binding SysProcsTotal}"/>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+
+                    <!-- Notes -->
+                    <DockPanel Grid.Row="2">
+                        <TextBlock Text="NOTES" Style="{StaticResource HeaderTextStyle}" DockPanel.Dock="Top"/>
+                        <Border Background="{StaticResource InputBgBrush}" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1" CornerRadius="6" Padding="6">
+                            <TextBox Text="{Binding NotesText, UpdateSourceTrigger=PropertyChanged}"
+                                     AcceptsReturn="True" AcceptsTab="True" TextWrapping="Wrap"
+                                     VerticalScrollBarVisibility="Auto" FontFamily="Consolas" FontSize="11"
+                                     Foreground="{StaticResource FgPrimaryBrush}" Background="Transparent" BorderThickness="0"/>
+                        </Border>
+                    </DockPanel>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- 3. BOTTOM STATUS TICKER -->
+        <Border Grid.Row="2" Margin="0,10,0,0" Padding="10,6" Background="{StaticResource BgCardBrush}" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1" CornerRadius="6" Cursor="Hand" MouseLeftButtonDown="BottomBar_MouseLeftButtonDown">
+            <Grid>
+                <TextBlock Text="{Binding StatusText}" Foreground="{Binding StatusBrush}" FontFamily="Consolas" FontSize="11" FontWeight="Bold" VerticalAlignment="Center"/>
+                <TextBlock Text="[VIEW LOGS]" Foreground="{StaticResource AccentCyanBrush}" FontSize="11" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

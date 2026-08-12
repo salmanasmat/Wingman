@@ -1,0 +1,130 @@
+{
+    "update_interval_data_ms": 1000,
+    "update_interval_ui_ms": 100,
+    "theme": {
+        "bg_main": "#F8FAFC",
+        "bg_card": "#FFFFFF",
+        "fg_primary": "#0F172A",
+        "accent_cyan": "#0284C7",
+        "accent_green": "#10B981",
+        "accent_warn": "#F59E0B",
+        "accent_crit": "#EF4444",
+        "font_family": "Segoe UI",
+        "font_mono": "Consolas"
+    },
+    "targets": [
+        {
+            "name": "Internet",
+            "host": "8.8.8.8"
+        },
+        {
+            "name": "IT Server",
+            "host": "172.17.19.2"
+        },
+        {
+            "name": "OZ Server",
+            "host": "172.20.0.55"
+        },
+        {
+            "name": "Shakargarh CC",
+            "host": "172.17.191.34"
+        },
+        {
+            "name": "E Voucher",
+            "host": "104.26.15.217"
+        },
+        {
+            "name": "Main Switch",
+            "host": "172.17.19.5"
+        },
+        {
+            "name": "PHS Switch",
+            "host": "172.17.19.6"
+        },
+        {
+            "name": "Digital Payments",
+            "host": "172.16.71.244"
+        }
+    ],
+    "launcher": {
+        "Utilities": [
+            {
+                "label": "CMD",
+                "cmd": "start cmd.exe /k"
+            },
+            {
+                "label": "PowerShell",
+                "cmd": "start powershell.exe"
+            },
+            {
+                "label": "Notepad",
+                "cmd": "notepad"
+            },
+            {
+                "label": "Task Manager",
+                "cmd": "taskmgr"
+            },
+            {
+                "label": "Calculator",
+                "cmd": "calc"
+            },
+            {
+                "label": "Task Scheduler",
+                "cmd": "taskschd.msc"
+            }
+        ],
+        "Apps": [
+            {
+                "label": "Pingr",
+                "cmd": "D:\\SLIC-Utilities\\Pingr\\Pingr.exe"
+            },
+            {
+                "label": "Portal Scanner",
+                "cmd": "D:\\SLIC-Utilities\\PortalScanner\\Portal-Scanner.exe"
+            },
+            {
+                "label": "Convertify",
+                "cmd": "D:\\SLIC-Utilities\\Convertify\\Convertify.exe"
+            },
+            {
+                "label": "Pol-Val",
+                "cmd": "D:\\SLIC-Utilities\\Pol-Val\\Pol-Val.exe"
+            },
+            {
+                "label": "SLIC-DG",
+                "cmd": "D:\\SLIC-Utilities\\SLIC-DG\\SLIC-DG.exe"
+            },
+            {
+                "label": "SmarTerm",
+                "cmd": "C:\\Program Files (x86)\\Persoft\\SmarTerm\\SESSIONS\\IBM.STW"
+            },
+            {
+                "label": "Filezilla",
+                "cmd": "\"C:\\Program Files\\FileZilla FTP Client\\filezilla.exe\""
+            },
+            {
+                "label": "Sublime Text",
+                "cmd": "\"C:\\Program Files\\Sublime Text 3\\sublime_text.exe\""
+            },
+            {
+                "label": "Chrome",
+                "cmd": "\"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe\""
+            },
+            {
+                "label": "Rustdesk",
+                "cmd": "\"C:\\Program Files\\RustDesk\\rustdesk.exe\""
+            }
+        ],
+        "Scripts": [
+            {
+                "label": "Server Backup",
+                "cmd": "powershell \"Start-Process cmd -ArgumentList '/c D:\\Backup\\Batch_Scripts\\BackupSystem\\run_process.bat' -Verb RunAs\""
+            },
+            {
+                "label": "Backup Retention",
+                "cmd": "powershell \"Start-Process cmd -ArgumentList '/c D:\\Backup\\Batch_Scripts\\BackupSystem\\backup_retention.bat' -Verb RunAs\""
+            }
+        ]
+    },
+    "prevent_sleep": true
+}

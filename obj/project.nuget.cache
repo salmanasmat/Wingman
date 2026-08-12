@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "kNbuaPUsVxo=",
+  "success": true,
+  "projectFilePath": "D:\\Reports\\Scripting\\Antigravity\\Wingman\\Wingman.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Lenovo\\.nuget\\packages\\system.management\\10.0.11\\system.management.10.0.11.nupkg.sha512"
+  ],
+  "logs": []
+}

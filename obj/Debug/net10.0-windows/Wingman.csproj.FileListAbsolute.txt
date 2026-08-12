@@ -1,0 +1,2 @@
+D:\Reports\Scripting\Antigravity\Wingman\obj\Debug\net10.0-windows\Wingman.csproj.AssemblyReference.cache
+D:\Reports\Scripting\Antigravity\Wingman\obj\Debug\net10.0-windows\Wingman_MarkupCompile.cache
