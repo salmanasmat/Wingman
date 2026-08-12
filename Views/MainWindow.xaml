@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="clr-namespace:Wingman.Controls"
-        Title="WINGMAN" Height="820" Width="1440"
+        Title="WINGMAN" Height="860" Width="1480"
         WindowState="Maximized"
         Background="{StaticResource BgMainBrush}"
         SnapsToDevicePixels="True"
@@ -19,7 +19,7 @@
         </Grid.RowDefinitions>
 
         <!-- 1. TOP HEADER BAR -->
-        <Border Grid.Row="0" Margin="0,0,0,10" Padding="14,8" Style="{StaticResource CardStyle}">
+        <Border Grid.Row="0" Margin="0,0,0,10" Padding="14,10" Style="{StaticResource CardStyle}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -29,21 +29,21 @@
 
                 <!-- Left Machine Info -->
                 <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                    <Border Background="{StaticResource AccentCyanBrush}" CornerRadius="4" Padding="6,2" Margin="0,0,10,0">
-                        <TextBlock Text="WINGMAN v1.6" FontSize="11" FontWeight="Bold" Foreground="White"/>
+                    <Border Background="{StaticResource AccentCyanBrush}" CornerRadius="4" Padding="8,3" Margin="0,0,12,0">
+                        <TextBlock Text="WINGMAN v1.6" FontSize="12" FontWeight="Bold" Foreground="White"/>
                     </Border>
-                    <TextBlock Text="{Binding HostnameText}" FontSize="15" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" Margin="0,0,16,0"/>
-                    <TextBlock Text="{Binding UptimeText}" FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource FgMutedBrush}"/>
+                    <TextBlock Text="{Binding HostnameText}" FontSize="17" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" Margin="0,0,18,0"/>
+                    <TextBlock Text="{Binding UptimeText}" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource FgMutedBrush}"/>
                 </StackPanel>
 
                 <!-- Center System Clock -->
                 <TextBlock Grid.Column="1" Text="{Binding ClockText}" HorizontalAlignment="Center" VerticalAlignment="Center"
-                           FontFamily="Consolas" FontSize="16" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}"/>
+                           FontFamily="Consolas" FontSize="18" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}"/>
 
                 <!-- Right Config -->
                 <StackPanel Grid.Column="2" Orientation="Horizontal">
                     <Button Content="[ CONFIGURATION ]" Command="{Binding OpenConfigCommand}"
-                            Style="{StaticResource ActionButtonStyle}" FontSize="12" Foreground="{StaticResource AccentCyanBrush}"/>
+                            Style="{StaticResource ActionButtonStyle}" FontSize="13" Foreground="{StaticResource AccentCyanBrush}"/>
                 </StackPanel>
             </Grid>
         </Border>
@@ -54,7 +54,7 @@
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="1.5*"/>
                 <ColumnDefinition Width="1.35*"/>
-                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1.05*"/>
             </Grid.ColumnDefinitions>
 
             <!-- ================= COLUMN 1 (FAR LEFT: 20%) ================= -->
@@ -68,22 +68,22 @@
                 <Border Grid.Row="0" Style="{StaticResource CardStyle}" Margin="0,0,0,8">
                     <DockPanel>
                         <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
-                            <TextBlock Text="MULTI-DRIVES" Style="{StaticResource HeaderTextStyle}" FontSize="16" DockPanel.Dock="Left"/>
-                            <TextBlock Text="STORAGE" FontSize="10" FontWeight="Bold" Foreground="{StaticResource FgMutedBrush}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            <TextBlock Text="MULTI-DRIVES" Style="{StaticResource HeaderTextStyle}" FontSize="18" DockPanel.Dock="Left"/>
+                            <TextBlock Text="STORAGE" FontSize="11" FontWeight="Bold" Foreground="{StaticResource FgMutedBrush}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                         </DockPanel>
                         <ScrollViewer VerticalScrollBarVisibility="Auto">
                             <ItemsControl ItemsSource="{Binding DrivesList}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Border Margin="0,0,0,8" Padding="6" Background="{StaticResource InputBgBrush}" CornerRadius="6" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1">
+                                        <Border Margin="0,0,0,8" Padding="8" Background="{StaticResource InputBgBrush}" CornerRadius="6" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1">
                                             <StackPanel>
-                                                <Grid Margin="0,0,0,2">
-                                                    <TextBlock FontSize="11" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}">
+                                                <Grid Margin="0,0,0,3">
+                                                    <TextBlock FontSize="13" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}">
                                                         <Run Text="{Binding Name, Mode=OneWay}"/>
                                                         <Run Text=" ("/><Run Text="{Binding VolumeLabel, Mode=OneWay}"/><Run Text=")"/>
                                                     </TextBlock>
                                                 </Grid>
-                                                <controls:LinearGauge Value="{Binding Percent}" Label="{Binding Label}" BarColor="{StaticResource AccentCyanBrush}" Height="18"/>
+                                                <controls:LinearGauge Value="{Binding Percent}" Label="{Binding Label}" BarColor="{StaticResource AccentCyanBrush}" Height="22"/>
                                             </StackPanel>
                                         </Border>
                                     </DataTemplate>
@@ -97,15 +97,15 @@
                 <Border Grid.Row="1" Style="{StaticResource CardStyle}">
                     <DockPanel>
                         <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
-                            <TextBlock Text="LAUNCHPAD" Style="{StaticResource HeaderTextStyle}" FontSize="16" DockPanel.Dock="Left"/>
-                            <TextBlock Text="QUICK APPS" FontSize="10" FontWeight="Bold" Foreground="{StaticResource FgMutedBrush}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            <TextBlock Text="LAUNCHPAD" Style="{StaticResource HeaderTextStyle}" FontSize="18" DockPanel.Dock="Left"/>
+                            <TextBlock Text="QUICK APPS" FontSize="11" FontWeight="Bold" Foreground="{StaticResource FgMutedBrush}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                         </DockPanel>
                         <ScrollViewer VerticalScrollBarVisibility="Auto">
                             <ItemsControl ItemsSource="{Binding LaunchpadCategories}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <StackPanel Margin="0,0,0,8">
-                                            <TextBlock Text="{Binding Category}" Style="{StaticResource SectionTextStyle}" FontSize="11" Margin="0,2,0,2"/>
+                                        <StackPanel Margin="0,0,0,10">
+                                            <TextBlock Text="{Binding Category}" Style="{StaticResource SectionTextStyle}" FontSize="13" Margin="0,2,0,4"/>
                                             <ItemsControl ItemsSource="{Binding Items}">
                                                 <ItemsControl.ItemsPanel>
                                                     <ItemsPanelTemplate>
@@ -114,7 +114,7 @@
                                                 </ItemsControl.ItemsPanel>
                                                 <ItemsControl.ItemTemplate>
                                                     <DataTemplate>
-                                                        <Button Content="{Binding Label}" Command="{Binding LaunchCommand}" Style="{StaticResource ActionButtonStyle}" Margin="2" FontSize="11" Padding="6,4">
+                                                        <Button Content="{Binding Label}" Command="{Binding LaunchCommand}" Style="{StaticResource ActionButtonStyle}" Margin="2" FontSize="12.5" Padding="8,6">
                                                             <Button.ContextMenu>
                                                                 <ContextMenu>
                                                                     <MenuItem Header="Run as Administrator" Command="{Binding LaunchAdminCommand}"/>
@@ -146,24 +146,24 @@
                         <StackPanel>
                             <!-- Header -->
                             <DockPanel Margin="0,0,0,6">
-                                <TextBlock Text="REACTOR CORE" Style="{StaticResource HeaderTextStyle}" FontSize="17" DockPanel.Dock="Left"/>
-                                <TextBlock Text="SYSTEM METRICS" FontSize="10" FontWeight="Bold" Foreground="{StaticResource FgMutedBrush}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                <TextBlock Text="REACTOR CORE" Style="{StaticResource HeaderTextStyle}" FontSize="18" DockPanel.Dock="Left"/>
+                                <TextBlock Text="SYSTEM METRICS" FontSize="11" FontWeight="Bold" Foreground="{StaticResource FgMutedBrush}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                             </DockPanel>
 
-                            <!-- Gauges Above (Compact Side-by-Side Centered) -->
+                            <!-- Gauges Above (Side-by-Side Centered) -->
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,8">
-                                <controls:CircularGauge Value="{Binding CpuPercent}" Title="CPU LOAD" GaugeColor="{StaticResource AccentCyanBrush}" Width="140" Height="140" Margin="0,0,14,0"/>
-                                <controls:CircularGauge Value="{Binding RamPercent}" Title="MEMORY" GaugeColor="{StaticResource AccentWarnBrush}" Width="140" Height="140"/>
+                                <controls:CircularGauge Value="{Binding CpuPercent}" Title="CPU LOAD" GaugeColor="{StaticResource AccentCyanBrush}" Width="150" Height="150" Margin="0,0,16,0"/>
+                                <controls:CircularGauge Value="{Binding RamPercent}" Title="MEMORY" GaugeColor="{StaticResource AccentWarnBrush}" Width="150" Height="150"/>
                             </StackPanel>
 
                             <!-- OS Drive Capacity Bar Under Gauges -->
-                            <StackPanel HorizontalAlignment="Center" Width="380" Margin="0,0,0,10">
-                                <TextBlock Text="OS DRIVE CAPACITY" Style="{StaticResource SectionTextStyle}" FontSize="11" Margin="0,0,0,2" HorizontalAlignment="Center"/>
-                                <controls:LinearGauge Value="{Binding DiskPercent}" Label="{Binding DiskLabel}" BarColor="{StaticResource AccentCyanBrush}" Height="24" Width="380"/>
+                            <StackPanel HorizontalAlignment="Center" Width="400" Margin="0,0,0,10">
+                                <TextBlock Text="OS DRIVE CAPACITY" Style="{StaticResource SectionTextStyle}" FontSize="12" Margin="0,0,0,3" HorizontalAlignment="Center"/>
+                                <controls:LinearGauge Value="{Binding DiskPercent}" Label="{Binding DiskLabel}" BarColor="{StaticResource AccentCyanBrush}" Height="26" Width="400"/>
                             </StackPanel>
 
                             <!-- Rest Info Under Gauges & Drive Bar (3-Column Grid) -->
-                            <Grid Width="400" HorizontalAlignment="Center">
+                            <Grid Width="420" HorizontalAlignment="Center">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="1.1*"/>
                                     <ColumnDefinition Width="1*"/>
@@ -172,16 +172,16 @@
 
                                 <!-- Column 1: Network Speed -->
                                 <StackPanel Grid.Column="0" Margin="0,0,6,0">
-                                    <TextBlock Text="NET SPEED" Style="{StaticResource SectionTextStyle}" FontSize="10" Margin="0,0,0,2"/>
-                                    <TextBlock Text="{Binding NetUpText}" FontFamily="Consolas" FontSize="11" FontWeight="Bold" Foreground="{StaticResource AccentCyanBrush}"/>
-                                    <TextBlock Text="{Binding NetDownText}" FontFamily="Consolas" FontSize="11" FontWeight="Bold" Foreground="{StaticResource AccentGreenBrush}"/>
+                                    <TextBlock Text="NET SPEED" Style="{StaticResource SectionTextStyle}" FontSize="11" Margin="0,0,0,2"/>
+                                    <TextBlock Text="{Binding NetUpText}" FontFamily="Consolas" FontSize="12.5" FontWeight="Bold" Foreground="{StaticResource AccentCyanBrush}"/>
+                                    <TextBlock Text="{Binding NetDownText}" FontFamily="Consolas" FontSize="12.5" FontWeight="Bold" Foreground="{StaticResource AccentGreenBrush}"/>
                                 </StackPanel>
 
                                 <!-- Column 2: Disk IO Badges & Power -->
                                 <StackPanel Grid.Column="1" HorizontalAlignment="Center">
-                                    <TextBlock Text="DISK IO" Style="{StaticResource SectionTextStyle}" FontSize="10" Margin="0,0,0,2"/>
-                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,2">
-                                        <Border Padding="4,1" CornerRadius="4" Margin="0,0,4,0">
+                                    <TextBlock Text="DISK IO" Style="{StaticResource SectionTextStyle}" FontSize="11" Margin="0,0,0,2"/>
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,3">
+                                        <Border Padding="6,2" CornerRadius="4" Margin="0,0,4,0">
                                             <Border.Style>
                                                 <Style TargetType="Border">
                                                     <Setter Property="Background" Value="{StaticResource ButtonBgBrush}"/>
@@ -192,10 +192,10 @@
                                                     </Style.Triggers>
                                                 </Style>
                                             </Border.Style>
-                                            <TextBlock Text="READ" FontFamily="Consolas" FontSize="9" FontWeight="Bold" Foreground="White"/>
+                                            <TextBlock Text="READ" FontFamily="Consolas" FontSize="10" FontWeight="Bold" Foreground="White"/>
                                         </Border>
 
-                                        <Border Padding="4,1" CornerRadius="4">
+                                        <Border Padding="6,2" CornerRadius="4">
                                             <Border.Style>
                                                 <Style TargetType="Border">
                                                     <Setter Property="Background" Value="{StaticResource ButtonBgBrush}"/>
@@ -206,19 +206,19 @@
                                                     </Style.Triggers>
                                                 </Style>
                                             </Border.Style>
-                                            <TextBlock Text="WRITE" FontFamily="Consolas" FontSize="9" FontWeight="Bold" Foreground="White"/>
+                                            <TextBlock Text="WRITE" FontFamily="Consolas" FontSize="10" FontWeight="Bold" Foreground="White"/>
                                         </Border>
                                     </StackPanel>
-                                    <TextBlock Text="{Binding BatteryText}" Foreground="{Binding BatteryBrush}" FontFamily="Consolas" FontSize="10" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding BatteryText}" Foreground="{Binding BatteryBrush}" FontFamily="Consolas" FontSize="11" FontWeight="Bold"/>
                                 </StackPanel>
 
                                 <!-- Column 3: Top Load Processes -->
                                 <StackPanel Grid.Column="2" Margin="6,0,0,0">
-                                    <TextBlock Text="TOP LOAD" Style="{StaticResource SectionTextStyle}" FontSize="10" Margin="0,0,0,2"/>
+                                    <TextBlock Text="TOP LOAD" Style="{StaticResource SectionTextStyle}" FontSize="11" Margin="0,0,0,2"/>
                                     <ItemsControl ItemsSource="{Binding TopProcesses}">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <TextBlock Text="{Binding}" FontFamily="Consolas" FontSize="10" Foreground="{StaticResource FgPrimaryBrush}"/>
+                                                <TextBlock Text="{Binding}" FontFamily="Consolas" FontSize="11" Foreground="{StaticResource FgPrimaryBrush}"/>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
@@ -232,14 +232,14 @@
                 <Border Grid.Row="1" Style="{StaticResource CardStyle}">
                     <DockPanel>
                         <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
-                            <TextBlock Text="PROCESS MANAGER" Style="{StaticResource HeaderTextStyle}" FontSize="16" DockPanel.Dock="Left"/>
-                            <TextBlock Text="RAM TOP 6" FontSize="10" FontWeight="Bold" Foreground="{StaticResource FgMutedBrush}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            <TextBlock Text="PROCESS MANAGER" Style="{StaticResource HeaderTextStyle}" FontSize="18" DockPanel.Dock="Left"/>
+                            <TextBlock Text="RAM TOP 6" FontSize="11" FontWeight="Bold" Foreground="{StaticResource FgMutedBrush}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                         </DockPanel>
                         <ScrollViewer VerticalScrollBarVisibility="Auto">
                             <ItemsControl ItemsSource="{Binding DetailedProcesses}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Border Margin="0,0,0,4" Padding="6,3" Background="{StaticResource InputBgBrush}" CornerRadius="4" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1">
+                                        <Border Margin="0,0,0,5" Padding="6,4" Background="{StaticResource InputBgBrush}" CornerRadius="4" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1">
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="Auto"/>
@@ -248,16 +248,16 @@
                                                     <ColumnDefinition Width="Auto"/>
                                                 </Grid.ColumnDefinitions>
 
-                                                <TextBlock Grid.Column="0" Text="{Binding Pid}" FontFamily="Consolas" FontSize="10" Foreground="{StaticResource FgMutedBrush}" Width="45" VerticalAlignment="Center"/>
-                                                <TextBlock Grid.Column="1" Text="{Binding Name}" FontSize="11" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" VerticalAlignment="Center"/>
-                                                <TextBlock Grid.Column="2" FontFamily="Consolas" FontSize="10" FontWeight="Bold" Foreground="{StaticResource AccentCyanBrush}" Margin="0,0,8,0" VerticalAlignment="Center">
+                                                <TextBlock Grid.Column="0" Text="{Binding Pid}" FontFamily="Consolas" FontSize="11" Foreground="{StaticResource FgMutedBrush}" Width="48" VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Column="1" Text="{Binding Name}" FontSize="12.5" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" VerticalAlignment="Center"/>
+                                                <TextBlock Grid.Column="2" FontFamily="Consolas" FontSize="11.5" FontWeight="Bold" Foreground="{StaticResource AccentCyanBrush}" Margin="0,0,8,0" VerticalAlignment="Center">
                                                     <TextBlock.Text>
                                                         <MultiBinding StringFormat="{}{0:F0} MB">
                                                             <Binding Path="RamMb"/>
                                                         </MultiBinding>
                                                     </TextBlock.Text>
                                                 </TextBlock>
-                                                <Button Grid.Column="3" Content="KILL" Command="{Binding KillCommand}" Padding="5,1" FontSize="9" FontWeight="Bold" Foreground="White" Background="{StaticResource AccentCritBrush}" BorderThickness="0" Cursor="Hand"/>
+                                                <Button Grid.Column="3" Content="KILL" Command="{Binding KillCommand}" Padding="6,2" FontSize="10" FontWeight="Bold" Foreground="White" Background="{StaticResource AccentCritBrush}" BorderThickness="0" Cursor="Hand"/>
                                             </Grid>
                                         </Border>
                                     </DataTemplate>
@@ -279,18 +279,18 @@
                 <Border Grid.Row="0" Style="{StaticResource CardStyle}" Margin="0,0,0,8">
                     <DockPanel>
                         <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
-                            <TextBlock Text="WATCHTOWER" Style="{StaticResource HeaderTextStyle}" FontSize="16" DockPanel.Dock="Left"/>
-                            <TextBlock Text="HOST LATENCY" FontSize="10" FontWeight="Bold" Foreground="{StaticResource FgMutedBrush}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            <TextBlock Text="WATCHTOWER" Style="{StaticResource HeaderTextStyle}" FontSize="18" DockPanel.Dock="Left"/>
+                            <TextBlock Text="HOST LATENCY" FontSize="11" FontWeight="Bold" Foreground="{StaticResource FgMutedBrush}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                         </DockPanel>
                         <ScrollViewer VerticalScrollBarVisibility="Auto">
                             <ItemsControl ItemsSource="{Binding WatchtowerItems}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Border Margin="0,0,0,6" Padding="6" Background="{StaticResource InputBgBrush}" CornerRadius="6" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1">
+                                        <Border Margin="0,0,0,6" Padding="8" Background="{StaticResource InputBgBrush}" CornerRadius="6" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1">
                                             <StackPanel>
-                                                <Grid Margin="0,0,0,2">
-                                                    <TextBlock Text="{Binding Name}" FontSize="12" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}"/>
-                                                    <TextBlock HorizontalAlignment="Right" FontFamily="Consolas" FontSize="11" FontWeight="Bold" Foreground="{StaticResource FgMutedBrush}">
+                                                <Grid Margin="0,0,0,3">
+                                                    <TextBlock Text="{Binding Name}" FontSize="13.5" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}"/>
+                                                    <TextBlock HorizontalAlignment="Right" FontFamily="Consolas" FontSize="12.5" FontWeight="Bold" Foreground="{StaticResource FgMutedBrush}">
                                                         <TextBlock.Text>
                                                             <MultiBinding StringFormat="{}{0}ms">
                                                                 <Binding Path="LastMs"/>
@@ -298,7 +298,7 @@
                                                         </TextBlock.Text>
                                                     </TextBlock>
                                                 </Grid>
-                                                <controls:SparklineChart History="{Binding History}" Status="{Binding Status}" Height="24"/>
+                                                <controls:SparklineChart History="{Binding History}" Status="{Binding Status}" Height="26"/>
                                             </StackPanel>
                                         </Border>
                                     </DataTemplate>
@@ -308,7 +308,7 @@
                     </DockPanel>
                 </Border>
 
-                <!-- BOTTOM CARD: NET PORTS, UTILITIES & EMBEDDED CLI -->
+                <!-- BOTTOM CARD: POWER UTILS & EMBEDDED CLI -->
                 <Border Grid.Row="1" Style="{StaticResource CardStyle}">
                     <Grid>
                         <Grid.RowDefinitions>
@@ -320,22 +320,22 @@
 
                         <!-- Header -->
                         <DockPanel Grid.Row="0" Margin="0,0,0,6">
-                            <TextBlock Text="POWER UTILS &amp; TERMINAL" Style="{StaticResource HeaderTextStyle}" FontSize="15" DockPanel.Dock="Left"/>
+                            <TextBlock Text="POWER UTILS &amp; TERMINAL" Style="{StaticResource HeaderTextStyle}" FontSize="17" DockPanel.Dock="Left"/>
                         </DockPanel>
 
                         <!-- Quick Action Buttons -->
                         <UniformGrid Grid.Row="1" Columns="4" Margin="0,0,0,6">
-                            <Button Content="FLUSH DNS" Command="{Binding FlushDnsCommand}" Style="{StaticResource ActionButtonStyle}" Margin="1" FontSize="9" Padding="2"/>
-                            <Button Content="RESTART EXP" Command="{Binding RestartExplorerCommand}" Style="{StaticResource ActionButtonStyle}" Margin="1" FontSize="9" Padding="2"/>
-                            <Button Content="EMPTY BIN" Command="{Binding EmptyRecycleBinCommand}" Style="{StaticResource ActionButtonStyle}" Margin="1" FontSize="9" Padding="2"/>
-                            <Button Content="LOCK PC" Command="{Binding LockWorkstationCommand}" Style="{StaticResource ActionButtonStyle}" Margin="1" FontSize="9" Padding="2"/>
+                            <Button Content="FLUSH DNS" Command="{Binding FlushDnsCommand}" Style="{StaticResource ActionButtonStyle}" Margin="1" FontSize="10" Padding="3"/>
+                            <Button Content="RESTART EXP" Command="{Binding RestartExplorerCommand}" Style="{StaticResource ActionButtonStyle}" Margin="1" FontSize="10" Padding="3"/>
+                            <Button Content="EMPTY BIN" Command="{Binding EmptyRecycleBinCommand}" Style="{StaticResource ActionButtonStyle}" Margin="1" FontSize="10" Padding="3"/>
+                            <Button Content="LOCK PC" Command="{Binding LockWorkstationCommand}" Style="{StaticResource ActionButtonStyle}" Margin="1" FontSize="10" Padding="3"/>
                         </UniformGrid>
 
                         <!-- Embedded Terminal Output -->
                         <Border Grid.Row="2" Background="Black" CornerRadius="4" Padding="6" Margin="0,0,0,4">
                             <TextBox Text="{Binding TerminalOutput, Mode=OneWay}" IsReadOnly="True"
                                      AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"
-                                     FontFamily="Consolas" FontSize="10" Foreground="#00FF00" Background="Transparent" BorderThickness="0"/>
+                                     FontFamily="Consolas" FontSize="11" Foreground="#00FF00" Background="Transparent" BorderThickness="0"/>
                         </Border>
 
                         <!-- Terminal Input -->
@@ -345,8 +345,8 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <TextBox Grid.Column="0" Text="{Binding TerminalInput, UpdateSourceTrigger=PropertyChanged}"
-                                     FontFamily="Consolas" FontSize="10" Padding="4" Background="{StaticResource InputBgBrush}" Foreground="{StaticResource FgPrimaryBrush}" Margin="0,0,4,0"/>
-                            <Button Grid.Column="1" Content="RUN" Command="{Binding RunTerminalCommand}" Style="{StaticResource ActionButtonStyle}" FontSize="10" Padding="8,2"/>
+                                     FontFamily="Consolas" FontSize="11" Padding="5" Background="{StaticResource InputBgBrush}" Foreground="{StaticResource FgPrimaryBrush}" Margin="0,0,4,0"/>
+                            <Button Grid.Column="1" Content="RUN" Command="{Binding RunTerminalCommand}" Style="{StaticResource ActionButtonStyle}" FontSize="11" Padding="10,3"/>
                         </Grid>
                     </Grid>
                 </Border>
@@ -363,11 +363,11 @@
                 <Border Grid.Row="0" Style="{StaticResource CardStyle}" Margin="0,0,0,8">
                     <ScrollViewer VerticalScrollBarVisibility="Auto">
                         <StackPanel>
-                            <TextBlock Text="SECURITY &amp; GPU" Style="{StaticResource HeaderTextStyle}" FontSize="16" Margin="0,0,0,6"/>
+                            <TextBlock Text="SECURITY &amp; GPU" Style="{StaticResource HeaderTextStyle}" FontSize="18" Margin="0,0,0,6"/>
 
                             <!-- GPU Intel -->
-                            <TextBlock Text="GPU GRAPHICS" Style="{StaticResource SectionTextStyle}" FontSize="10" Margin="0,0,0,2"/>
-                            <TextBlock FontSize="11" FontFamily="Consolas" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" Text="{Binding GpuName}" Margin="0,0,0,4"/>
+                            <TextBlock Text="GPU GRAPHICS" Style="{StaticResource SectionTextStyle}" FontSize="11" Margin="0,0,0,2"/>
+                            <TextBlock FontSize="12.5" FontFamily="Consolas" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" Text="{Binding GpuName}" Margin="0,0,0,4"/>
 
                             <Grid Margin="0,0,0,6">
                                 <Grid.ColumnDefinitions>
@@ -375,47 +375,47 @@
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
                                 <StackPanel Grid.Column="0">
-                                    <TextBlock FontSize="9" Foreground="{StaticResource FgMutedBrush}" Text="VRAM TOTAL:"/>
-                                    <TextBlock FontSize="11" FontFamily="Consolas" FontWeight="Bold" Foreground="{StaticResource AccentCyanBrush}" Text="{Binding VramText}"/>
+                                    <TextBlock FontSize="10" Foreground="{StaticResource FgMutedBrush}" Text="VRAM TOTAL:"/>
+                                    <TextBlock FontSize="12" FontFamily="Consolas" FontWeight="Bold" Foreground="{StaticResource AccentCyanBrush}" Text="{Binding VramText}"/>
                                 </StackPanel>
                                 <StackPanel Grid.Column="1">
-                                    <TextBlock FontSize="9" Foreground="{StaticResource FgMutedBrush}" Text="DISPLAY:"/>
-                                    <TextBlock FontSize="11" FontFamily="Consolas" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" Text="{Binding DisplayRes}"/>
+                                    <TextBlock FontSize="10" Foreground="{StaticResource FgMutedBrush}" Text="DISPLAY:"/>
+                                    <TextBlock FontSize="12" FontFamily="Consolas" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" Text="{Binding DisplayRes}"/>
                                 </StackPanel>
                             </Grid>
 
                             <!-- Network Details -->
-                            <TextBlock Text="NETWORK SPECS" Style="{StaticResource SectionTextStyle}" FontSize="10" Margin="0,4,0,2"/>
-                            <TextBlock FontSize="9" Foreground="{StaticResource FgMutedBrush}" Text="LOCAL IP:"/>
-                            <TextBlock FontSize="11" FontFamily="Consolas" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" Text="{Binding LocalIp}" Margin="0,0,0,3"/>
+                            <TextBlock Text="NETWORK SPECS" Style="{StaticResource SectionTextStyle}" FontSize="11" Margin="0,4,0,2"/>
+                            <TextBlock FontSize="10" Foreground="{StaticResource FgMutedBrush}" Text="LOCAL IP:"/>
+                            <TextBlock FontSize="12" FontFamily="Consolas" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" Text="{Binding LocalIp}" Margin="0,0,0,3"/>
 
-                            <TextBlock FontSize="9" Foreground="{StaticResource FgMutedBrush}" Text="WAN IP:"/>
-                            <TextBlock FontSize="11" FontFamily="Consolas" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" Text="{Binding PublicIp}" Margin="0,0,0,3"/>
+                            <TextBlock FontSize="10" Foreground="{StaticResource FgMutedBrush}" Text="WAN IP:"/>
+                            <TextBlock FontSize="12" FontFamily="Consolas" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" Text="{Binding PublicIp}" Margin="0,0,0,3"/>
 
-                            <TextBlock FontSize="9" Foreground="{StaticResource FgMutedBrush}" Text="MAC ADDR:"/>
-                            <TextBlock FontSize="11" FontFamily="Consolas" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" Text="{Binding Mac}" Margin="0,0,0,6"/>
+                            <TextBlock FontSize="10" Foreground="{StaticResource FgMutedBrush}" Text="MAC ADDR:"/>
+                            <TextBlock FontSize="12" FontFamily="Consolas" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" Text="{Binding Mac}" Margin="0,0,0,6"/>
 
                             <!-- Security Badges -->
                             <Border BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="0,1,0,0" Padding="0,6,0,0">
                                 <StackPanel>
-                                    <TextBlock Text="SECURITY COMPLIANCE" Style="{StaticResource SectionTextStyle}" FontSize="10" Margin="0,0,0,4"/>
+                                    <TextBlock Text="SECURITY COMPLIANCE" Style="{StaticResource SectionTextStyle}" FontSize="11" Margin="0,0,0,4"/>
                                     <UniformGrid Columns="3">
                                         <Border Background="{StaticResource InputBgBrush}" CornerRadius="4" Padding="4" Margin="1">
                                             <StackPanel HorizontalAlignment="Center">
-                                                <TextBlock Text="DEF" FontSize="8" FontWeight="Bold" Foreground="{StaticResource FgMutedBrush}" HorizontalAlignment="Center"/>
-                                                <TextBlock Text="OK" FontSize="9" FontWeight="Bold" Foreground="{StaticResource AccentGreenBrush}" HorizontalAlignment="Center"/>
+                                                <TextBlock Text="DEF" FontSize="9" FontWeight="Bold" Foreground="{StaticResource FgMutedBrush}" HorizontalAlignment="Center"/>
+                                                <TextBlock Text="OK" FontSize="10" FontWeight="Bold" Foreground="{StaticResource AccentGreenBrush}" HorizontalAlignment="Center"/>
                                             </StackPanel>
                                         </Border>
                                         <Border Background="{StaticResource InputBgBrush}" CornerRadius="4" Padding="4" Margin="1">
                                             <StackPanel HorizontalAlignment="Center">
-                                                <TextBlock Text="FW" FontSize="8" FontWeight="Bold" Foreground="{StaticResource FgMutedBrush}" HorizontalAlignment="Center"/>
-                                                <TextBlock Text="ON" FontSize="9" FontWeight="Bold" Foreground="{StaticResource AccentCyanBrush}" HorizontalAlignment="Center"/>
+                                                <TextBlock Text="FW" FontSize="9" FontWeight="Bold" Foreground="{StaticResource FgMutedBrush}" HorizontalAlignment="Center"/>
+                                                <TextBlock Text="ON" FontSize="10" FontWeight="Bold" Foreground="{StaticResource AccentCyanBrush}" HorizontalAlignment="Center"/>
                                             </StackPanel>
                                         </Border>
                                         <Border Background="{StaticResource InputBgBrush}" CornerRadius="4" Padding="4" Margin="1">
                                             <StackPanel HorizontalAlignment="Center">
-                                                <TextBlock Text="UPD" FontSize="8" FontWeight="Bold" Foreground="{StaticResource FgMutedBrush}" HorizontalAlignment="Center"/>
-                                                <TextBlock Text="OK" FontSize="9" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" HorizontalAlignment="Center"/>
+                                                <TextBlock Text="UPD" FontSize="9" FontWeight="Bold" Foreground="{StaticResource FgMutedBrush}" HorizontalAlignment="Center"/>
+                                                <TextBlock Text="OK" FontSize="10" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" HorizontalAlignment="Center"/>
                                             </StackPanel>
                                         </Border>
                                     </UniformGrid>
@@ -429,13 +429,13 @@
                 <Border Grid.Row="1" Style="{StaticResource CardStyle}">
                     <DockPanel>
                         <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
-                            <TextBlock Text="QUICK NOTES" Style="{StaticResource HeaderTextStyle}" FontSize="16" DockPanel.Dock="Left"/>
-                            <TextBlock Text="AUTO-SAVED" FontSize="9" FontWeight="Bold" Foreground="{StaticResource AccentGreenBrush}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            <TextBlock Text="QUICK NOTES" Style="{StaticResource HeaderTextStyle}" FontSize="18" DockPanel.Dock="Left"/>
+                            <TextBlock Text="AUTO-SAVED" FontSize="10" FontWeight="Bold" Foreground="{StaticResource AccentGreenBrush}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                         </DockPanel>
                         <Border Background="{StaticResource InputBgBrush}" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1" CornerRadius="6" Padding="6">
                             <TextBox Text="{Binding NotesText, UpdateSourceTrigger=PropertyChanged}"
                                      AcceptsReturn="True" AcceptsTab="True" TextWrapping="Wrap"
-                                     VerticalScrollBarVisibility="Auto" FontFamily="Consolas" FontSize="11"
+                                     VerticalScrollBarVisibility="Auto" FontFamily="Consolas" FontSize="12.5"
                                      Foreground="{StaticResource FgPrimaryBrush}" Background="Transparent" BorderThickness="0"/>
                         </Border>
                     </DockPanel>
@@ -446,8 +446,8 @@
         <!-- 3. BOTTOM STATUS TICKER -->
         <Border Grid.Row="2" Margin="0,8,0,0" Padding="12,6" Style="{StaticResource CardStyle}" Cursor="Hand" MouseLeftButtonDown="BottomBar_MouseLeftButtonDown">
             <Grid>
-                <TextBlock Text="{Binding StatusText}" Foreground="{Binding StatusBrush}" FontFamily="Consolas" FontSize="12" FontWeight="Bold" VerticalAlignment="Center"/>
-                <TextBlock Text="[ VIEW SYSTEM EVENT LOGS ]" Foreground="{StaticResource AccentCyanBrush}" FontSize="12" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding StatusText}" Foreground="{Binding StatusBrush}" FontFamily="Consolas" FontSize="13" FontWeight="Bold" VerticalAlignment="Center"/>
+                <TextBlock Text="[ VIEW SYSTEM EVENT LOGS ]" Foreground="{StaticResource AccentCyanBrush}" FontSize="13" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center"/>
             </Grid>
         </Border>
     </Grid>

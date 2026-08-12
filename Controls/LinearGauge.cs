@@ -64,14 +64,14 @@ namespace Wingman.Controls
                 dc.DrawRoundedRectangle(BarColor, null, new Rect(0, 0, fillWidth, h), 6, 6);
             }
 
-            // Label Text (Increased to 12pt bold)
+            // Label Text (Increased to 13pt bold)
             Brush textBrush = pct > 60 ? Brushes.White : new SolidColorBrush(Color.FromRgb(15, 23, 42));
             var formattedLabel = new FormattedText(
                 Label,
                 CultureInfo.CurrentCulture,
                 FlowDirection.LeftToRight,
                 new Typeface("Segoe UI Bold"),
-                12,
+                13,
                 textBrush,
                 VisualTreeHelper.GetDpi(this).PixelsPerDip);
 

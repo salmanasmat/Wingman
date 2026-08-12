@@ -57,7 +57,7 @@ namespace Wingman.Controls
 
             if (radius <= 0) return;
 
-            double strokeWidth = 12;
+            double strokeWidth = 13;
             var trackPen = new Pen(new SolidColorBrush(Color.FromRgb(226, 232, 240)), strokeWidth)
             {
                 StartLineCap = PenLineCap.Round,
@@ -84,30 +84,30 @@ namespace Wingman.Controls
                 DrawArc(dc, valuePen, center, radius, startAngle, valueSweep);
             }
 
-            // Percentage Text (Increased to 26pt bold)
+            // Percentage Text (Increased to 30pt extra bold)
             string pctText = $"{Math.Round(clampedVal)}%";
             var formattedPct = new FormattedText(
                 pctText,
                 CultureInfo.CurrentCulture,
                 FlowDirection.LeftToRight,
                 new Typeface("Segoe UI Bold"),
-                26,
+                30,
                 (Brush)Application.Current.FindResource("FgPrimaryBrush") ?? Brushes.DarkSlateGray,
                 VisualTreeHelper.GetDpi(this).PixelsPerDip);
 
-            dc.DrawText(formattedPct, new Point(center.X - formattedPct.Width / 2, center.Y - formattedPct.Height / 2 - 10));
+            dc.DrawText(formattedPct, new Point(center.X - formattedPct.Width / 2, center.Y - formattedPct.Height / 2 - 12));
 
-            // Title Text (Increased to 12pt bold)
+            // Title Text (Increased to 13pt bold)
             var formattedTitle = new FormattedText(
                 Title,
                 CultureInfo.CurrentCulture,
                 FlowDirection.LeftToRight,
                 new Typeface("Segoe UI Bold"),
-                12,
+                13,
                 (Brush)Application.Current.FindResource("FgMutedBrush") ?? Brushes.Gray,
                 VisualTreeHelper.GetDpi(this).PixelsPerDip);
 
-            dc.DrawText(formattedTitle, new Point(center.X - formattedTitle.Width / 2, center.Y + 18));
+            dc.DrawText(formattedTitle, new Point(center.X - formattedTitle.Width / 2, center.Y + 20));
         }
 
         private void DrawArc(DrawingContext dc, Pen pen, Point center, double radius, double startAngleDeg, double sweepAngleDeg)
