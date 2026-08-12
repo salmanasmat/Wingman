@@ -46,7 +46,9 @@ namespace Wingman.Models
         public double RamPercent { get; set; } = 0;
         public double RamUsedGb { get; set; } = 0;
         public double RamTotalGb { get; set; } = 0;
-        public double DiskPercent { get; set; } = 0;
+
+        public double DiskPercent { get; set; } = 0;            // Real-time Physical Disk Active Load % (0-100%)
+        public double DiskCapacityPercent { get; set; } = 0;    // OS Storage Capacity Used % (e.g. 69%)
         public double DiskUsedGb { get; set; } = 0;
         public double DiskTotalGb { get; set; } = 0;
         public double TotalStorageGb { get; set; } = 0;

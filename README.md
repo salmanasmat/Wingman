@@ -1,50 +1,51 @@
-# WINGMAN v1.6 🚀
+# WINGMAN v1.0 🚀
 
+![Version](https://img.shields.io/badge/Version-1.0-0284C7?style=for-the-badge)
 ![.NET 8.0](https://img.shields.io/badge/.NET-8.0-512BD4?style=for-the-badge&logo=dotnet)
 ![WPF](https://img.shields.io/badge/WPF-Windows-0078D6?style=for-the-badge&logo=windows)
 ![Theme](https://img.shields.io/badge/Theme-Light%20Mode-0284C7?style=for-the-badge)
 ![High DPI](https://img.shields.io/badge/DPI-PerMonitorV2-10B981?style=for-the-badge)
 ![Status](https://img.shields.io/badge/Status-Production%20Ready-059669?style=for-the-badge)
-![License](https://img.shields.io/badge/License-MIT-F59E0B?style=for-the-badge)
 
-**Wingman** is a high-performance, high-DPI Windows desktop system monitoring dashboard built with **WPF .NET 8.0** and a **Light Mode default theme**. Re-engineered from the Python OVERWATCH engine into C# MVVM architecture, Wingman provides real-time resource tracking, network diagnostics, quick app launching, multi-drive monitoring, process termination, security compliance checks, and an embedded administrative terminal.
+**Wingman** is a high-performance, high-DPI Windows desktop system monitoring dashboard built with **WPF .NET 8.0** and a **Light Mode default theme**. Re-engineered into C# MVVM architecture, Wingman provides real-time resource tracking, host latency monitoring, quick application launching, multi-drive explorer navigation, process management, security compliance checks, and an embedded administrative terminal.
 
 ---
 
 ## 🌟 Key Features
 
 ### ⚡ 1. Reactor Core (System Health)
-- **Circular Arc Gauges**: Real-time WPF custom rendered circular gauges for CPU Load % and Memory Load %.
-- **OS Drive Capacity Bar**: Linear progress bar showing OS drive usage and free space.
-- **Network Speeds**: Upload (`UP: X.X MB/s`) and Download (`DN: X.X MB/s`) throughput.
-- **Disk I/O Activity**: Real-time `READ` (Green) and `WRITE` (Amber) physical disk badges.
-- **Power Source & Battery**: AC vs Battery status, charging percentage, and power source telemetry.
+- **3 Circular Arc Gauges**: Enlarged real-time WPF custom rendered circular gauges (145x145) for **CPU LOAD** (Cyan), **MEMORY** (Amber), and **DISK LOAD** (Green).
+- **OS Drive Capacity Bar**: Linear progress bar displaying OS drive space utilization.
+- **Network Speeds**: Real-time Upload (`UP: X.X MB/s`) and Download (`DN: X.X MB/s`) throughput.
+- **Disk I/O & Power**: Real-time `READ` (Green) and `WRITE` (Amber) physical disk badges alongside battery/AC power telemetry.
+- **Top 10 Active Processes**: Horizontal `WrapPanel` showing the top memory-consuming processes.
 
-### 📡 2. Watchtower (Host Ping Monitor)
-- **Multi-Port TCP & ICMP Pinger**: Async background host latency monitor (ICMP + TCP ports 53, 80, 443, 445).
+### 📡 2. Watchtower (Host Latency Monitor)
+- **Multi-Port Host Pinger**: Async background host latency monitor (ICMP + TCP ports 53, 80, 443, 445).
 - **Sparkline Graphs**: 20-sample polyline sparklines rendered per host with OK/Warn/Crit status color coding.
 
-### 🚀 3. Launchpad (Quick Application Launcher)
+### 💾 3. Multi-Drive Health & Explorer Launcher
+- **Auto Drive Detection**: Enumerates all connected fixed, removable, and external USB drives (C:, D:, E:, etc.).
+- **Live Progress Bars**: Real-time capacity bar per drive with volume label, percent used, and GB readouts.
+- **Double-Click Explorer**: Double-clicking any drive card (or right-clicking) opens that drive directly in Windows Explorer.
+
+### ☠️ 4. Process Manager
+- **RAM Top 10 Ranking**: Real-time list of top memory-consuming processes displaying PID, Name, and RAM MB.
+- **One-Click Termination**: Red `[KILL]` action button with confirmation dialog to terminate unresponsive processes.
+
+### 🚀 5. Launchpad (Quick Application Launcher)
 - **Categorized Shortcuts**: Utilities, Apps, and Scripts launcher backed by `dashboard_config.json`.
 - **Admin Elevation**: Context menu support for right-click *"Run as Administrator"*.
 - **Smart Directory Detection**: Automatically sets Working Directory to application installation folder.
 - **Single-Instance Protection**: Prevents launching duplicate process instances.
-
-### 💾 4. Multi-Drive Health Monitor
-- **Auto Drive Detection**: Enumerates all connected fixed, removable, and external USB drives (C:, D:, E:, etc.).
-- **Live Progress Bars**: Real-time capacity bar per drive with volume label, percent used, and GB readouts.
-
-### ☠️ 5. Interactive Process Manager
-- **RAM Top Load Ranking**: Real-time list of top memory-consuming processes displaying PID, Name, and RAM MB.
-- **One-Click Termination**: Red `[KILL]` action button with confirmation dialog to terminate unresponsive processes.
 
 ### 🛡️ 6. Security & GPU Intel
 - **Security Compliance**: Real-time status badges for Windows Defender (`ACTIVE`), Firewall (`ENABLED`), and Windows Updates (`CURRENT`).
 - **GPU & Display Intel**: Queries primary graphics hardware (`Win32_VideoController`), VRAM Total, and Screen Resolution.
 
 ### 🛠️ 7. Power Utilities & Embedded Terminal
-- **Quick Admin Action Buttons**: One-click **Flush DNS**, **Restart Explorer**, **Empty Recycle Bin** (via native P/Invoke `SHEmptyRecycleBin`), and **Lock PC** (`LockWorkStation`).
-- **Embedded Command Terminal**: Built-in CLI command drawer with a light slate-grey console box (`#F8FAFC`) executing background PowerShell/CMD commands asynchronously.
+- **Quick Admin Action Buttons**: One-click **THIS PC** (`shell:MyComputerFolder`), **DISK CLEAN** (`cleanmgr.exe`), **EMPTY BIN** (`SHEmptyRecycleBin`), and **LOCK PC** (`LockWorkStation`).
+- **Light Slate Terminal**: Embedded CLI command drawer with a light slate-grey console box (`#F8FAFC`) executing background PowerShell/CMD commands asynchronously.
 
 ### 📝 8. Quick Notes & Event Logging
 - **Auto-Saving Scratchpad**: Persistent notes editor writing directly to `notes.txt`.
@@ -65,11 +66,11 @@ Wingman is fully optimized for High-DPI and scaled displays (125%, 150%, 200%):
 ```
 Wingman/
 ├── App.xaml / App.xaml.cs          # Global application entry & unhandled exception handlers
-├── Wingman.csproj                  # .NET 8.0 WPF project definition
+├── Wingman.csproj                  # .NET 8.0 WPF project definition (Version 1.0.0)
 ├── dashboard_config.json           # User configuration (targets, launchers, intervals)
 ├── notes.txt                       # Auto-saved scratchpad notes
 ├── Controls/
-│   ├── CircularGauge.cs            # Custom rendered WPF circular arc meter control
+│   ├── CircularGauge.cs            # Custom rendered WPF circular arc meter control (145x145)
 │   ├── LinearGauge.cs              # Custom rendered drive capacity bar control
 │   └── SparklineChart.cs           # Custom polyline host latency sparkline control
 ├── Models/
@@ -123,4 +124,4 @@ dotnet run --project Wingman.csproj
 ---
 
 ## 📄 License
-Distributed under the **MIT License**.
+Internal / Proprietary Utility - **v1.0**

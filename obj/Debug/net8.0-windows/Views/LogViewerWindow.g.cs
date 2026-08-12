@@ -51,7 +51,7 @@ namespace Wingman.Views {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/Wingman;component/views/logviewerwindow.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/Wingman;V1.0.0.0;component/views/logviewerwindow.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\Views\LogViewerWindow.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);
