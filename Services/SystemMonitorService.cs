@@ -71,7 +71,7 @@ namespace Wingman.Services
             _netIntelService = new NetworkIntelService();
             _pingService = new PingService();
 
-            // Run static specs initialization asynchronously in background to keep UI thread instant!
+            // Run static specs initialization asynchronously in background
             Task.Run(() => InitStaticSpecs());
         }
 
@@ -119,12 +119,46 @@ namespace Wingman.Services
                     ramStr = $"{Math.Round(totalGb, 1)} GB";
                 }
 
+                // GPU & Display Query
+                string gpuName = "Integrated Graphics";
+                double vramTotalMb = 0;
+                try
+                {
+                    using var searcher = new ManagementObjectSearcher("SELECT Name, AdapterRAM FROM Win32_VideoController");
+                    foreach (var item in searcher.Get())
+                    {
+                        if (item["Name"] != null)
+                        {
+                            gpuName = item["Name"].ToString() ?? gpuName;
+                            if (item["AdapterRAM"] != null)
+                            {
+                                ulong bytes = Convert.ToUInt64(item["AdapterRAM"]);
+                                vramTotalMb = bytes / (1024 * 1024);
+                            }
+                            break;
+                        }
+                    }
+                }
+                catch { }
+
+                string displayRes = $"{Environment.SystemDirectory}";
+                try
+                {
+                    var primaryScreen = System.Windows.SystemParameters.PrimaryScreenWidth;
+                    var primaryHeight = System.Windows.SystemParameters.PrimaryScreenHeight;
+                    displayRes = $"{(int)primaryScreen}x{(int)primaryHeight}";
+                }
+                catch { }
+
                 lock (_state.Lock)
                 {
                     _state.SysOs = osName;
                     _state.SysUser = Environment.UserName;
                     _state.SysCores = $"{physicalCores}P / {logicalCores}L";
                     _state.SysRamTotal = ramStr;
+                    _state.GpuName = gpuName;
+                    _state.VramTotalMb = vramTotalMb;
+                    _state.DisplayRes = displayRes;
                 }
             }
             catch (Exception ex)
@@ -269,49 +303,52 @@ namespace Wingman.Services
                 batPlugged = sps.ACLineStatus == 1;
             }
 
-            // 6. OS Drive Capacity (fast check every 10s)
+            // 6. OS Drive & Multi-Drive Monitor (Every 10s)
             double diskPercent = _state.DiskPercent;
             double diskUsedGb = _state.DiskUsedGb;
             double diskTotalGb = _state.DiskTotalGb;
             double totalStorageGb = _state.TotalStorageGb;
+            List<DriveInfoModel> drivesList = _state.Drives;
 
             if (_pollCount % 10 == 0)
             {
                 try
                 {
-                    string sysDrive = Path.GetPathRoot(Environment.SystemDirectory) ?? "C:\\";
-                    var driveInfo = new DriveInfo(sysDrive);
-                    if (driveInfo.IsReady)
-                    {
-                        diskTotalGb = (double)driveInfo.TotalSize / (1024 * 1024 * 1024);
-                        long freeBytes = driveInfo.AvailableFreeSpace;
-                        long usedBytes = driveInfo.TotalSize - freeBytes;
-                        diskUsedGb = (double)usedBytes / (1024 * 1024 * 1024);
-                        diskPercent = (diskUsedGb / diskTotalGb) * 100;
-                    }
-                }
-                catch { }
-            }
-
-            // 7. Aggregate Storage (slow check every 60s)
-            if (_pollCount % 60 == 0)
-            {
-                try
-                {
-                    double sumTotal = 0;
+                    var updatedDrives = new List<DriveInfoModel>();
                     foreach (var drive in DriveInfo.GetDrives())
                     {
-                        if (drive.IsReady && drive.DriveType == DriveType.Fixed)
+                        if (drive.IsReady)
                         {
-                            sumTotal += drive.TotalSize;
+                            double total = (double)drive.TotalSize / (1024 * 1024 * 1024);
+                            double free = (double)drive.AvailableFreeSpace / (1024 * 1024 * 1024);
+                            double used = total - free;
+                            double pct = (used / total) * 100;
+
+                            string sysDrive = Path.GetPathRoot(Environment.SystemDirectory) ?? "C:\\";
+                            if (drive.Name.Equals(sysDrive, StringComparison.OrdinalIgnoreCase))
+                            {
+                                diskTotalGb = total;
+                                diskUsedGb = used;
+                                diskPercent = pct;
+                            }
+
+                            updatedDrives.Add(new DriveInfoModel
+                            {
+                                Name = drive.Name.TrimEnd('\\'),
+                                VolumeLabel = string.IsNullOrEmpty(drive.VolumeLabel) ? drive.DriveType.ToString() : drive.VolumeLabel,
+                                Percent = Math.Round(pct, 1),
+                                UsedGb = Math.Round(used, 1),
+                                TotalGb = Math.Round(total, 1),
+                                DriveType = drive.DriveType.ToString()
+                            });
                         }
                     }
-                    totalStorageGb = sumTotal / (1024 * 1024 * 1024);
+                    drivesList = updatedDrives;
                 }
                 catch { }
             }
 
-            // 8. Disk IO Activity (Fast Performance Counters instead of slow WMI query)
+            // 7. Disk IO Activity
             bool isRead = false;
             bool isWrite = false;
             try
@@ -329,30 +366,63 @@ namespace Wingman.Services
             }
             catch { }
 
-            // 9. Top CPU Processes
+            // 8. Top CPU & RAM Processes Detailed (Every 3s)
             List<string> topProcs = _state.TopProcs;
+            List<ProcessInfoModel> topProcDetails = _state.TopProcDetails;
+
             if (_pollCount % 3 == 0)
             {
                 try
                 {
                     var procs = Process.GetProcesses()
                         .Where(p => p.ProcessName != "Idle" && p.ProcessName != "System")
-                        .Take(15)
                         .Select(p =>
                         {
                             try
                             {
-                                return new { Name = p.ProcessName, Cpu = p.WorkingSet64 };
+                                return new ProcessInfoModel
+                                {
+                                    Pid = p.Id,
+                                    Name = p.ProcessName,
+                                    RamMb = Math.Round((double)p.WorkingSet64 / (1024 * 1024), 1)
+                                };
                             }
                             catch { return null; }
                         })
                         .Where(x => x != null)
-                        .OrderByDescending(x => x!.Cpu)
-                        .Take(3)
-                        .Select(x => $"{x!.Name.Substring(0, Math.Min(12, x.Name.Length))} (Active)")
+                        .OrderByDescending(x => x!.RamMb)
+                        .Take(6)
+                        .Cast<ProcessInfoModel>()
                         .ToList();
 
-                    if (procs.Count > 0) topProcs = procs;
+                    if (procs.Count > 0)
+                    {
+                        topProcDetails = procs;
+                        topProcs = procs.Take(3).Select(x => $"{x.Name} ({x.RamMb:F0}MB)").ToList();
+                    }
+                }
+                catch { }
+            }
+
+            // 9. Active Network Connections & Open Ports (Every 15s)
+            List<NetConnInfoModel> netConns = _state.ActiveConnections;
+            if (_pollCount % 15 == 0)
+            {
+                try
+                {
+                    var properties = IPGlobalProperties.GetIPGlobalProperties();
+                    var connections = properties.GetActiveTcpConnections()
+                        .Take(10)
+                        .Select(c => new NetConnInfoModel
+                        {
+                            Protocol = "TCP",
+                            LocalPort = c.LocalEndPoint.Port,
+                            RemoteIp = c.RemoteEndPoint.Address.ToString(),
+                            State = c.State.ToString()
+                        })
+                        .ToList();
+
+                    netConns = connections;
                 }
                 catch { }
             }
@@ -403,6 +473,9 @@ namespace Wingman.Services
                 _state.DiskRead = isRead;
                 _state.DiskWrite = isWrite;
                 _state.TopProcs = topProcs;
+                _state.TopProcDetails = topProcDetails;
+                _state.Drives = drivesList;
+                _state.ActiveConnections = netConns;
                 _state.Uptime = uptimeStr;
                 _state.BatteryPercent = batPercent;
                 _state.BatteryPlugged = batPlugged;

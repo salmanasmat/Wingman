@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -15,6 +16,31 @@ using Brushes = System.Windows.Media.Brushes;
 
 namespace Wingman.ViewModels
 {
+    public class DriveItemViewModel : ObservableObject
+    {
+        public string Name { get; set; } = string.Empty;
+        public string VolumeLabel { get; set; } = string.Empty;
+        public double Percent { get; set; }
+        public string Label { get; set; } = string.Empty;
+        public string DriveType { get; set; } = "Fixed";
+    }
+
+    public class ProcessItemViewModel : ObservableObject
+    {
+        public int Pid { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public double RamMb { get; set; }
+        public ICommand KillCommand { get; set; } = null!;
+    }
+
+    public class NetConnItemViewModel : ObservableObject
+    {
+        public string Protocol { get; set; } = "TCP";
+        public int LocalPort { get; set; }
+        public string RemoteIp { get; set; } = string.Empty;
+        public string State { get; set; } = "ESTABLISHED";
+    }
+
     public class WatchtowerItemViewModel : ObservableObject
     {
         private string _name = string.Empty;
@@ -113,14 +139,28 @@ namespace Wingman.ViewModels
         private string _sysDiskCap = "...";
         private string _sysProcsTotal = "...";
 
+        private string _gpuName = "Integrated Graphics";
+        private string _vramText = "N/A";
+        private string _displayRes = "1920x1080";
+
         private string _notesText = string.Empty;
+        private string _terminalInput = string.Empty;
+        private string _terminalOutput = "Wingman Power Terminal v1.6 ready.\nType a command (e.g. ping 8.8.8.8) and press Run.\n";
 
         public ObservableCollection<WatchtowerItemViewModel> WatchtowerItems { get; } = new ObservableCollection<WatchtowerItemViewModel>();
         public ObservableCollection<LaunchpadCategoryViewModel> LaunchpadCategories { get; } = new ObservableCollection<LaunchpadCategoryViewModel>();
         public ObservableCollection<string> TopProcesses { get; } = new ObservableCollection<string>();
+        public ObservableCollection<DriveItemViewModel> DrivesList { get; } = new ObservableCollection<DriveItemViewModel>();
+        public ObservableCollection<ProcessItemViewModel> DetailedProcesses { get; } = new ObservableCollection<ProcessItemViewModel>();
+        public ObservableCollection<NetConnItemViewModel> NetworkConnections { get; } = new ObservableCollection<NetConnItemViewModel>();
 
         public ICommand OpenConfigCommand { get; }
         public ICommand ShowLogsCommand { get; }
+        public ICommand FlushDnsCommand { get; }
+        public ICommand RestartExplorerCommand { get; }
+        public ICommand EmptyRecycleBinCommand { get; }
+        public ICommand LockWorkstationCommand { get; }
+        public ICommand RunTerminalCommand { get; }
 
         public string ClockText { get => _clockText; set => SetProperty(ref _clockText, value); }
         public string HostnameText { get => _hostnameText; set => SetProperty(ref _hostnameText, value); }
@@ -157,6 +197,13 @@ namespace Wingman.ViewModels
         public string SysDiskCap { get => _sysDiskCap; set => SetProperty(ref _sysDiskCap, value); }
         public string SysProcsTotal { get => _sysProcsTotal; set => SetProperty(ref _sysProcsTotal, value); }
 
+        public string GpuName { get => _gpuName; set => SetProperty(ref _gpuName, value); }
+        public string VramText { get => _vramText; set => SetProperty(ref _vramText, value); }
+        public string DisplayRes { get => _displayRes; set => SetProperty(ref _displayRes, value); }
+
+        public string TerminalInput { get => _terminalInput; set => SetProperty(ref _terminalInput, value); }
+        public string TerminalOutput { get => _terminalOutput; set => SetProperty(ref _terminalOutput, value); }
+
         public string NotesText
         {
             get => _notesText;
@@ -169,6 +216,12 @@ namespace Wingman.ViewModels
             }
         }
 
+        [DllImport("Shell32.dll", CharSet = CharSet.Unicode)]
+        private static extern uint SHEmptyRecycleBin(IntPtr hwnd, string? pszRootPath, uint dwFlags);
+
+        [DllImport("user32.dll")]
+        private static extern bool LockWorkStation();
+
         public MainViewModel(ConfigService configService, Action openConfigDialogAction, Action showLogsDialogAction)
         {
             _configService = configService;
@@ -179,6 +232,12 @@ namespace Wingman.ViewModels
 
             OpenConfigCommand = new RelayCommand(openConfigDialogAction);
             ShowLogsCommand = new RelayCommand(showLogsDialogAction);
+
+            FlushDnsCommand = new RelayCommand(ExecuteFlushDns);
+            RestartExplorerCommand = new RelayCommand(ExecuteRestartExplorer);
+            EmptyRecycleBinCommand = new RelayCommand(ExecuteEmptyRecycleBin);
+            LockWorkstationCommand = new RelayCommand(ExecuteLockWorkstation);
+            RunTerminalCommand = new RelayCommand(ExecuteTerminalCommand);
 
             LoadNotes();
             RefreshLaunchpad();
@@ -192,7 +251,6 @@ namespace Wingman.ViewModels
 
             _monitorService.Start();
 
-            // Smooth UI timer: update UI every 250ms (4 FPS) to keep UI ultra responsive
             int uiInterval = Math.Max(250, _configService.Current.UpdateIntervalUiMs);
             _uiTimer = new DispatcherTimer
             {
@@ -242,7 +300,6 @@ namespace Wingman.ViewModels
                     BatteryBrush = Brushes.Gray;
                 }
 
-                // Update TopProcesses in-place to prevent unnecessary collection allocations
                 if (!TopProcesses.SequenceEqual(_state.TopProcs))
                 {
                     TopProcesses.Clear();
@@ -250,6 +307,47 @@ namespace Wingman.ViewModels
                     {
                         TopProcesses.Add(p);
                     }
+                }
+
+                // Update Multi-Drive List
+                DrivesList.Clear();
+                foreach (var drive in _state.Drives)
+                {
+                    DrivesList.Add(new DriveItemViewModel
+                    {
+                        Name = drive.Name,
+                        VolumeLabel = drive.VolumeLabel,
+                        Percent = drive.Percent,
+                        Label = $"{drive.Name} {(int)drive.UsedGb}GB / {(int)drive.TotalGb}GB",
+                        DriveType = drive.DriveType
+                    });
+                }
+
+                // Update Detailed Process List with Kill Command
+                DetailedProcesses.Clear();
+                foreach (var proc in _state.TopProcDetails)
+                {
+                    var pItem = new ProcessItemViewModel
+                    {
+                        Pid = proc.Pid,
+                        Name = proc.Name,
+                        RamMb = proc.RamMb
+                    };
+                    pItem.KillCommand = new RelayCommand(() => KillProcess(pItem.Pid, pItem.Name));
+                    DetailedProcesses.Add(pItem);
+                }
+
+                // Update Network Connections
+                NetworkConnections.Clear();
+                foreach (var conn in _state.ActiveConnections)
+                {
+                    NetworkConnections.Add(new NetConnItemViewModel
+                    {
+                        Protocol = conn.Protocol,
+                        LocalPort = conn.LocalPort,
+                        RemoteIp = conn.RemoteIp,
+                        State = conn.State
+                    });
                 }
 
                 LocalIp = _state.LocalIp;
@@ -268,6 +366,10 @@ namespace Wingman.ViewModels
                 SysDiskCap = $"{ (int)_state.TotalStorageGb } GB";
                 SysProcsTotal = _state.ProcCount.ToString();
 
+                GpuName = _state.GpuName;
+                VramText = _state.VramTotalMb > 0 ? $"{ (int)_state.VramTotalMb } MB" : "Dynamic";
+                DisplayRes = _state.DisplayRes;
+
                 UpdateWatchtowerData();
 
                 if (_state.Alerts.Count > 0)
@@ -281,6 +383,124 @@ namespace Wingman.ViewModels
                     StatusBrush = (Brush)Application.Current.FindResource("FgMutedBrush");
                 }
             }
+        }
+
+        private void KillProcess(int pid, string name)
+        {
+            var res = MessageBox.Show($"Are you sure you want to terminate process '{name}' (PID: {pid})?",
+                "CONFIRM PROCESS KILL", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            if (res != MessageBoxResult.Yes) return;
+
+            try
+            {
+                var proc = Process.GetProcessById(pid);
+                proc.Kill();
+                LoggingService.WriteLog($"Killed Process: {name} (PID: {pid})", "WARN");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to kill process: {ex.Message}", "Kill Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void ExecuteFlushDns()
+        {
+            try
+            {
+                Process.Start(new ProcessStartInfo { FileName = "ipconfig", Arguments = "/flushdns", CreateNoWindow = true, UseShellExecute = false });
+                MessageBox.Show("DNS Resolver Cache flushed successfully.", "Flush DNS", MessageBoxButton.OK, MessageBoxImage.Information);
+                LoggingService.WriteLog("Flushed DNS Resolver Cache", "UTIL");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Flush DNS error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void ExecuteRestartExplorer()
+        {
+            try
+            {
+                foreach (var p in Process.GetProcessesByName("explorer"))
+                {
+                    p.Kill();
+                }
+                Process.Start("explorer.exe");
+                LoggingService.WriteLog("Restarted Windows Explorer", "UTIL");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Restart Explorer error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void ExecuteEmptyRecycleBin()
+        {
+            try
+            {
+                SHEmptyRecycleBin(IntPtr.Zero, null, 7); // SHERB_NOCONFIRMATION | SHERB_NOPROGRESSUI | SHERB_NOSOUND
+                MessageBox.Show("Recycle Bin emptied.", "Empty Recycle Bin", MessageBoxButton.OK, MessageBoxImage.Information);
+                LoggingService.WriteLog("Emptied Recycle Bin", "UTIL");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Empty Recycle Bin error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void ExecuteLockWorkstation()
+        {
+            try
+            {
+                LockWorkStation();
+                LoggingService.WriteLog("Locked Workstation", "UTIL");
+            }
+            catch { }
+        }
+
+        private void ExecuteTerminalCommand()
+        {
+            if (string.IsNullOrWhiteSpace(TerminalInput)) return;
+
+            string cmd = TerminalInput.Trim();
+            TerminalOutput += $"\n> {cmd}\n";
+            TerminalInput = string.Empty;
+
+            Task.Run(() =>
+            {
+                try
+                {
+                    var psi = new ProcessStartInfo
+                    {
+                        FileName = "cmd.exe",
+                        Arguments = $"/c {cmd}",
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true,
+                        UseShellExecute = false,
+                        CreateNoWindow = true
+                    };
+                    using var proc = Process.Start(psi);
+                    if (proc != null)
+                    {
+                        string outStr = proc.StandardOutput.ReadToEnd();
+                        string errStr = proc.StandardError.ReadToEnd();
+                        proc.WaitForExit();
+
+                        string result = !string.IsNullOrEmpty(outStr) ? outStr : errStr;
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            TerminalOutput += result + "\n";
+                        });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        TerminalOutput += $"Error: {ex.Message}\n";
+                    });
+                }
+            });
         }
 
         public void RefreshWatchtower()
