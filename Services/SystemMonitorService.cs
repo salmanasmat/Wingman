@@ -217,7 +217,7 @@ namespace Wingman.Services
             try
             {
                 cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
-                cpuCounter.NextValue();
+                cpuCounter.NextValue(); // First dummy read
             }
             catch { }
 
@@ -229,6 +229,9 @@ namespace Wingman.Services
                 diskWriteCounter.NextValue();
             }
             catch { }
+
+            // Allow initial sampling interval before entering poll loop
+            await Task.Delay(250, token);
 
             while (!token.IsCancellationRequested)
             {
@@ -432,7 +435,7 @@ namespace Wingman.Services
                         catch { }
                         finally
                         {
-                            p.Dispose(); // Properly free native handle!
+                            p.Dispose(); // Free native handle!
                         }
                     }
 
@@ -524,6 +527,8 @@ namespace Wingman.Services
                 _state.HasBattery = hasBat;
                 _state.ProcCount = procCount;
 
+                // Dynamically re-evaluate alerts every cycle (clear stale alerts!)
+                _state.Alerts.Clear();
                 if (cpu > 95) _state.AddAlert($"High CPU Load: {cpu:F1}%", "crit");
                 if (ramPercent > 95) _state.AddAlert($"Memory Critical: {ramPercent:F1}%", "crit");
             }
