@@ -22,6 +22,23 @@ namespace Wingman.Controls
             DependencyProperty.Register(nameof(GaugeColor), typeof(Brush), typeof(CircularGauge),
                 new FrameworkPropertyMetadata(Brushes.SkyBlue, FrameworkPropertyMetadataOptions.AffectsRender));
 
+        private static readonly Typeface BoldTypeface = new Typeface("Segoe UI Bold");
+        private static readonly Brush TrackBrush;
+        private static readonly Pen TrackPen;
+
+        static CircularGauge()
+        {
+            TrackBrush = new SolidColorBrush(Color.FromRgb(226, 232, 240));
+            TrackBrush.Freeze();
+
+            TrackPen = new Pen(TrackBrush, 13)
+            {
+                StartLineCap = PenLineCap.Round,
+                EndLineCap = PenLineCap.Round
+            };
+            TrackPen.Freeze();
+        }
+
         public double Value
         {
             get => (double)GetValue(ValueProperty);
@@ -50,33 +67,26 @@ namespace Wingman.Controls
         {
             base.OnRender(dc);
 
-            double w = ActualWidth > 0 ? ActualWidth : 180;
-            double h = ActualHeight > 0 ? ActualHeight : 180;
+            double w = ActualWidth > 0 ? ActualWidth : 140;
+            double h = ActualHeight > 0 ? ActualHeight : 140;
             Point center = new Point(w / 2, h / 2);
             double radius = Math.Min(w, h) / 2 - 14;
 
             if (radius <= 0) return;
 
-            double strokeWidth = 13;
-            var trackPen = new Pen(new SolidColorBrush(Color.FromRgb(226, 232, 240)), strokeWidth)
-            {
-                StartLineCap = PenLineCap.Round,
-                EndLineCap = PenLineCap.Round
-            };
-
-            // Gauge track (-210 degrees to 30 degrees = 240 deg arc)
             double startAngle = 150;
             double totalSweep = 240;
 
-            DrawArc(dc, trackPen, center, radius, startAngle, totalSweep);
+            // Draw Track
+            DrawArc(dc, TrackPen, center, radius, startAngle, totalSweep);
 
-            // Active gauge fill
+            // Draw Value Arc
             double clampedVal = Math.Clamp(Value, 0, 100);
             double valueSweep = (clampedVal / 100.0) * totalSweep;
 
             if (valueSweep > 0)
             {
-                var valuePen = new Pen(GaugeColor, strokeWidth)
+                var valuePen = new Pen(GaugeColor, 13)
                 {
                     StartLineCap = PenLineCap.Round,
                     EndLineCap = PenLineCap.Round
@@ -84,27 +94,29 @@ namespace Wingman.Controls
                 DrawArc(dc, valuePen, center, radius, startAngle, valueSweep);
             }
 
-            // Percentage Text (Increased to 30pt extra bold)
+            // Draw Percentage Text
             string pctText = $"{Math.Round(clampedVal)}%";
+            Brush primaryBrush = (Brush)Application.Current.FindResource("FgPrimaryBrush") ?? Brushes.DarkSlateGray;
             var formattedPct = new FormattedText(
                 pctText,
                 CultureInfo.CurrentCulture,
                 FlowDirection.LeftToRight,
-                new Typeface("Segoe UI Bold"),
+                BoldTypeface,
                 30,
-                (Brush)Application.Current.FindResource("FgPrimaryBrush") ?? Brushes.DarkSlateGray,
+                primaryBrush,
                 VisualTreeHelper.GetDpi(this).PixelsPerDip);
 
             dc.DrawText(formattedPct, new Point(center.X - formattedPct.Width / 2, center.Y - formattedPct.Height / 2 - 12));
 
-            // Title Text (Increased to 13pt bold)
+            // Draw Title Text
+            Brush mutedBrush = (Brush)Application.Current.FindResource("FgMutedBrush") ?? Brushes.Gray;
             var formattedTitle = new FormattedText(
                 Title,
                 CultureInfo.CurrentCulture,
                 FlowDirection.LeftToRight,
-                new Typeface("Segoe UI Bold"),
+                BoldTypeface,
                 13,
-                (Brush)Application.Current.FindResource("FgMutedBrush") ?? Brushes.Gray,
+                mutedBrush,
                 VisualTreeHelper.GetDpi(this).PixelsPerDip);
 
             dc.DrawText(formattedTitle, new Point(center.X - formattedTitle.Width / 2, center.Y + 20));

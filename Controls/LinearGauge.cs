@@ -20,6 +20,23 @@ namespace Wingman.Controls
             DependencyProperty.Register(nameof(BarColor), typeof(Brush), typeof(LinearGauge),
                 new FrameworkPropertyMetadata(Brushes.SkyBlue, FrameworkPropertyMetadataOptions.AffectsRender));
 
+        private static readonly Typeface BoldTypeface = new Typeface("Segoe UI Bold");
+        private static readonly Brush TrackBrush;
+        private static readonly Pen BorderPen;
+        private static readonly Brush DarkTextBrush;
+
+        static LinearGauge()
+        {
+            TrackBrush = new SolidColorBrush(Color.FromRgb(241, 245, 249));
+            TrackBrush.Freeze();
+
+            BorderPen = new Pen(new SolidColorBrush(Color.FromRgb(203, 213, 225)), 1.5);
+            BorderPen.Freeze();
+
+            DarkTextBrush = new SolidColorBrush(Color.FromRgb(15, 23, 42));
+            DarkTextBrush.Freeze();
+        }
+
         public double Value
         {
             get => (double)GetValue(ValueProperty);
@@ -49,12 +66,10 @@ namespace Wingman.Controls
             base.OnRender(dc);
 
             double w = ActualWidth > 0 ? ActualWidth : 180;
-            double h = ActualHeight > 0 ? ActualHeight : 28;
+            double h = ActualHeight > 0 ? ActualHeight : 24;
 
             // Background Track
-            var trackBrush = new SolidColorBrush(Color.FromRgb(241, 245, 249));
-            var borderPen = new Pen(new SolidColorBrush(Color.FromRgb(203, 213, 225)), 1.5);
-            dc.DrawRoundedRectangle(trackBrush, borderPen, new Rect(0, 0, w, h), 6, 6);
+            dc.DrawRoundedRectangle(TrackBrush, BorderPen, new Rect(0, 0, w, h), 6, 6);
 
             // Fill Bar
             double pct = Math.Clamp(Value, 0, 100);
@@ -64,13 +79,13 @@ namespace Wingman.Controls
                 dc.DrawRoundedRectangle(BarColor, null, new Rect(0, 0, fillWidth, h), 6, 6);
             }
 
-            // Label Text (Increased to 13pt bold)
-            Brush textBrush = pct > 60 ? Brushes.White : new SolidColorBrush(Color.FromRgb(15, 23, 42));
+            // Label Text
+            Brush textBrush = pct > 60 ? Brushes.White : DarkTextBrush;
             var formattedLabel = new FormattedText(
                 Label,
                 CultureInfo.CurrentCulture,
                 FlowDirection.LeftToRight,
-                new Typeface("Segoe UI Bold"),
+                BoldTypeface,
                 13,
                 textBrush,
                 VisualTreeHelper.GetDpi(this).PixelsPerDip);

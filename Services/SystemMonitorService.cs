@@ -28,6 +28,21 @@ namespace Wingman.Services
         private int _pollCount = 0;
         private bool _fetchingNetInfo = false;
 
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern bool SetProcessWorkingSetSize(IntPtr proc, IntPtr min, IntPtr max);
+
+        public static void TrimWorkingSet()
+        {
+            try
+            {
+                GC.Collect(2, GCCollectionMode.Forced, true, true);
+                GC.WaitForPendingFinalizers();
+                GC.Collect(2, GCCollectionMode.Forced, true, true);
+                SetProcessWorkingSetSize(Process.GetCurrentProcess().Handle, new IntPtr(-1), new IntPtr(-1));
+            }
+            catch { }
+        }
+
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
         private class MEMORYSTATUSEX
         {
@@ -82,13 +97,16 @@ namespace Wingman.Services
                 string osName = $"{Environment.OSVersion.Platform} {Environment.OSVersion.Version}";
                 try
                 {
-                    using var searcher = new ManagementObjectSearcher("SELECT Caption FROM Win32_OperatingSystem");
-                    foreach (var os in searcher.Get())
+                    using (var searcher = new ManagementObjectSearcher("SELECT Caption FROM Win32_OperatingSystem"))
+                    using (var collection = searcher.Get())
                     {
-                        if (os["Caption"] != null)
+                        foreach (var os in collection)
                         {
-                            osName = os["Caption"].ToString() ?? osName;
-                            break;
+                            if (os["Caption"] != null)
+                            {
+                                osName = os["Caption"].ToString() ?? osName;
+                                break;
+                            }
                         }
                     }
                 }
@@ -98,16 +116,19 @@ namespace Wingman.Services
                 int physicalCores = logicalCores / 2 > 0 ? logicalCores / 2 : logicalCores;
                 try
                 {
-                    using var searcher = new ManagementObjectSearcher("SELECT NumberOfCores FROM Win32_Processor");
-                    int phys = 0;
-                    foreach (var item in searcher.Get())
+                    using (var searcher = new ManagementObjectSearcher("SELECT NumberOfCores FROM Win32_Processor"))
+                    using (var collection = searcher.Get())
                     {
-                        if (item["NumberOfCores"] != null)
+                        int phys = 0;
+                        foreach (var item in collection)
                         {
-                            phys += Convert.ToInt32(item["NumberOfCores"]);
+                            if (item["NumberOfCores"] != null)
+                            {
+                                phys += Convert.ToInt32(item["NumberOfCores"]);
+                            }
                         }
+                        if (phys > 0) physicalCores = phys;
                     }
-                    if (phys > 0) physicalCores = phys;
                 }
                 catch { }
 
@@ -124,24 +145,27 @@ namespace Wingman.Services
                 double vramTotalMb = 0;
                 try
                 {
-                    using var searcher = new ManagementObjectSearcher("SELECT Name, AdapterRAM FROM Win32_VideoController");
-                    foreach (var item in searcher.Get())
+                    using (var searcher = new ManagementObjectSearcher("SELECT Name, AdapterRAM FROM Win32_VideoController"))
+                    using (var collection = searcher.Get())
                     {
-                        if (item["Name"] != null)
+                        foreach (var item in collection)
                         {
-                            gpuName = item["Name"].ToString() ?? gpuName;
-                            if (item["AdapterRAM"] != null)
+                            if (item["Name"] != null)
                             {
-                                ulong bytes = Convert.ToUInt64(item["AdapterRAM"]);
-                                vramTotalMb = bytes / (1024 * 1024);
+                                gpuName = item["Name"].ToString() ?? gpuName;
+                                if (item["AdapterRAM"] != null)
+                                {
+                                    ulong bytes = Convert.ToUInt64(item["AdapterRAM"]);
+                                    vramTotalMb = bytes / (1024 * 1024);
+                                }
+                                break;
                             }
-                            break;
                         }
                     }
                 }
                 catch { }
 
-                string displayRes = $"{Environment.SystemDirectory}";
+                string displayRes = "1920x1080";
                 try
                 {
                     var primaryScreen = System.Windows.SystemParameters.PrimaryScreenWidth;
@@ -160,6 +184,9 @@ namespace Wingman.Services
                     _state.VramTotalMb = vramTotalMb;
                     _state.DisplayRes = displayRes;
                 }
+
+                // Trim memory immediately after initial WMI load
+                TrimWorkingSet();
             }
             catch (Exception ex)
             {
@@ -219,9 +246,10 @@ namespace Wingman.Services
                         }, token);
                     }
 
-                    if (_pollCount % 300 == 0)
+                    // Perform working set trim every 30 seconds
+                    if (_pollCount % 60 == 0)
                     {
-                        GC.Collect();
+                        TrimWorkingSet();
                     }
 
                     (string name, string host)? targetData = null;
@@ -252,7 +280,7 @@ namespace Wingman.Services
                     LoggingService.WriteLog($"Monitor Loop Exception: {ex.Message}", "ERROR");
                 }
 
-                int interval = Math.Max(200, _configService.Current.UpdateIntervalDataMs);
+                int interval = Math.Max(250, _configService.Current.UpdateIntervalDataMs);
                 await Task.Delay(interval, token);
             }
 
@@ -284,8 +312,17 @@ namespace Wingman.Services
             }
 
             // 3. Process Count
-            int procCount = 0;
-            try { procCount = Process.GetProcesses().Length; } catch { }
+            int procCount = _state.ProcCount;
+            if (_pollCount % 10 == 0)
+            {
+                try
+                {
+                    var procs = Process.GetProcesses();
+                    procCount = procs.Length;
+                    foreach (var p in procs) p.Dispose();
+                }
+                catch { }
+            }
 
             // 4. Uptime
             long tickMs = Environment.TickCount64;
@@ -310,7 +347,7 @@ namespace Wingman.Services
             double totalStorageGb = _state.TotalStorageGb;
             List<DriveInfoModel> drivesList = _state.Drives;
 
-            if (_pollCount % 10 == 0)
+            if (_pollCount % 20 == 0)
             {
                 try
                 {
@@ -366,47 +403,52 @@ namespace Wingman.Services
             }
             catch { }
 
-            // 8. Top 10 CPU & RAM Processes Detailed (Every 3s)
+            // 8. Top 10 CPU & RAM Processes Detailed (Every 6s, disposing process handles)
             List<string> topProcs = _state.TopProcs;
             List<ProcessInfoModel> topProcDetails = _state.TopProcDetails;
 
-            if (_pollCount % 3 == 0)
+            if (_pollCount % 12 == 0)
             {
+                Process[]? allProcs = null;
                 try
                 {
-                    var procs = Process.GetProcesses()
-                        .Where(p => p.ProcessName != "Idle" && p.ProcessName != "System")
-                        .Select(p =>
+                    allProcs = Process.GetProcesses();
+                    var list = new List<ProcessInfoModel>();
+
+                    foreach (var p in allProcs)
+                    {
+                        try
                         {
-                            try
+                            if (p.ProcessName != "Idle" && p.ProcessName != "System")
                             {
-                                return new ProcessInfoModel
+                                list.Add(new ProcessInfoModel
                                 {
                                     Pid = p.Id,
                                     Name = p.ProcessName,
                                     RamMb = Math.Round((double)p.WorkingSet64 / (1024 * 1024), 1)
-                                };
+                                });
                             }
-                            catch { return null; }
-                        })
-                        .Where(x => x != null)
-                        .OrderByDescending(x => x!.RamMb)
-                        .Take(10) // Updated to Top 10!
-                        .Cast<ProcessInfoModel>()
-                        .ToList();
+                        }
+                        catch { }
+                        finally
+                        {
+                            p.Dispose(); // Properly free native handle!
+                        }
+                    }
 
-                    if (procs.Count > 0)
+                    var top10 = list.OrderByDescending(x => x.RamMb).Take(10).ToList();
+                    if (top10.Count > 0)
                     {
-                        topProcDetails = procs;
-                        topProcs = procs.Select(x => $"{x.Name} ({x.RamMb:F0}MB)").ToList();
+                        topProcDetails = top10;
+                        topProcs = top10.Select(x => $"{x.Name} ({x.RamMb:F0}MB)").ToList();
                     }
                 }
                 catch { }
             }
 
-            // 9. Active Network Connections & Open Ports (Every 15s)
+            // 9. Active Network Connections & Open Ports (Every 20s)
             List<NetConnInfoModel> netConns = _state.ActiveConnections;
-            if (_pollCount % 15 == 0)
+            if (_pollCount % 40 == 0)
             {
                 try
                 {

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Wingman")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b1d96837a3d98e25f4fbfc5b590444dce108cd43")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+dce2b3fe3ae9a5ebbfbdddfe3c802c4853c00531")]
 [assembly: System.Reflection.AssemblyProductAttribute("Wingman")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Wingman")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
