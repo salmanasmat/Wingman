@@ -40,18 +40,24 @@ namespace Wingman.Controls
             set => SetValue(GaugeColorProperty, value);
         }
 
+        public CircularGauge()
+        {
+            SnapsToDevicePixels = true;
+            UseLayoutRounding = true;
+        }
+
         protected override void OnRender(DrawingContext dc)
         {
             base.OnRender(dc);
 
-            double w = ActualWidth > 0 ? ActualWidth : 160;
-            double h = ActualHeight > 0 ? ActualHeight : 160;
+            double w = ActualWidth > 0 ? ActualWidth : 180;
+            double h = ActualHeight > 0 ? ActualHeight : 180;
             Point center = new Point(w / 2, h / 2);
-            double radius = Math.Min(w, h) / 2 - 12;
+            double radius = Math.Min(w, h) / 2 - 14;
 
             if (radius <= 0) return;
 
-            double strokeWidth = 10;
+            double strokeWidth = 12;
             var trackPen = new Pen(new SolidColorBrush(Color.FromRgb(226, 232, 240)), strokeWidth)
             {
                 StartLineCap = PenLineCap.Round,
@@ -78,30 +84,30 @@ namespace Wingman.Controls
                 DrawArc(dc, valuePen, center, radius, startAngle, valueSweep);
             }
 
-            // Percentage Text
+            // Percentage Text (Increased to 26pt bold)
             string pctText = $"{Math.Round(clampedVal)}%";
             var formattedPct = new FormattedText(
                 pctText,
                 CultureInfo.CurrentCulture,
                 FlowDirection.LeftToRight,
                 new Typeface("Segoe UI Bold"),
-                22,
+                26,
                 (Brush)Application.Current.FindResource("FgPrimaryBrush") ?? Brushes.DarkSlateGray,
                 VisualTreeHelper.GetDpi(this).PixelsPerDip);
 
-            dc.DrawText(formattedPct, new Point(center.X - formattedPct.Width / 2, center.Y - formattedPct.Height / 2 - 8));
+            dc.DrawText(formattedPct, new Point(center.X - formattedPct.Width / 2, center.Y - formattedPct.Height / 2 - 10));
 
-            // Title Text
+            // Title Text (Increased to 12pt bold)
             var formattedTitle = new FormattedText(
                 Title,
                 CultureInfo.CurrentCulture,
                 FlowDirection.LeftToRight,
-                new Typeface("Segoe UI Semibold"),
-                11,
+                new Typeface("Segoe UI Bold"),
+                12,
                 (Brush)Application.Current.FindResource("FgMutedBrush") ?? Brushes.Gray,
                 VisualTreeHelper.GetDpi(this).PixelsPerDip);
 
-            dc.DrawText(formattedTitle, new Point(center.X - formattedTitle.Width / 2, center.Y + 14));
+            dc.DrawText(formattedTitle, new Point(center.X - formattedTitle.Width / 2, center.Y + 18));
         }
 
         private void DrawArc(DrawingContext dc, Pen pen, Point center, double radius, double startAngleDeg, double sweepAngleDeg)
