@@ -9,6 +9,9 @@
         UseLayoutRounding="True"
         TextOptions.TextFormattingMode="Display"
         TextOptions.TextRenderingMode="ClearType"
+        ToolTipService.InitialShowDelay="400"
+        ToolTipService.BetweenShowDelay="200"
+        ToolTipService.ShowDuration="10000"
         KeyDown="Window_KeyDown">
 
     <Grid Margin="12">
@@ -19,7 +22,7 @@
         </Grid.RowDefinitions>
 
         <!-- 1. TOP HEADER BAR -->
-        <Border Grid.Row="0" Margin="0,0,0,10" Padding="14,10" Style="{StaticResource CardStyle}" ToolTip="System Header Bar">
+        <Border Grid.Row="0" Margin="0,0,0,10" Padding="14,10" Style="{StaticResource CardStyle}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -52,7 +55,7 @@
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="1.55*"/>
+                <ColumnDefinition Width="1.6*"/>
                 <ColumnDefinition Width="1.3*"/>
                 <ColumnDefinition Width="1.1*"/>
             </Grid.ColumnDefinitions>
@@ -65,7 +68,7 @@
                 </Grid.RowDefinitions>
 
                 <!-- TOP CARD 1: MULTI-DRIVES MONITOR -->
-                <Border Grid.Row="0" Style="{StaticResource CardStyle}" Margin="0,0,0,8" ToolTip="Connected Local, Fixed, Removable and External USB Storage Drives">
+                <Border Grid.Row="0" Style="{StaticResource CardStyle}" Margin="0,0,0,8">
                     <DockPanel>
                         <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
                             <TextBlock Text="MULTI-DRIVES" Style="{StaticResource HeaderTextStyle}" FontSize="18" DockPanel.Dock="Left" ToolTip="Storage Drives List"/>
@@ -102,7 +105,7 @@
                 </Border>
 
                 <!-- BOTTOM CARD 1: LAUNCHPAD -->
-                <Border Grid.Row="1" Style="{StaticResource CardStyle}" ToolTip="Quick Application &amp; Administrative Script Launcher">
+                <Border Grid.Row="1" Style="{StaticResource CardStyle}">
                     <DockPanel>
                         <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
                             <TextBlock Text="LAUNCHPAD" Style="{StaticResource HeaderTextStyle}" FontSize="18" DockPanel.Dock="Left" ToolTip="Application Launchpad"/>
@@ -141,15 +144,15 @@
                 </Border>
             </Grid>
 
-            <!-- ================= COLUMN 2 (CENTER-LEFT: REACTOR CORE WITH 3 GAUGES) ================= -->
+            <!-- ================= COLUMN 2 (CENTER-LEFT: REACTOR CORE WITH ENLARGED GAUGES) ================= -->
             <Grid Grid.Column="1" Margin="5,0,5,0">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="1.18*"/>
+                    <RowDefinition Height="1.25*"/>
                     <RowDefinition Height="1*"/>
                 </Grid.RowDefinitions>
 
-                <!-- TOP HERO CARD: REACTOR CORE (3 CIRCULAR GAUGES: CPU, MEMORY & DISK LOAD) -->
-                <Border Grid.Row="0" Style="{StaticResource CardStyle}" Margin="0,0,0,8" Padding="12" ToolTip="Core System Telemetry &amp; Vital Metrics">
+                <!-- TOP HERO CARD: REACTOR CORE (3 ENLARGED CIRCULAR GAUGES: 145x145 EACH) -->
+                <Border Grid.Row="0" Style="{StaticResource CardStyle}" Margin="0,0,0,8" Padding="12">
                     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                         <StackPanel>
                             <!-- Header -->
@@ -158,21 +161,21 @@
                                 <TextBlock Text="SYSTEM METRICS" FontSize="11" FontWeight="Bold" Foreground="{StaticResource FgMutedBrush}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                             </DockPanel>
 
-                            <!-- 3 GAUGES ABOVE: CPU LOAD, MEMORY & DISK LOAD -->
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,6">
-                                <controls:CircularGauge Value="{Binding CpuPercent}" Title="CPU LOAD" GaugeColor="{StaticResource AccentCyanBrush}" Width="120" Height="120" Margin="0,0,8,0" ToolTip="Real-Time Total Processor Load Percentage"/>
-                                <controls:CircularGauge Value="{Binding RamPercent}" Title="MEMORY" GaugeColor="{StaticResource AccentWarnBrush}" Width="120" Height="120" Margin="0,0,8,0" ToolTip="Real-Time Physical Memory (RAM) Utilization"/>
-                                <controls:CircularGauge Value="{Binding DiskPercent}" Title="DISK LOAD" GaugeColor="{StaticResource AccentGreenBrush}" Width="120" Height="120" ToolTip="OS Disk Capacity &amp; Real-Time Storage Utilization"/>
+                            <!-- 3 ENLARGED CIRCULAR GAUGES (145x145 EACH) -->
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,8">
+                                <controls:CircularGauge Value="{Binding CpuPercent}" Title="CPU LOAD" GaugeColor="{StaticResource AccentCyanBrush}" Width="145" Height="145" Margin="0,0,10,0" ToolTip="Real-Time Total Processor Load Percentage"/>
+                                <controls:CircularGauge Value="{Binding RamPercent}" Title="MEMORY" GaugeColor="{StaticResource AccentWarnBrush}" Width="145" Height="145" Margin="0,0,10,0" ToolTip="Real-Time Physical Memory (RAM) Utilization"/>
+                                <controls:CircularGauge Value="{Binding DiskPercent}" Title="DISK LOAD" GaugeColor="{StaticResource AccentGreenBrush}" Width="145" Height="145" ToolTip="OS Disk Capacity &amp; Real-Time Storage Utilization"/>
                             </StackPanel>
 
                             <!-- OS Drive Capacity Bar Under Gauges -->
-                            <StackPanel HorizontalAlignment="Center" Width="400" Margin="0,0,0,8" ToolTip="Primary System OS Drive Space Usage">
+                            <StackPanel HorizontalAlignment="Center" Width="430" Margin="0,0,0,8" ToolTip="Primary System OS Drive Space Usage">
                                 <TextBlock Text="OS DRIVE CAPACITY" Style="{StaticResource SectionTextStyle}" FontSize="11.5" Margin="0,0,0,2" HorizontalAlignment="Center"/>
-                                <controls:LinearGauge Value="{Binding DiskPercent}" Label="{Binding DiskLabel}" BarColor="{StaticResource AccentCyanBrush}" Height="24" Width="400"/>
+                                <controls:LinearGauge Value="{Binding DiskPercent}" Label="{Binding DiskLabel}" BarColor="{StaticResource AccentCyanBrush}" Height="25" Width="430"/>
                             </StackPanel>
 
                             <!-- Network & Disk IO Row -->
-                            <Grid Width="420" HorizontalAlignment="Center" Margin="0,0,0,8">
+                            <Grid Width="430" HorizontalAlignment="Center" Margin="0,0,0,8">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="*"/>
@@ -181,8 +184,8 @@
                                 <!-- Column 1: Network Speed -->
                                 <StackPanel Grid.Column="0" Margin="0,0,6,0" ToolTip="Real-Time Network Upload &amp; Download Throughput">
                                     <TextBlock Text="NET SPEED" Style="{StaticResource SectionTextStyle}" FontSize="11" Margin="0,0,0,2"/>
-                                    <TextBlock Text="{Binding NetUpText}" FontFamily="Consolas" FontSize="12" FontWeight="Bold" Foreground="{StaticResource AccentCyanBrush}" ToolTip="Upload Transfer Rate"/>
-                                    <TextBlock Text="{Binding NetDownText}" FontFamily="Consolas" FontSize="12" FontWeight="Bold" Foreground="{StaticResource AccentGreenBrush}" ToolTip="Download Transfer Rate"/>
+                                    <TextBlock Text="{Binding NetUpText}" FontFamily="Consolas" FontSize="12.5" FontWeight="Bold" Foreground="{StaticResource AccentCyanBrush}" ToolTip="Upload Transfer Rate"/>
+                                    <TextBlock Text="{Binding NetDownText}" FontFamily="Consolas" FontSize="12.5" FontWeight="Bold" Foreground="{StaticResource AccentGreenBrush}" ToolTip="Download Transfer Rate"/>
                                 </StackPanel>
 
                                 <!-- Column 2: Disk IO Badges & Power -->
@@ -217,15 +220,15 @@
                                             <TextBlock Text="WRITE" FontFamily="Consolas" FontSize="10" FontWeight="Bold" Foreground="White"/>
                                         </Border>
                                     </StackPanel>
-                                    <TextBlock Text="{Binding BatteryText}" Foreground="{Binding BatteryBrush}" FontFamily="Consolas" FontSize="11" FontWeight="Bold" ToolTip="System Power Source &amp; Battery Telemetry"/>
+                                    <TextBlock Text="{Binding BatteryText}" Foreground="{Binding BatteryBrush}" FontFamily="Consolas" FontSize="11.5" FontWeight="Bold" ToolTip="System Power Source &amp; Battery Telemetry"/>
                                 </StackPanel>
                             </Grid>
 
                             <!-- TOP 10 PROCESSES SHIFTED HORIZONTALLY BELOW -->
-                            <Border BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="0,1.5,0,0" Padding="0,6,0,0" Margin="0,4,0,0" ToolTip="Top 10 Processes by RAM/CPU Consumption">
+                            <Border BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="0,1.5,0,0" Padding="0,6,0,0" Margin="0,4,0,0">
                                 <StackPanel>
                                     <DockPanel Margin="0,0,0,4">
-                                        <TextBlock Text="TOP 10 ACTIVE PROCESSES" Style="{StaticResource SectionTextStyle}" FontSize="11.5" DockPanel.Dock="Left"/>
+                                        <TextBlock Text="TOP 10 ACTIVE PROCESSES" Style="{StaticResource SectionTextStyle}" FontSize="11.5" DockPanel.Dock="Left" ToolTip="Top 10 Processes by RAM/CPU Consumption"/>
                                     </DockPanel>
                                     <ItemsControl ItemsSource="{Binding TopProcesses}">
                                         <ItemsControl.ItemsPanel>
@@ -248,7 +251,7 @@
                 </Border>
 
                 <!-- BOTTOM CARD: PROCESS MANAGER -->
-                <Border Grid.Row="1" Style="{StaticResource CardStyle}" ToolTip="Live Top Memory Processes with One-Click Termination">
+                <Border Grid.Row="1" Style="{StaticResource CardStyle}">
                     <DockPanel>
                         <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
                             <TextBlock Text="PROCESS MANAGER" Style="{StaticResource HeaderTextStyle}" FontSize="18" DockPanel.Dock="Left" ToolTip="Process Manager Engine"/>
@@ -295,7 +298,7 @@
                 </Grid.RowDefinitions>
 
                 <!-- TOP CARD: WATCHTOWER PING MONITOR -->
-                <Border Grid.Row="0" Style="{StaticResource CardStyle}" Margin="0,0,0,8" ToolTip="Network Host Ping &amp; Latency Monitoring Engine">
+                <Border Grid.Row="0" Style="{StaticResource CardStyle}" Margin="0,0,0,8">
                     <DockPanel>
                         <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
                             <TextBlock Text="WATCHTOWER" Style="{StaticResource HeaderTextStyle}" FontSize="18" DockPanel.Dock="Left" ToolTip="Host Latency Monitor"/>
@@ -328,7 +331,7 @@
                 </Border>
 
                 <!-- BOTTOM CARD: POWER UTILITIES & LIGHT SLATE TERMINAL -->
-                <Border Grid.Row="1" Style="{StaticResource CardStyle}" ToolTip="System Administration Utilities &amp; Embedded Command Runner">
+                <Border Grid.Row="1" Style="{StaticResource CardStyle}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -379,7 +382,7 @@
                 </Grid.RowDefinitions>
 
                 <!-- TOP CARD 4: GPU INTEL, SPECS & SECURITY -->
-                <Border Grid.Row="0" Style="{StaticResource CardStyle}" Margin="0,0,0,8" ToolTip="Graphics Hardware Specs &amp; Windows Security Compliance Badges">
+                <Border Grid.Row="0" Style="{StaticResource CardStyle}" Margin="0,0,0,8">
                     <ScrollViewer VerticalScrollBarVisibility="Auto">
                         <StackPanel>
                             <TextBlock Text="SECURITY &amp; GPU" Style="{StaticResource HeaderTextStyle}" FontSize="20" Margin="0,0,0,8" ToolTip="Security &amp; GPU Hardware Intel"/>
@@ -415,7 +418,7 @@
                             <TextBlock FontSize="14" FontFamily="Consolas" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" Text="{Binding Mac}" Margin="0,0,0,8" ToolTip="Network Hardware MAC Address"/>
 
                             <!-- Security Badges -->
-                            <Border BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="0,1.5,0,0" Padding="0,8,0,0" ToolTip="Windows Security &amp; Compliance Status Badges">
+                            <Border BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="0,1.5,0,0" Padding="0,8,0,0">
                                 <StackPanel>
                                     <TextBlock Text="SECURITY COMPLIANCE" Style="{StaticResource SectionTextStyle}" FontSize="13" Margin="0,0,0,6"/>
                                     <UniformGrid Columns="3">
@@ -445,7 +448,7 @@
                 </Border>
 
                 <!-- BOTTOM CARD 4: QUICK NOTES -->
-                <Border Grid.Row="1" Style="{StaticResource CardStyle}" ToolTip="Persistent Auto-Saving Scratchpad">
+                <Border Grid.Row="1" Style="{StaticResource CardStyle}">
                     <DockPanel>
                         <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
                             <TextBlock Text="QUICK NOTES" Style="{StaticResource HeaderTextStyle}" FontSize="18" DockPanel.Dock="Left" ToolTip="Auto-Saving Scratchpad"/>

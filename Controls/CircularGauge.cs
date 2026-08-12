@@ -31,7 +31,7 @@ namespace Wingman.Controls
             TrackBrush = new SolidColorBrush(Color.FromRgb(226, 232, 240));
             TrackBrush.Freeze();
 
-            TrackPen = new Pen(TrackBrush, 13)
+            TrackPen = new Pen(TrackBrush, 14)
             {
                 StartLineCap = PenLineCap.Round,
                 EndLineCap = PenLineCap.Round
@@ -67,8 +67,8 @@ namespace Wingman.Controls
         {
             base.OnRender(dc);
 
-            double w = ActualWidth > 0 ? ActualWidth : 140;
-            double h = ActualHeight > 0 ? ActualHeight : 140;
+            double w = ActualWidth > 0 ? ActualWidth : 145;
+            double h = ActualHeight > 0 ? ActualHeight : 145;
             Point center = new Point(w / 2, h / 2);
             double radius = Math.Min(w, h) / 2 - 14;
 
@@ -86,7 +86,7 @@ namespace Wingman.Controls
 
             if (valueSweep > 0)
             {
-                var valuePen = new Pen(GaugeColor, 13)
+                var valuePen = new Pen(GaugeColor, 14)
                 {
                     StartLineCap = PenLineCap.Round,
                     EndLineCap = PenLineCap.Round
@@ -94,7 +94,7 @@ namespace Wingman.Controls
                 DrawArc(dc, valuePen, center, radius, startAngle, valueSweep);
             }
 
-            // Draw Percentage Text
+            // Draw Percentage Text (Increased to 34pt extra bold)
             string pctText = $"{Math.Round(clampedVal)}%";
             Brush primaryBrush = (Brush)Application.Current.FindResource("FgPrimaryBrush") ?? Brushes.DarkSlateGray;
             var formattedPct = new FormattedText(
@@ -102,24 +102,24 @@ namespace Wingman.Controls
                 CultureInfo.CurrentCulture,
                 FlowDirection.LeftToRight,
                 BoldTypeface,
-                30,
+                34,
                 primaryBrush,
                 VisualTreeHelper.GetDpi(this).PixelsPerDip);
 
-            dc.DrawText(formattedPct, new Point(center.X - formattedPct.Width / 2, center.Y - formattedPct.Height / 2 - 12));
+            dc.DrawText(formattedPct, new Point(center.X - formattedPct.Width / 2, center.Y - formattedPct.Height / 2 - 14));
 
-            // Draw Title Text
+            // Draw Title Text (Increased to 14pt bold)
             Brush mutedBrush = (Brush)Application.Current.FindResource("FgMutedBrush") ?? Brushes.Gray;
             var formattedTitle = new FormattedText(
                 Title,
                 CultureInfo.CurrentCulture,
                 FlowDirection.LeftToRight,
                 BoldTypeface,
-                13,
+                14,
                 mutedBrush,
                 VisualTreeHelper.GetDpi(this).PixelsPerDip);
 
-            dc.DrawText(formattedTitle, new Point(center.X - formattedTitle.Width / 2, center.Y + 20));
+            dc.DrawText(formattedTitle, new Point(center.X - formattedTitle.Width / 2, center.Y + 22));
         }
 
         private void DrawArc(DrawingContext dc, Pen pen, Point center, double radius, double startAngleDeg, double sweepAngleDeg)

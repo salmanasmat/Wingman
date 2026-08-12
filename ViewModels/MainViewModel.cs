@@ -18,28 +18,43 @@ namespace Wingman.ViewModels
 {
     public class DriveItemViewModel : ObservableObject
     {
-        public string Name { get; set; } = string.Empty;
-        public string VolumeLabel { get; set; } = string.Empty;
-        public double Percent { get; set; }
-        public string Label { get; set; } = string.Empty;
-        public string DriveType { get; set; } = "Fixed";
+        private string _name = string.Empty;
+        private string _volumeLabel = string.Empty;
+        private double _percent;
+        private string _label = string.Empty;
+        private string _driveType = "Fixed";
+
+        public string Name { get => _name; set => SetProperty(ref _name, value); }
+        public string VolumeLabel { get => _volumeLabel; set => SetProperty(ref _volumeLabel, value); }
+        public double Percent { get => _percent; set => SetProperty(ref _percent, value); }
+        public string Label { get => _label; set => SetProperty(ref _label, value); }
+        public string DriveType { get => _driveType; set => SetProperty(ref _driveType, value); }
         public ICommand OpenDriveCommand { get; set; } = null!;
     }
 
     public class ProcessItemViewModel : ObservableObject
     {
-        public int Pid { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public double RamMb { get; set; }
+        private int _pid;
+        private string _name = string.Empty;
+        private double _ramMb;
+
+        public int Pid { get => _pid; set => SetProperty(ref _pid, value); }
+        public string Name { get => _name; set => SetProperty(ref _name, value); }
+        public double RamMb { get => _ramMb; set => SetProperty(ref _ramMb, value); }
         public ICommand KillCommand { get; set; } = null!;
     }
 
     public class NetConnItemViewModel : ObservableObject
     {
-        public string Protocol { get; set; } = "TCP";
-        public int LocalPort { get; set; }
-        public string RemoteIp { get; set; } = string.Empty;
-        public string State { get; set; } = "ESTABLISHED";
+        private string _protocol = "TCP";
+        private int _localPort;
+        private string _remoteIp = string.Empty;
+        private string _state = "ESTABLISHED";
+
+        public string Protocol { get => _protocol; set => SetProperty(ref _protocol, value); }
+        public int LocalPort { get => _localPort; set => SetProperty(ref _localPort, value); }
+        public string RemoteIp { get => _remoteIp; set => SetProperty(ref _remoteIp, value); }
+        public string State { get => _state; set => SetProperty(ref _state, value); }
     }
 
     public class WatchtowerItemViewModel : ObservableObject
@@ -301,6 +316,7 @@ namespace Wingman.ViewModels
                     BatteryBrush = Brushes.Gray;
                 }
 
+                // Update Top Processes without destroying visual tree if unchanged
                 if (!TopProcesses.SequenceEqual(_state.TopProcs))
                 {
                     TopProcesses.Clear();
@@ -310,48 +326,93 @@ namespace Wingman.ViewModels
                     }
                 }
 
-                // Update Multi-Drive List with OpenDriveCommand
-                DrivesList.Clear();
-                foreach (var drive in _state.Drives)
+                // In-place update for DrivesList to prevent tooltip blinking
+                if (DrivesList.Count == _state.Drives.Count)
                 {
-                    string driveName = drive.Name;
-                    var driveVm = new DriveItemViewModel
+                    for (int i = 0; i < _state.Drives.Count; i++)
                     {
-                        Name = drive.Name,
-                        VolumeLabel = drive.VolumeLabel,
-                        Percent = drive.Percent,
-                        Label = $"{drive.Name} {(int)drive.UsedGb}GB / {(int)drive.TotalGb}GB",
-                        DriveType = drive.DriveType,
-                    };
-                    driveVm.OpenDriveCommand = new RelayCommand(() => OpenDrive(driveName));
-                    DrivesList.Add(driveVm);
+                        var dData = _state.Drives[i];
+                        var dItem = DrivesList[i];
+                        dItem.Name = dData.Name;
+                        dItem.VolumeLabel = dData.VolumeLabel;
+                        dItem.Percent = dData.Percent;
+                        dItem.Label = $"{dData.Name} {(int)dData.UsedGb}GB / {(int)dData.TotalGb}GB";
+                        dItem.DriveType = dData.DriveType;
+                    }
+                }
+                else
+                {
+                    DrivesList.Clear();
+                    foreach (var drive in _state.Drives)
+                    {
+                        string driveName = drive.Name;
+                        var driveVm = new DriveItemViewModel
+                        {
+                            Name = drive.Name,
+                            VolumeLabel = drive.VolumeLabel,
+                            Percent = drive.Percent,
+                            Label = $"{drive.Name} {(int)drive.UsedGb}GB / {(int)drive.TotalGb}GB",
+                            DriveType = drive.DriveType,
+                        };
+                        driveVm.OpenDriveCommand = new RelayCommand(() => OpenDrive(driveName));
+                        DrivesList.Add(driveVm);
+                    }
                 }
 
-                // Update Detailed Process List with Kill Command
-                DetailedProcesses.Clear();
-                foreach (var proc in _state.TopProcDetails)
+                // In-place update for DetailedProcesses to prevent tooltip blinking
+                if (DetailedProcesses.Count == _state.TopProcDetails.Count)
                 {
-                    var pItem = new ProcessItemViewModel
+                    for (int i = 0; i < _state.TopProcDetails.Count; i++)
                     {
-                        Pid = proc.Pid,
-                        Name = proc.Name,
-                        RamMb = proc.RamMb
-                    };
-                    pItem.KillCommand = new RelayCommand(() => KillProcess(pItem.Pid, pItem.Name));
-                    DetailedProcesses.Add(pItem);
+                        var pData = _state.TopProcDetails[i];
+                        var pItem = DetailedProcesses[i];
+                        pItem.Pid = pData.Pid;
+                        pItem.Name = pData.Name;
+                        pItem.RamMb = pData.RamMb;
+                    }
+                }
+                else
+                {
+                    DetailedProcesses.Clear();
+                    foreach (var proc in _state.TopProcDetails)
+                    {
+                        var pItem = new ProcessItemViewModel
+                        {
+                            Pid = proc.Pid,
+                            Name = proc.Name,
+                            RamMb = proc.RamMb
+                        };
+                        pItem.KillCommand = new RelayCommand(() => KillProcess(pItem.Pid, pItem.Name));
+                        DetailedProcesses.Add(pItem);
+                    }
                 }
 
-                // Update Network Connections
-                NetworkConnections.Clear();
-                foreach (var conn in _state.ActiveConnections)
+                // In-place update for NetworkConnections
+                if (NetworkConnections.Count == _state.ActiveConnections.Count)
                 {
-                    NetworkConnections.Add(new NetConnItemViewModel
+                    for (int i = 0; i < _state.ActiveConnections.Count; i++)
                     {
-                        Protocol = conn.Protocol,
-                        LocalPort = conn.LocalPort,
-                        RemoteIp = conn.RemoteIp,
-                        State = conn.State
-                    });
+                        var cData = _state.ActiveConnections[i];
+                        var cItem = NetworkConnections[i];
+                        cItem.Protocol = cData.Protocol;
+                        cItem.LocalPort = cData.LocalPort;
+                        cItem.RemoteIp = cData.RemoteIp;
+                        cItem.State = cData.State;
+                    }
+                }
+                else
+                {
+                    NetworkConnections.Clear();
+                    foreach (var conn in _state.ActiveConnections)
+                    {
+                        NetworkConnections.Add(new NetConnItemViewModel
+                        {
+                            Protocol = conn.Protocol,
+                            LocalPort = conn.LocalPort,
+                            RemoteIp = conn.RemoteIp,
+                            State = conn.State
+                        });
+                    }
                 }
 
                 LocalIp = _state.LocalIp;
