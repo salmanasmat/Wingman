@@ -43,4 +43,3 @@ __pycache__/
 build/
 dist/
 *.egg-info/
-/bin/Debug
