@@ -400,8 +400,8 @@
             <!-- ================= COLUMN 4 (FAR RIGHT: SECURITY & GPU INTEL) ================= -->
             <Grid Grid.Column="3" Margin="5,0,0,0">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="1.25*"/>
                     <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1.25*"/>
                 </Grid.RowDefinitions>
 
                 <!-- TOP CARD 4: GPU INTEL, SPECS & SECURITY -->
