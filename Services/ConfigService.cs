@@ -8,7 +8,7 @@ namespace Wingman.Services
 {
     public class ConfigService
     {
-        private const string ConfigFile = "dashboard_config.json";
+        private static readonly string ConfigFile = Path.Combine(AppContext.BaseDirectory, "dashboard_config.json");
         public DashboardConfig Current { get; private set; } = new DashboardConfig();
 
         public event EventHandler? ConfigChanged;

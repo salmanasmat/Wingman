@@ -5,7 +5,7 @@ namespace Wingman.Services
 {
     public static class LoggingService
     {
-        private static readonly string LogDir = "Logs";
+        private static readonly string LogDir = Path.Combine(AppContext.BaseDirectory, "Logs");
         private static readonly object LogLock = new object();
 
         public static void WriteLog(string message, string category = "INFO")
