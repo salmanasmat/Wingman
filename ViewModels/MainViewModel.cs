@@ -171,6 +171,9 @@ namespace Wingman.ViewModels
         public ICommand ClearTerminalCommand { get; }
         public ICommand RunPresetTerminalCommand { get; }
         public ICommand ToggleThemeCommand { get; }
+        public ICommand ToggleDarkModeCommand { get; }
+
+        public string DarkModeButtonText => _configService.Current.Theme.IsDarkMode ? "[ ☀️ LIGHT ]" : "[ 🌙 DARK ]";
 
         public string ClockText { get => _clockText; set => SetProperty(ref _clockText, value); }
         public string HostnameText { get => _hostnameText; set => SetProperty(ref _hostnameText, value); }
@@ -265,6 +268,7 @@ namespace Wingman.ViewModels
             ClearTerminalCommand = new RelayCommand(ExecuteClearTerminal);
             RunPresetTerminalCommand = new RelayCommand(ExecutePresetTerminal);
             ToggleThemeCommand = new RelayCommand(ExecuteToggleTheme);
+            ToggleDarkModeCommand = new RelayCommand(ExecuteToggleDarkMode);
 
             LoadNotes();
             RefreshLaunchpad();
@@ -819,6 +823,14 @@ namespace Wingman.ViewModels
             _configService.Current.Theme.AccentCyan = themeOptions[nextIdx];
             _configService.SaveConfig();
             LoggingService.WriteLog($"Toggled Accent Theme to: {themeOptions[nextIdx]}", "THEME");
+        }
+
+        private void ExecuteToggleDarkMode()
+        {
+            _configService.Current.Theme.IsDarkMode = !_configService.Current.Theme.IsDarkMode;
+            _configService.SaveConfig();
+            OnPropertyChanged(nameof(DarkModeButtonText));
+            LoggingService.WriteLog($"Toggled Dark Mode to: {_configService.Current.Theme.IsDarkMode}", "THEME");
         }
 
         private void LoadNotes()

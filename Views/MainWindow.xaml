@@ -4,7 +4,7 @@
         xmlns:controls="clr-namespace:Wingman.Controls"
         Title="WINGMAN" Height="860" Width="1480"
         WindowState="Maximized"
-        Background="{StaticResource BgMainBrush}"
+        Background="{DynamicResource BgMainBrush}"
         SnapsToDevicePixels="True"
         UseLayoutRounding="True"
         TextOptions.TextFormattingMode="Display"
@@ -22,7 +22,7 @@
         </Grid.RowDefinitions>
 
         <!-- 1. TOP HEADER BAR -->
-        <Border Grid.Row="0" Margin="0,0,0,10" Padding="14,10" Style="{StaticResource CardStyle}">
+        <Border Grid.Row="0" Margin="0,0,0,10" Padding="14,10" Style="{DynamicResource CardStyle}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -35,21 +35,23 @@
                     <Border Background="{DynamicResource AccentCyanBrush}" CornerRadius="4" Padding="8,3" Margin="0,0,12,0" ToolTip="Wingman WPF System Dashboard v1.0">
                         <TextBlock Text="WINGMAN v1.0" FontSize="12" FontWeight="Bold" Foreground="White"/>
                     </Border>
-                    <TextBlock Text="{Binding HostnameText}" FontSize="17" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" Margin="0,0,18,0" ToolTip="Current Computer Name / Hostname"/>
-                    <TextBlock Text="{Binding UptimeText}" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource FgMutedBrush}" ToolTip="System Up Time since last Windows reboot"/>
+                    <TextBlock Text="{Binding HostnameText}" FontSize="17" FontWeight="Bold" Foreground="{DynamicResource FgPrimaryBrush}" Margin="0,0,18,0" ToolTip="Current Computer Name / Hostname"/>
+                    <TextBlock Text="{Binding UptimeText}" FontSize="14" FontWeight="SemiBold" Foreground="{DynamicResource FgMutedBrush}" ToolTip="System Up Time since last Windows reboot"/>
                 </StackPanel>
 
                 <!-- Center System Clock -->
                 <TextBlock Grid.Column="1" Text="{Binding ClockText}" HorizontalAlignment="Center" VerticalAlignment="Center"
-                           FontFamily="Consolas" FontSize="18" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" ToolTip="Current System Date &amp; Time"/>
+                           FontFamily="Consolas" FontSize="18" FontWeight="Bold" Foreground="{DynamicResource FgPrimaryBrush}" ToolTip="Current System Date &amp; Time"/>
 
                 <!-- Right Config & Toolbar -->
                 <StackPanel Grid.Column="2" Orientation="Horizontal">
-                    <Border Background="{StaticResource InputBgBrush}" CornerRadius="4" Padding="6,2" Margin="0,0,8,0" VerticalAlignment="Center" ToolTip="Press F5 to toggle Fullscreen mode | Esc to exit">
-                        <TextBlock Text="[ 🗖 F5 ]" FontSize="11" FontWeight="Bold" Foreground="{StaticResource FgMutedBrush}"/>
+                    <Border Background="{DynamicResource InputBgBrush}" CornerRadius="4" Padding="6,2" Margin="0,0,8,0" VerticalAlignment="Center" ToolTip="Press F5 to toggle Fullscreen mode | Esc to exit">
+                        <TextBlock Text="[ 🗖 F5 ]" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource FgMutedBrush}"/>
                     </Border>
-                    <Button Content="[ 🎨 THEME ]" Command="{Binding ToggleThemeCommand}"
-                            Style="{StaticResource ActionButtonStyle}" FontSize="12" Foreground="{StaticResource AccentGreenBrush}" Margin="0,0,6,0" ToolTip="Quick Toggle Accent Color Palette"/>
+                    <Button Content="{Binding DarkModeButtonText}" Command="{Binding ToggleDarkModeCommand}"
+                            Style="{StaticResource ActionButtonStyle}" FontSize="12" Foreground="{DynamicResource AccentWarnBrush}" Margin="0,0,6,0" ToolTip="Toggle Light / Dark Mode Theme"/>
+                    <Button Content="[ 🎨 ACCENT ]" Command="{Binding ToggleThemeCommand}"
+                            Style="{StaticResource ActionButtonStyle}" FontSize="12" Foreground="{DynamicResource AccentGreenBrush}" Margin="0,0,6,0" ToolTip="Quick Toggle Accent Color Palette"/>
                     <Button Content="[ CONFIGURATION ]" Command="{Binding OpenConfigCommand}"
                             Style="{StaticResource ActionButtonStyle}" FontSize="12" Foreground="{DynamicResource AccentCyanBrush}" ToolTip="Open Dashboard Configuration &amp; Target Host Settings"/>
                 </StackPanel>
@@ -73,17 +75,17 @@
                 </Grid.RowDefinitions>
 
                 <!-- TOP CARD 1: MULTI-DRIVES MONITOR (EXPANDED HEIGHT - NO SCROLLBAR) -->
-                <Border Grid.Row="0" Style="{StaticResource CardStyle}" Margin="0,0,0,8">
+                <Border Grid.Row="0" Style="{DynamicResource CardStyle}" Margin="0,0,0,8">
                     <DockPanel>
                         <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
                             <TextBlock Text="MULTI-DRIVES" Style="{StaticResource HeaderTextStyle}" FontSize="18" DockPanel.Dock="Left" ToolTip="Storage Drives List"/>
-                            <TextBlock Text="STORAGE" FontSize="11" FontWeight="Bold" Foreground="{StaticResource FgMutedBrush}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            <TextBlock Text="STORAGE" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource FgMutedBrush}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                         </DockPanel>
                         <ScrollViewer VerticalScrollBarVisibility="Auto">
                             <ItemsControl ItemsSource="{Binding DrivesList}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Border Margin="0,0,0,8" Padding="8" Background="{StaticResource InputBgBrush}" CornerRadius="6" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1" Cursor="Hand" ToolTip="Double-click to open drive in Windows Explorer | Right-click for context menu">
+                                        <Border Margin="0,0,0,8" Padding="8" Background="{DynamicResource InputBgBrush}" CornerRadius="6" BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1" Cursor="Hand" ToolTip="Double-click to open drive in Windows Explorer | Right-click for context menu">
                                             <Border.InputBindings>
                                                 <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding OpenDriveCommand}"/>
                                             </Border.InputBindings>
@@ -94,7 +96,7 @@
                                             </Border.ContextMenu>
                                             <StackPanel>
                                                 <Grid Margin="0,0,0,3">
-                                                    <TextBlock FontSize="13" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}">
+                                                    <TextBlock FontSize="13" FontWeight="Bold" Foreground="{DynamicResource FgPrimaryBrush}">
                                                         <Run Text="{Binding Name, Mode=OneWay}"/>
                                                         <Run Text=" ("/><Run Text="{Binding VolumeLabel, Mode=OneWay}"/><Run Text=")"/>
                                                     </TextBlock>
@@ -110,30 +112,30 @@
                 </Border>
 
                 <!-- BOTTOM CARD 1: PROCESS MANAGER (WITH REAL-TIME FILTER) -->
-                <Border Grid.Row="1" Style="{StaticResource CardStyle}" ToolTip="Live Top Memory Processes with Real-Time Filtering &amp; One-Click Termination">
+                <Border Grid.Row="1" Style="{DynamicResource CardStyle}" ToolTip="Live Top Memory Processes with Real-Time Filtering &amp; One-Click Termination">
                     <DockPanel>
                         <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
                             <TextBlock Text="PROCESS MANAGER" Style="{StaticResource HeaderTextStyle}" FontSize="18" DockPanel.Dock="Left" ToolTip="Process Manager Engine"/>
-                            <TextBlock Text="RAM TOP 10" FontSize="11" FontWeight="Bold" Foreground="{StaticResource FgMutedBrush}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            <TextBlock Text="RAM TOP 10" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource FgMutedBrush}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                         </DockPanel>
 
                         <!-- Filter Search Input -->
-                        <Border DockPanel.Dock="Top" Margin="0,0,0,6" Background="{StaticResource InputBgBrush}" CornerRadius="4" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1" Padding="4,2">
+                        <Border DockPanel.Dock="Top" Margin="0,0,0,6" Background="{DynamicResource InputBgBrush}" CornerRadius="4" BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1" Padding="4,2">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0" Text="🔍 " FontSize="11" VerticalAlignment="Center" Foreground="{StaticResource FgMutedBrush}"/>
+                                <TextBlock Grid.Column="0" Text="🔍 " FontSize="11" VerticalAlignment="Center" Foreground="{DynamicResource FgMutedBrush}"/>
                                 <TextBox Grid.Column="1" Text="{Binding ProcessFilterText, UpdateSourceTrigger=PropertyChanged}"
-                                         Background="Transparent" BorderThickness="0" FontSize="11" Foreground="{StaticResource FgPrimaryBrush}" VerticalAlignment="Center" ToolTip="Type process name or PID to filter in real-time..."/>
+                                         Background="Transparent" BorderThickness="0" FontSize="11" Foreground="{DynamicResource FgPrimaryBrush}" VerticalAlignment="Center" ToolTip="Type process name or PID to filter in real-time..."/>
                             </Grid>
                         </Border>
                         <ScrollViewer VerticalScrollBarVisibility="Auto">
                             <ItemsControl ItemsSource="{Binding DetailedProcesses}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Border Margin="0,0,0,4" Padding="6,3" Background="{StaticResource InputBgBrush}" CornerRadius="4" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1" ToolTip="Process ID, Name, and Memory Working Set">
+                                        <Border Margin="0,0,0,4" Padding="6,3" Background="{DynamicResource InputBgBrush}" CornerRadius="4" BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1" ToolTip="Process ID, Name, and Memory Working Set">
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="Auto"/>
@@ -142,8 +144,8 @@
                                                     <ColumnDefinition Width="Auto"/>
                                                 </Grid.ColumnDefinitions>
 
-                                                <TextBlock Grid.Column="0" Text="{Binding Pid}" FontFamily="Consolas" FontSize="11" Foreground="{StaticResource FgMutedBrush}" Width="48" VerticalAlignment="Center" ToolTip="Process Identifier (PID)"/>
-                                                <TextBlock Grid.Column="1" Text="{Binding Name}" FontSize="12" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" VerticalAlignment="Center" ToolTip="Executable Process Name"/>
+                                                <TextBlock Grid.Column="0" Text="{Binding Pid}" FontFamily="Consolas" FontSize="11" Foreground="{DynamicResource FgMutedBrush}" Width="48" VerticalAlignment="Center" ToolTip="Process Identifier (PID)"/>
+                                                <TextBlock Grid.Column="1" Text="{Binding Name}" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource FgPrimaryBrush}" VerticalAlignment="Center" ToolTip="Executable Process Name"/>
                                                 <TextBlock Grid.Column="2" FontFamily="Consolas" FontSize="11.5" FontWeight="Bold" Foreground="{DynamicResource AccentCyanBrush}" Margin="0,0,8,0" VerticalAlignment="Center" ToolTip="RAM Working Set Memory in MB">
                                                     <TextBlock.Text>
                                                         <MultiBinding StringFormat="{}{0:F0} MB">
@@ -170,7 +172,7 @@
                 </Grid.RowDefinitions>
 
                 <!-- TOP HERO CARD: REACTOR CORE -->
-                <Border Grid.Row="0" Style="{StaticResource CardStyle}" Margin="0,0,0,8" Padding="12">
+                <Border Grid.Row="0" Style="{DynamicResource CardStyle}" Margin="0,0,0,8" Padding="12">
                     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                         <StackPanel>
                             <!-- Header -->
@@ -269,7 +271,7 @@
                 </Border>
 
                 <!-- BOTTOM CARD 2: LAUNCHPAD -->
-                <Border Grid.Row="1" Style="{StaticResource CardStyle}" ToolTip="Quick Application &amp; Administrative Script Launcher">
+                <Border Grid.Row="1" Style="{DynamicResource CardStyle}" ToolTip="Quick Application &amp; Administrative Script Launcher">
                     <DockPanel>
                         <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
                             <TextBlock Text="LAUNCHPAD" Style="{StaticResource HeaderTextStyle}" FontSize="18" DockPanel.Dock="Left" ToolTip="Application Launchpad"/>
@@ -316,7 +318,7 @@
                 </Grid.RowDefinitions>
 
                 <!-- TOP CARD: WATCHTOWER PING MONITOR -->
-                <Border Grid.Row="0" Style="{StaticResource CardStyle}" Margin="0,0,0,8">
+                <Border Grid.Row="0" Style="{DynamicResource CardStyle}" Margin="0,0,0,8">
                     <DockPanel>
                         <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
                             <TextBlock Text="WATCHTOWER" Style="{StaticResource HeaderTextStyle}" FontSize="18" DockPanel.Dock="Left" ToolTip="Host Latency Monitor"/>
@@ -326,11 +328,11 @@
                             <ItemsControl ItemsSource="{Binding WatchtowerItems}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Border Margin="0,0,0,6" Padding="8" Background="{StaticResource InputBgBrush}" CornerRadius="6" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1" ToolTip="20-Sample Real-Time Host Ping Latency Sparkline Graph">
+                                        <Border Margin="0,0,0,6" Padding="8" Background="{DynamicResource InputBgBrush}" CornerRadius="6" BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1" ToolTip="20-Sample Real-Time Host Ping Latency Sparkline Graph">
                                             <StackPanel>
                                                 <Grid Margin="0,0,0,3">
-                                                    <TextBlock Text="{Binding Name}" FontSize="13.5" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}"/>
-                                                    <TextBlock Text="{Binding SummaryText}" HorizontalAlignment="Right" FontFamily="Consolas" FontSize="11.5" FontWeight="Bold" Foreground="{StaticResource FgMutedBrush}" ToolTip="Host Latency (Last | Avg | Peak)"/>
+                                                    <TextBlock Text="{Binding Name}" FontSize="13.5" FontWeight="Bold" Foreground="{DynamicResource FgPrimaryBrush}"/>
+                                                    <TextBlock Text="{Binding SummaryText}" HorizontalAlignment="Right" FontFamily="Consolas" FontSize="11.5" FontWeight="Bold" Foreground="{DynamicResource FgMutedBrush}" ToolTip="Host Latency (Last | Avg | Peak)"/>
                                                 </Grid>
                                                 <controls:SparklineChart History="{Binding History}" Status="{Binding Status}" Height="26"/>
                                             </StackPanel>
@@ -343,7 +345,7 @@
                 </Border>
 
                 <!-- BOTTOM CARD: POWER UTILITIES & LIGHT SLATE TERMINAL -->
-                <Border Grid.Row="1" Style="{StaticResource CardStyle}">
+                <Border Grid.Row="1" Style="{DynamicResource CardStyle}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -374,12 +376,12 @@
                             </WrapPanel>
                         </StackPanel>
 
-                        <!-- Light Slate-Grey Terminal Output -->
-                        <Border Grid.Row="2" Background="{StaticResource InputBgBrush}" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1.5" CornerRadius="6" Padding="6" Margin="0,0,0,4" ToolTip="Command Output Console Window (Redirects stdout and stderr)">
+                        <!-- Terminal Output -->
+                        <Border Grid.Row="2" Background="{DynamicResource InputBgBrush}" BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1.5" CornerRadius="6" Padding="6" Margin="0,0,0,4" ToolTip="Command Output Console Window (Redirects stdout and stderr)">
                             <TextBox Text="{Binding TerminalOutput, Mode=OneWay}" IsReadOnly="True"
                                      AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"
                                      TextChanged="TerminalOutput_TextChanged"
-                                     FontFamily="Consolas" FontSize="11.5" Foreground="{StaticResource FgPrimaryBrush}" Background="Transparent" BorderThickness="0"/>
+                                     FontFamily="Consolas" FontSize="11.5" Foreground="{DynamicResource FgPrimaryBrush}" Background="Transparent" BorderThickness="0"/>
                         </Border>
 
                         <!-- Terminal Input -->
@@ -390,7 +392,7 @@
                             </Grid.ColumnDefinitions>
                             <TextBox Grid.Column="0" Text="{Binding TerminalInput, UpdateSourceTrigger=PropertyChanged}"
                                      KeyDown="TerminalInput_KeyDown"
-                                     FontFamily="Consolas" FontSize="11.5" Padding="5" Background="{StaticResource InputBgBrush}" Foreground="{StaticResource FgPrimaryBrush}" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1.5" Margin="0,0,4,0" ToolTip="Type a command and press Enter or Run (Use Up/Down arrows for history)"/>
+                                     FontFamily="Consolas" FontSize="11.5" Padding="5" Background="{DynamicResource InputBgBrush}" Foreground="{DynamicResource FgPrimaryBrush}" BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1.5" Margin="0,0,4,0" ToolTip="Type a command and press Enter or Run (Use Up/Down arrows for history)"/>
                             <Button Grid.Column="1" Content="RUN" Command="{Binding RunTerminalCommand}" Style="{StaticResource ActionButtonStyle}" FontSize="11" Padding="10,3" ToolTip="Execute command asynchronously in background"/>
                         </Grid>
                     </Grid>
@@ -405,7 +407,7 @@
                 </Grid.RowDefinitions>
 
                 <!-- TOP CARD 4: GPU INTEL, SPECS & SECURITY -->
-                <Border Grid.Row="0" Style="{StaticResource CardStyle}" Margin="0,0,0,8">
+                <Border Grid.Row="0" Style="{DynamicResource CardStyle}" Margin="0,0,0,8">
                     <ScrollViewer VerticalScrollBarVisibility="Auto">
                         <StackPanel>
                             <TextBlock Text="SECURITY &amp; GPU" Style="{StaticResource HeaderTextStyle}" FontSize="20" Margin="0,0,0,8" ToolTip="Security &amp; GPU Hardware Intel"/>
@@ -431,36 +433,36 @@
 
                             <!-- Network Details -->
                             <TextBlock Text="NETWORK SPECS" Style="{StaticResource SectionTextStyle}" FontSize="13" Margin="0,4,0,2"/>
-                            <TextBlock FontSize="11" Foreground="{StaticResource FgMutedBrush}" Text="LOCAL IP:"/>
-                            <TextBlock FontSize="14" FontFamily="Consolas" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" Text="{Binding LocalIp}" Margin="0,0,0,4" ToolTip="Local Area Network IPv4 Address"/>
+                            <TextBlock FontSize="11" Foreground="{DynamicResource FgMutedBrush}" Text="LOCAL IP:"/>
+                            <TextBlock FontSize="14" FontFamily="Consolas" FontWeight="Bold" Foreground="{DynamicResource FgPrimaryBrush}" Text="{Binding LocalIp}" Margin="0,0,0,4" ToolTip="Local Area Network IPv4 Address"/>
 
-                            <TextBlock FontSize="11" Foreground="{StaticResource FgMutedBrush}" Text="WAN IP:"/>
-                            <TextBlock FontSize="14" FontFamily="Consolas" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" Text="{Binding PublicIp}" Margin="0,0,0,4" ToolTip="Public Internet WAN IP Address"/>
+                            <TextBlock FontSize="11" Foreground="{DynamicResource FgMutedBrush}" Text="WAN IP:"/>
+                            <TextBlock FontSize="14" FontFamily="Consolas" FontWeight="Bold" Foreground="{DynamicResource FgPrimaryBrush}" Text="{Binding PublicIp}" Margin="0,0,0,4" ToolTip="Public Internet WAN IP Address"/>
 
-                            <TextBlock FontSize="11" Foreground="{StaticResource FgMutedBrush}" Text="MAC ADDR:"/>
-                            <TextBlock FontSize="14" FontFamily="Consolas" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" Text="{Binding Mac}" Margin="0,0,0,8" ToolTip="Network Hardware MAC Address"/>
+                            <TextBlock FontSize="11" Foreground="{DynamicResource FgMutedBrush}" Text="MAC ADDR:"/>
+                            <TextBlock FontSize="14" FontFamily="Consolas" FontWeight="Bold" Foreground="{DynamicResource FgPrimaryBrush}" Text="{Binding Mac}" Margin="0,0,0,8" ToolTip="Network Hardware MAC Address"/>
 
                             <!-- Security Badges -->
-                            <Border BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="0,1.5,0,0" Padding="0,8,0,0">
+                            <Border BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="0,1.5,0,0" Padding="0,8,0,0">
                                 <StackPanel>
                                     <TextBlock Text="SECURITY COMPLIANCE" Style="{StaticResource SectionTextStyle}" FontSize="13" Margin="0,0,0,6"/>
                                     <UniformGrid Columns="3">
-                                        <Border Background="{StaticResource InputBgBrush}" CornerRadius="6" Padding="6,4" Margin="2" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1" ToolTip="Windows Defender Antivirus Protection Status">
+                                        <Border Background="{DynamicResource InputBgBrush}" CornerRadius="6" Padding="6,4" Margin="2" BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1" ToolTip="Windows Defender Antivirus Protection Status">
                                             <StackPanel HorizontalAlignment="Center">
-                                                <TextBlock Text="DEFENDER" FontSize="11" FontWeight="Bold" Foreground="{StaticResource FgMutedBrush}" HorizontalAlignment="Center"/>
+                                                <TextBlock Text="DEFENDER" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource FgMutedBrush}" HorizontalAlignment="Center"/>
                                                 <TextBlock Text="ACTIVE" FontSize="12" FontWeight="Bold" Foreground="{StaticResource AccentGreenBrush}" HorizontalAlignment="Center"/>
                                             </StackPanel>
                                         </Border>
-                                        <Border Background="{StaticResource InputBgBrush}" CornerRadius="6" Padding="6,4" Margin="2" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1" ToolTip="Windows Firewall Protection State">
+                                        <Border Background="{DynamicResource InputBgBrush}" CornerRadius="6" Padding="6,4" Margin="2" BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1" ToolTip="Windows Firewall Protection State">
                                             <StackPanel HorizontalAlignment="Center">
-                                                <TextBlock Text="FIREWALL" FontSize="11" FontWeight="Bold" Foreground="{StaticResource FgMutedBrush}" HorizontalAlignment="Center"/>
+                                                <TextBlock Text="FIREWALL" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource FgMutedBrush}" HorizontalAlignment="Center"/>
                                                 <TextBlock Text="ENABLED" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource AccentCyanBrush}" HorizontalAlignment="Center"/>
                                             </StackPanel>
                                         </Border>
-                                        <Border Background="{StaticResource InputBgBrush}" CornerRadius="6" Padding="6,4" Margin="2" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1" ToolTip="Windows Update Compliance Status">
+                                        <Border Background="{DynamicResource InputBgBrush}" CornerRadius="6" Padding="6,4" Margin="2" BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1" ToolTip="Windows Update Compliance Status">
                                             <StackPanel HorizontalAlignment="Center">
-                                                <TextBlock Text="UPDATES" FontSize="11" FontWeight="Bold" Foreground="{StaticResource FgMutedBrush}" HorizontalAlignment="Center"/>
-                                                <TextBlock Text="CURRENT" FontSize="12" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" HorizontalAlignment="Center"/>
+                                                <TextBlock Text="UPDATES" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource FgMutedBrush}" HorizontalAlignment="Center"/>
+                                                <TextBlock Text="CURRENT" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource FgPrimaryBrush}" HorizontalAlignment="Center"/>
                                             </StackPanel>
                                         </Border>
                                     </UniformGrid>
@@ -471,17 +473,17 @@
                 </Border>
 
                 <!-- BOTTOM CARD 4: QUICK NOTES -->
-                <Border Grid.Row="1" Style="{StaticResource CardStyle}">
+                <Border Grid.Row="1" Style="{DynamicResource CardStyle}">
                     <DockPanel>
                         <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
                             <TextBlock Text="QUICK NOTES" Style="{StaticResource HeaderTextStyle}" FontSize="18" DockPanel.Dock="Left" ToolTip="Auto-Saving Scratchpad"/>
                             <TextBlock Text="AUTO-SAVED" FontSize="11" FontWeight="Bold" Foreground="{StaticResource AccentGreenBrush}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                         </DockPanel>
-                        <Border Background="{StaticResource InputBgBrush}" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1" CornerRadius="6" Padding="6">
+                        <Border Background="{DynamicResource InputBgBrush}" BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1" CornerRadius="6" Padding="6">
                             <TextBox Text="{Binding NotesText, UpdateSourceTrigger=PropertyChanged}"
                                      AcceptsReturn="True" AcceptsTab="True" TextWrapping="Wrap"
                                      VerticalScrollBarVisibility="Auto" FontFamily="Consolas" FontSize="13"
-                                     Foreground="{StaticResource FgPrimaryBrush}" Background="Transparent" BorderThickness="0" ToolTip="Type notes here - changes auto-save instantly to notes.txt"/>
+                                     Foreground="{DynamicResource FgPrimaryBrush}" Background="Transparent" BorderThickness="0" ToolTip="Type notes here - changes auto-save instantly to notes.txt"/>
                         </Border>
                     </DockPanel>
                 </Border>
@@ -489,7 +491,7 @@
         </Grid>
 
         <!-- 3. BOTTOM STATUS TICKER -->
-        <Border Grid.Row="2" Margin="0,8,0,0" Padding="12,6" Style="{StaticResource CardStyle}" Cursor="Hand" MouseLeftButtonDown="BottomBar_MouseLeftButtonDown" ToolTip="Click to open interactive Event Log Viewer">
+        <Border Grid.Row="2" Margin="0,8,0,0" Padding="12,6" Style="{DynamicResource CardStyle}" Cursor="Hand" MouseLeftButtonDown="BottomBar_MouseLeftButtonDown" ToolTip="Click to open interactive Event Log Viewer">
             <Grid>
                 <TextBlock Text="{Binding StatusText}" Foreground="{Binding StatusBrush}" FontFamily="Consolas" FontSize="13" FontWeight="Bold" VerticalAlignment="Center" ToolTip="Live System Telemetry Alert Status"/>
                 <TextBlock Text="[ VIEW SYSTEM EVENT LOGS ]" Foreground="{DynamicResource AccentCyanBrush}" FontSize="13" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center" ToolTip="Open System Event Log Viewer Window"/>

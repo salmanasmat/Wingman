@@ -86,7 +86,13 @@ namespace Wingman.Controls
             double totalSweep = 240;
 
             // Draw Track
-            DrawArc(dc, TrackPen, center, radius, startAngle, totalSweep);
+            Brush dynamicTrackBrush = (Application.Current?.TryFindResource("GaugeTrackBrush") as Brush) ?? TrackBrush;
+            var dynamicTrackPen = new Pen(dynamicTrackBrush, 14)
+            {
+                StartLineCap = PenLineCap.Round,
+                EndLineCap = PenLineCap.Round
+            };
+            DrawArc(dc, dynamicTrackPen, center, radius, startAngle, totalSweep);
 
             // Draw Value Arc
             double clampedVal = Math.Clamp(Value, 0, 100);
@@ -105,7 +111,7 @@ namespace Wingman.Controls
 
             // Draw Percentage Text (Increased to 34pt extra bold)
             string pctText = $"{Math.Round(clampedVal)}%";
-            Brush primaryBrush = (Brush)Application.Current.FindResource("FgPrimaryBrush") ?? Brushes.DarkSlateGray;
+            Brush primaryBrush = (Application.Current?.TryFindResource("FgPrimaryBrush") as Brush) ?? Brushes.DarkSlateGray;
             var formattedPct = new FormattedText(
                 pctText,
                 CultureInfo.CurrentCulture,
@@ -118,7 +124,7 @@ namespace Wingman.Controls
             dc.DrawText(formattedPct, new Point(center.X - formattedPct.Width / 2, center.Y - formattedPct.Height / 2 - 14));
 
             // Draw Title Text (Increased to 14pt bold)
-            Brush mutedBrush = (Brush)Application.Current.FindResource("FgMutedBrush") ?? Brushes.Gray;
+            Brush mutedBrush = (Application.Current?.TryFindResource("FgMutedBrush") as Brush) ?? Brushes.Gray;
             var formattedTitle = new FormattedText(
                 Title,
                 CultureInfo.CurrentCulture,

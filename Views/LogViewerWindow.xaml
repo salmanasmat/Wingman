@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="EVENT HISTORY" Height="500" Width="700"
         WindowStartupLocation="CenterOwner"
-        Background="{StaticResource BgMainBrush}">
+        Background="{DynamicResource BgMainBrush}">
     <Grid Margin="15">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -14,7 +14,7 @@
         <TextBlock Text="{Binding LogTitle}" Style="{StaticResource HeaderTextStyle}" FontSize="16" Margin="0,0,0,10"/>
 
         <!-- Log Text Area -->
-        <Border Grid.Row="1" Background="{StaticResource BgCardBrush}" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1" CornerRadius="6" Padding="10">
+        <Border Grid.Row="1" Background="{DynamicResource BgCardBrush}" BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1" CornerRadius="6" Padding="10">
             <TextBox Text="{Binding LogContent, Mode=OneWay}"
                      IsReadOnly="True"
                      TextWrapping="Wrap"
@@ -22,7 +22,7 @@
                      HorizontalScrollBarVisibility="Auto"
                      FontFamily="Consolas"
                      FontSize="12"
-                     Foreground="{StaticResource FgPrimaryBrush}"
+                     Foreground="{DynamicResource FgPrimaryBrush}"
                      Background="Transparent"
                      BorderThickness="0"/>
         </Border>

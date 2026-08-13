@@ -31,6 +31,7 @@ namespace Wingman.ViewModels
 
         private string _selectedThemeName = "Cyber Cyan";
         private bool _preventSleep;
+        private bool _isDarkMode;
 
         public ObservableCollection<string> TargetListItems { get; } = new ObservableCollection<string>();
         public ObservableCollection<string> LaunchpadListItems { get; } = new ObservableCollection<string>();
@@ -65,6 +66,7 @@ namespace Wingman.ViewModels
 
         public string SelectedThemeName { get => _selectedThemeName; set => SetProperty(ref _selectedThemeName, value); }
         public bool PreventSleep { get => _preventSleep; set => SetProperty(ref _preventSleep, value); }
+        public bool IsDarkMode { get => _isDarkMode; set => SetProperty(ref _isDarkMode, value); }
 
         public ICommand AddTargetCommand { get; }
         public ICommand EditTargetCommand { get; }
@@ -102,6 +104,7 @@ namespace Wingman.ViewModels
         {
             var cfg = _configService.Current;
             PreventSleep = cfg.PreventSleep;
+            IsDarkMode = cfg.Theme.IsDarkMode;
 
             string currentHex = cfg.Theme.AccentCyan.ToLower();
             SelectedThemeName = Themes.FirstOrDefault(x => x.Value.ToLower() == currentHex).Key ?? "Cyber Cyan";
@@ -297,6 +300,7 @@ namespace Wingman.ViewModels
                 _configService.Current.Theme.AccentCyan = hex;
             }
 
+            _configService.Current.Theme.IsDarkMode = IsDarkMode;
             _configService.Current.PreventSleep = PreventSleep;
             _configService.SaveConfig();
 

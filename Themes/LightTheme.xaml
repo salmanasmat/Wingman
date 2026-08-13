@@ -16,27 +16,29 @@
     <Color x:Key="ButtonBgColor">#F8FAFC</Color>
     <Color x:Key="ButtonHoverColor">#E2E8F0</Color>
     <Color x:Key="InputBgColor">#F8FAFC</Color>
+    <Color x:Key="GaugeTrackColor">#E2E8F0</Color>
 
     <!-- Brushes -->
-    <SolidColorBrush x:Key="BgMainBrush" Color="{StaticResource BgMainColor}" />
-    <SolidColorBrush x:Key="BgCardBrush" Color="{StaticResource BgCardColor}" />
-    <SolidColorBrush x:Key="CardBorderBrush" Color="{StaticResource CardBorderColor}" />
-    <SolidColorBrush x:Key="FgPrimaryBrush" Color="{StaticResource FgPrimaryColor}" />
-    <SolidColorBrush x:Key="FgMutedBrush" Color="{StaticResource FgMutedColor}" />
+    <SolidColorBrush x:Key="BgMainBrush" Color="{DynamicResource BgMainColor}" />
+    <SolidColorBrush x:Key="BgCardBrush" Color="{DynamicResource BgCardColor}" />
+    <SolidColorBrush x:Key="CardBorderBrush" Color="{DynamicResource CardBorderColor}" />
+    <SolidColorBrush x:Key="FgPrimaryBrush" Color="{DynamicResource FgPrimaryColor}" />
+    <SolidColorBrush x:Key="FgMutedBrush" Color="{DynamicResource FgMutedColor}" />
 
-    <SolidColorBrush x:Key="AccentCyanBrush" Color="{StaticResource AccentCyanColor}" />
-    <SolidColorBrush x:Key="AccentGreenBrush" Color="{StaticResource AccentGreenColor}" />
-    <SolidColorBrush x:Key="AccentWarnBrush" Color="{StaticResource AccentWarnColor}" />
-    <SolidColorBrush x:Key="AccentCritBrush" Color="{StaticResource AccentCritColor}" />
+    <SolidColorBrush x:Key="AccentCyanBrush" Color="{DynamicResource AccentCyanColor}" />
+    <SolidColorBrush x:Key="AccentGreenBrush" Color="{DynamicResource AccentGreenColor}" />
+    <SolidColorBrush x:Key="AccentWarnBrush" Color="{DynamicResource AccentWarnColor}" />
+    <SolidColorBrush x:Key="AccentCritBrush" Color="{DynamicResource AccentCritColor}" />
 
-    <SolidColorBrush x:Key="ButtonBgBrush" Color="{StaticResource ButtonBgColor}" />
-    <SolidColorBrush x:Key="ButtonHoverBrush" Color="{StaticResource ButtonHoverColor}" />
-    <SolidColorBrush x:Key="InputBgBrush" Color="{StaticResource InputBgColor}" />
+    <SolidColorBrush x:Key="ButtonBgBrush" Color="{DynamicResource ButtonBgColor}" />
+    <SolidColorBrush x:Key="ButtonHoverBrush" Color="{DynamicResource ButtonHoverColor}" />
+    <SolidColorBrush x:Key="InputBgBrush" Color="{DynamicResource InputBgColor}" />
+    <SolidColorBrush x:Key="GaugeTrackBrush" Color="{DynamicResource GaugeTrackColor}" />
 
     <!-- Card Style -->
     <Style x:Key="CardStyle" TargetType="Border">
-        <Setter Property="Background" Value="{StaticResource BgCardBrush}" />
-        <Setter Property="BorderBrush" Value="{StaticResource CardBorderBrush}" />
+        <Setter Property="Background" Value="{DynamicResource BgCardBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}" />
         <Setter Property="BorderThickness" Value="1.5" />
         <Setter Property="CornerRadius" Value="10" />
         <Setter Property="Padding" Value="14" />
@@ -44,12 +46,12 @@
         <Setter Property="UseLayoutRounding" Value="True" />
         <Setter Property="Effect">
             <Setter.Value>
-                <DropShadowEffect BlurRadius="12" ShadowDepth="3" Direction="270" Color="{StaticResource FgPrimaryColor}" Opacity="0.06" />
+                <DropShadowEffect BlurRadius="12" ShadowDepth="3" Direction="270" Color="{DynamicResource FgPrimaryColor}" Opacity="0.06" />
             </Setter.Value>
         </Setter>
     </Style>
 
-    <!-- Header Text Style (Increased to 19pt) -->
+    <!-- Header Text Style -->
     <Style x:Key="HeaderTextStyle" TargetType="TextBlock">
         <Setter Property="FontFamily" Value="Segoe UI" />
         <Setter Property="FontSize" Value="19" />
@@ -60,27 +62,27 @@
         <Setter Property="TextOptions.TextRenderingMode" Value="ClearType" />
     </Style>
 
-    <!-- Section Text Style (Increased to 13.5pt) -->
+    <!-- Section Text Style -->
     <Style x:Key="SectionTextStyle" TargetType="TextBlock">
         <Setter Property="FontFamily" Value="Segoe UI" />
         <Setter Property="FontSize" Value="13.5" />
         <Setter Property="FontWeight" Value="Bold" />
-        <Setter Property="Foreground" Value="{StaticResource FgMutedBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource FgMutedBrush}" />
         <Setter Property="Margin" Value="0,8,0,4" />
         <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
         <Setter Property="TextOptions.TextRenderingMode" Value="ClearType" />
     </Style>
 
-    <!-- Action Button Style (Increased to 13pt) -->
+    <!-- Action Button Style -->
     <Style x:Key="ActionButtonStyle" TargetType="Button">
-        <Setter Property="Background" Value="{StaticResource ButtonBgBrush}" />
-        <Setter Property="Foreground" Value="{StaticResource FgPrimaryBrush}" />
+        <Setter Property="Background" Value="{DynamicResource ButtonBgBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource FgPrimaryBrush}" />
         <Setter Property="FontFamily" Value="Segoe UI" />
         <Setter Property="FontSize" Value="13" />
         <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="Padding" Value="10,6" />
         <Setter Property="BorderThickness" Value="1.5" />
-        <Setter Property="BorderBrush" Value="{StaticResource CardBorderBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource CardBorderBrush}" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="UseLayoutRounding" Value="True" />
@@ -96,7 +98,7 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="{StaticResource ButtonHoverBrush}" />
+                            <Setter Property="Background" Value="{DynamicResource ButtonHoverBrush}" />
                             <Setter Property="Foreground" Value="{DynamicResource AccentCyanBrush}" />
                             <Setter Property="BorderBrush" Value="{DynamicResource AccentCyanBrush}" />
                         </Trigger>

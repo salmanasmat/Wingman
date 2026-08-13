@@ -76,8 +76,12 @@ namespace Wingman.Controls
             double w = ActualWidth > 0 ? ActualWidth : 180;
             double h = ActualHeight > 0 ? ActualHeight : 24;
 
+            Brush dynamicTrackBrush = (Application.Current?.TryFindResource("InputBgBrush") as Brush) ?? TrackBrush;
+            Brush dynamicBorderBrush = (Application.Current?.TryFindResource("CardBorderBrush") as Brush) ?? Brushes.Gray;
+            var dynamicBorderPen = new Pen(dynamicBorderBrush, 1.5);
+
             // Background Track
-            dc.DrawRoundedRectangle(TrackBrush, BorderPen, new Rect(0, 0, w, h), 6, 6);
+            dc.DrawRoundedRectangle(dynamicTrackBrush, dynamicBorderPen, new Rect(0, 0, w, h), 6, 6);
 
             // Fill Bar
             double pct = Math.Clamp(Value, 0, 100);
@@ -89,7 +93,8 @@ namespace Wingman.Controls
             }
 
             // Label Text
-            Brush textBrush = pct > 60 ? Brushes.White : DarkTextBrush;
+            Brush dynamicTextBrush = (Application.Current?.TryFindResource("FgPrimaryBrush") as Brush) ?? DarkTextBrush;
+            Brush textBrush = pct > 60 ? Brushes.White : dynamicTextBrush;
             var formattedLabel = new FormattedText(
                 Label,
                 CultureInfo.CurrentCulture,

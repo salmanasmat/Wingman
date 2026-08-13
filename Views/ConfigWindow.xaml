@@ -102,16 +102,18 @@
                 <StackPanel Margin="20">
                     <TextBlock Text="INTERFACE THEME" Style="{StaticResource HeaderTextStyle}" Margin="0,0,0,15"/>
 
+                    <CheckBox Content="Enable Dark Mode Theme" IsChecked="{Binding IsDarkMode}" Foreground="{DynamicResource FgPrimaryBrush}" FontWeight="SemiBold" Margin="0,0,0,15"/>
+
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,25">
-                        <TextBlock Text="Primary Accent Color:" VerticalAlignment="Center" Margin="0,0,15,0" Foreground="{StaticResource FgPrimaryBrush}" FontWeight="SemiBold"/>
+                        <TextBlock Text="Primary Accent Color:" VerticalAlignment="Center" Margin="0,0,15,0" Foreground="{DynamicResource FgPrimaryBrush}" FontWeight="SemiBold"/>
                         <ComboBox ItemsSource="{Binding ThemeNames}" SelectedItem="{Binding SelectedThemeName}" Width="180" Padding="6"/>
                     </StackPanel>
 
                     <TextBlock Text="BEHAVIOR" Style="{StaticResource HeaderTextStyle}" Margin="0,0,0,15"/>
-                    <CheckBox Content="Prevent Sleep in Fullscreen" IsChecked="{Binding PreventSleep}" Foreground="{StaticResource FgPrimaryBrush}" FontWeight="SemiBold" Margin="0,0,0,30"/>
+                    <CheckBox Content="Prevent Sleep in Fullscreen" IsChecked="{Binding PreventSleep}" Foreground="{DynamicResource FgPrimaryBrush}" FontWeight="SemiBold" Margin="0,0,0,30"/>
 
                     <Button Content="APPLY SETTINGS" Command="{Binding ApplySettingsCommand}" Style="{StaticResource ActionButtonStyle}"
-                            Background="{StaticResource AccentCyanBrush}" Foreground="White" Width="180" HorizontalAlignment="Left" Padding="0,10"/>
+                            Background="{DynamicResource AccentCyanBrush}" Foreground="White" Width="180" HorizontalAlignment="Left" Padding="0,10"/>
                 </StackPanel>
             </TabItem>
 

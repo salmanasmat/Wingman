@@ -75,24 +75,44 @@ namespace Wingman.Services
 
         public static void ApplyThemeResources(ThemeConfig? theme)
         {
-            if (theme == null || string.IsNullOrWhiteSpace(theme.AccentCyan)) return;
+            if (theme == null) return;
 
             try
             {
-                var color = (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(theme.AccentCyan);
-                var brush = new System.Windows.Media.SolidColorBrush(color);
-                brush.Freeze();
-
                 if (System.Windows.Application.Current != null)
                 {
                     System.Windows.Application.Current.Dispatcher.Invoke(() =>
                     {
-                        System.Windows.Application.Current.Resources["AccentCyanBrush"] = brush;
-                        System.Windows.Application.Current.Resources["AccentCyanColor"] = color;
+                        string themeSource = theme.IsDarkMode ? "Themes/DarkTheme.xaml" : "Themes/LightTheme.xaml";
+                        var newDict = new System.Windows.ResourceDictionary
+                        {
+                            Source = new Uri(themeSource, UriKind.Relative)
+                        };
+
+                        var appDicts = System.Windows.Application.Current.Resources.MergedDictionaries;
+                        appDicts.Clear();
+                        appDicts.Add(newDict);
+
+                        if (!string.IsNullOrWhiteSpace(theme.AccentCyan))
+                        {
+                            try
+                            {
+                                var color = (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(theme.AccentCyan);
+                                var brush = new System.Windows.Media.SolidColorBrush(color);
+                                brush.Freeze();
+
+                                System.Windows.Application.Current.Resources["AccentCyanBrush"] = brush;
+                                System.Windows.Application.Current.Resources["AccentCyanColor"] = color;
+                            }
+                            catch { }
+                        }
                     });
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                LoggingService.WriteLog($"Failed to apply theme resources: {ex.Message}", "ERROR");
+            }
         }
 
         private void EnsureDefaults(DashboardConfig cfg)

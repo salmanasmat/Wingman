@@ -48,6 +48,9 @@ namespace Wingman.Models
         [JsonPropertyName("accent_crit")]
         public string AccentCrit { get; set; } = "#EF4444";
 
+        [JsonPropertyName("is_dark_mode")]
+        public bool IsDarkMode { get; set; } = false;
+
         [JsonPropertyName("font_family")]
         public string FontFamily { get; set; } = "Segoe UI";
 
