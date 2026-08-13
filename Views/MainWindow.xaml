@@ -402,119 +402,117 @@
             <!-- ================= COLUMN 4 (FAR RIGHT: SECURITY & GPU INTEL) ================= -->
             <Grid Grid.Column="3" Margin="5,0,0,0">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="1*"/>
-                    <RowDefinition Height="1.25*"/>
+                    <RowDefinition Height="1.65*"/>
+                    <RowDefinition Height="0.8*"/>
                 </Grid.RowDefinitions>
 
                 <!-- TOP CARD 4: GPU INTEL, SPECS & SECURITY -->
                 <Border Grid.Row="0" Style="{DynamicResource CardStyle}" Margin="0,0,0,8">
-                    <ScrollViewer VerticalScrollBarVisibility="Auto">
-                        <StackPanel>
-                            <TextBlock Text="SECURITY &amp; GPU" Style="{StaticResource HeaderTextStyle}" FontSize="20" Margin="0,0,0,8" ToolTip="Security &amp; GPU Hardware Intel"/>
+                    <StackPanel>
+                        <TextBlock Text="SECURITY &amp; GPU" Style="{StaticResource HeaderTextStyle}" FontSize="18" Margin="0,0,0,6" ToolTip="Security &amp; GPU Hardware Intel"/>
 
-                            <!-- GPU Intel -->
-                            <TextBlock Text="GPU GRAPHICS" Style="{StaticResource SectionTextStyle}" FontSize="13" Margin="0,0,0,2"/>
-                            <TextBlock FontSize="14" FontFamily="Consolas" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" Text="{Binding GpuName}" Margin="0,0,0,6" ToolTip="Graphics Adapter Hardware Name"/>
+                        <!-- GPU Intel -->
+                        <TextBlock Text="GPU GRAPHICS" Style="{StaticResource SectionTextStyle}" FontSize="12.5" Margin="0,0,0,2"/>
+                        <TextBlock FontSize="13.5" FontFamily="Consolas" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" Text="{Binding GpuName}" Margin="0,0,0,4" ToolTip="Graphics Adapter Hardware Name"/>
 
-                            <Grid Margin="0,0,0,8">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <StackPanel Grid.Column="0" ToolTip="Total Dedicated Video RAM (VRAM) in MB">
-                                    <TextBlock FontSize="11" Foreground="{StaticResource FgMutedBrush}" Text="VRAM TOTAL:"/>
-                                    <TextBlock FontSize="14" FontFamily="Consolas" FontWeight="Bold" Foreground="{DynamicResource AccentCyanBrush}" Text="{Binding VramText}"/>
-                                </StackPanel>
-                                <StackPanel Grid.Column="1" ToolTip="Primary Display Screen Resolution">
-                                    <TextBlock FontSize="11" Foreground="{StaticResource FgMutedBrush}" Text="DISPLAY:"/>
-                                    <TextBlock FontSize="14" FontFamily="Consolas" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" Text="{Binding DisplayRes}"/>
-                                </StackPanel>
-                            </Grid>
+                        <Grid Margin="0,0,0,6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" ToolTip="Total Dedicated Video RAM (VRAM) in MB">
+                                <TextBlock FontSize="10.5" Foreground="{StaticResource FgMutedBrush}" Text="VRAM TOTAL:"/>
+                                <TextBlock FontSize="13.5" FontFamily="Consolas" FontWeight="Bold" Foreground="{DynamicResource AccentCyanBrush}" Text="{Binding VramText}"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" ToolTip="Primary Display Screen Resolution">
+                                <TextBlock FontSize="10.5" Foreground="{StaticResource FgMutedBrush}" Text="DISPLAY:"/>
+                                <TextBlock FontSize="13.5" FontFamily="Consolas" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" Text="{Binding DisplayRes}"/>
+                            </StackPanel>
+                        </Grid>
 
-                            <!-- Network Details (Split 2-Column: Wi-Fi vs LAN) -->
-                            <TextBlock Text="NETWORK SPECS" Style="{StaticResource SectionTextStyle}" FontSize="13" Margin="0,4,0,4"/>
-                            <Grid Margin="0,0,0,6">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
+                        <!-- Network Details (Split 2-Column: Wi-Fi vs LAN) -->
+                        <TextBlock Text="NETWORK SPECS" Style="{StaticResource SectionTextStyle}" FontSize="12.5" Margin="0,2,0,3"/>
+                        <Grid Margin="0,0,0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
 
-                                <!-- Left: Wi-Fi Specs -->
-                                <StackPanel Grid.Column="0" Margin="0,0,4,0" ToolTip="Wireless Wi-Fi Adapter Intel">
-                                    <TextBlock Text="📶 WI-FI ADAPTER" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource AccentCyanBrush}"/>
+                            <!-- Left: Wi-Fi Specs -->
+                            <StackPanel Grid.Column="0" Margin="0,0,4,0" ToolTip="Wireless Wi-Fi Adapter Intel">
+                                <TextBlock Text="📶 WI-FI ADAPTER" FontSize="10.5" FontWeight="Bold" Foreground="{DynamicResource AccentCyanBrush}"/>
 
-                                    <TextBlock FontSize="10.5" Foreground="{DynamicResource FgMutedBrush}" Text="SSID / SIGNAL:"/>
-                                    <TextBlock FontSize="12" FontFamily="Consolas" FontWeight="Bold" Foreground="{DynamicResource FgPrimaryBrush}" Margin="0,0,0,3">
-                                        <Run Text="{Binding WifiSsid, Mode=OneWay}"/>
-                                        <Run Text=" ("/><Run Text="{Binding WifiSignal, Mode=OneWay}"/><Run Text=")"/>
-                                    </TextBlock>
+                                <TextBlock FontSize="10" Foreground="{DynamicResource FgMutedBrush}" Text="SSID / SIGNAL:"/>
+                                <TextBlock FontSize="11.5" FontFamily="Consolas" FontWeight="Bold" Foreground="{DynamicResource FgPrimaryBrush}" Margin="0,0,0,2">
+                                    <Run Text="{Binding WifiSsid, Mode=OneWay}"/>
+                                    <Run Text=" ("/><Run Text="{Binding WifiSignal, Mode=OneWay}"/><Run Text=")"/>
+                                </TextBlock>
 
-                                    <TextBlock FontSize="10.5" Foreground="{DynamicResource FgMutedBrush}" Text="WIFI IP:"/>
-                                    <TextBlock FontSize="12" FontFamily="Consolas" FontWeight="Bold" Foreground="{DynamicResource FgPrimaryBrush}" Text="{Binding WifiIp}" Margin="0,0,0,3"/>
+                                <TextBlock FontSize="10" Foreground="{DynamicResource FgMutedBrush}" Text="WIFI IP:"/>
+                                <TextBlock FontSize="11.5" FontFamily="Consolas" FontWeight="Bold" Foreground="{DynamicResource FgPrimaryBrush}" Text="{Binding WifiIp}" Margin="0,0,0,2"/>
 
-                                    <TextBlock FontSize="10.5" Foreground="{DynamicResource FgMutedBrush}" Text="WIFI MAC:"/>
-                                    <TextBlock FontSize="11" FontFamily="Consolas" FontWeight="Bold" Foreground="{DynamicResource FgMutedBrush}" Text="{Binding WifiMac}"/>
-                                </StackPanel>
+                                <TextBlock FontSize="10" Foreground="{DynamicResource FgMutedBrush}" Text="WIFI MAC:"/>
+                                <TextBlock FontSize="10.5" FontFamily="Consolas" FontWeight="Bold" Foreground="{DynamicResource FgMutedBrush}" Text="{Binding WifiMac}"/>
+                            </StackPanel>
 
-                                <!-- Right: LAN / Ethernet Specs -->
-                                <StackPanel Grid.Column="1" Margin="4,0,0,0" ToolTip="Wired Ethernet LAN Adapter Intel">
-                                    <TextBlock Text="🔌 ETHERNET / LAN" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource AccentGreenBrush}"/>
+                            <!-- Right: LAN / Ethernet Specs -->
+                            <StackPanel Grid.Column="1" Margin="4,0,0,0" ToolTip="Wired Ethernet LAN Adapter Intel">
+                                <TextBlock Text="🔌 ETHERNET / LAN" FontSize="10.5" FontWeight="Bold" Foreground="{DynamicResource AccentGreenBrush}"/>
 
-                                    <TextBlock FontSize="10.5" Foreground="{DynamicResource FgMutedBrush}" Text="LAN STATUS:"/>
-                                    <TextBlock FontSize="12" FontFamily="Consolas" FontWeight="Bold" Foreground="{DynamicResource FgPrimaryBrush}" Text="{Binding LanStatus}" Margin="0,0,0,3"/>
+                                <TextBlock FontSize="10" Foreground="{DynamicResource FgMutedBrush}" Text="LAN STATUS:"/>
+                                <TextBlock FontSize="11.5" FontFamily="Consolas" FontWeight="Bold" Foreground="{DynamicResource FgPrimaryBrush}" Text="{Binding LanStatus}" Margin="0,0,0,2"/>
 
-                                    <TextBlock FontSize="10.5" Foreground="{DynamicResource FgMutedBrush}" Text="LAN IP:"/>
-                                    <TextBlock FontSize="12" FontFamily="Consolas" FontWeight="Bold" Foreground="{DynamicResource FgPrimaryBrush}" Text="{Binding LanIp}" Margin="0,0,0,3"/>
+                                <TextBlock FontSize="10" Foreground="{DynamicResource FgMutedBrush}" Text="LAN IP:"/>
+                                <TextBlock FontSize="11.5" FontFamily="Consolas" FontWeight="Bold" Foreground="{DynamicResource FgPrimaryBrush}" Text="{Binding LanIp}" Margin="0,0,0,2"/>
 
-                                    <TextBlock FontSize="10.5" Foreground="{DynamicResource FgMutedBrush}" Text="LAN MAC:"/>
-                                    <TextBlock FontSize="11" FontFamily="Consolas" FontWeight="Bold" Foreground="{DynamicResource FgMutedBrush}" Text="{Binding LanMac}"/>
-                                </StackPanel>
-                            </Grid>
+                                <TextBlock FontSize="10" Foreground="{DynamicResource FgMutedBrush}" Text="LAN MAC:"/>
+                                <TextBlock FontSize="10.5" FontFamily="Consolas" FontWeight="Bold" Foreground="{DynamicResource FgMutedBrush}" Text="{Binding LanMac}"/>
+                            </StackPanel>
+                        </Grid>
 
-                            <!-- Public WAN IP & Gateway Footer -->
-                            <Grid Margin="0,2,0,6">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <StackPanel Grid.Column="0" ToolTip="Public Internet WAN IP">
-                                    <TextBlock FontSize="10.5" Foreground="{DynamicResource FgMutedBrush}" Text="PUBLIC WAN IP:"/>
-                                    <TextBlock FontSize="12" FontFamily="Consolas" FontWeight="Bold" Foreground="{DynamicResource AccentWarnBrush}" Text="{Binding PublicIp}"/>
-                                </StackPanel>
-                                <StackPanel Grid.Column="1" ToolTip="Default Gateway Router IP">
-                                    <TextBlock FontSize="10.5" Foreground="{DynamicResource FgMutedBrush}" Text="GATEWAY:"/>
-                                    <TextBlock FontSize="12" FontFamily="Consolas" FontWeight="Bold" Foreground="{DynamicResource FgPrimaryBrush}" Text="{Binding Gateway}"/>
-                                </StackPanel>
-                            </Grid>
+                        <!-- Public WAN IP & Gateway Footer -->
+                        <Grid Margin="0,2,0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" ToolTip="Public Internet WAN IP">
+                                <TextBlock FontSize="10" Foreground="{DynamicResource FgMutedBrush}" Text="PUBLIC WAN IP:"/>
+                                <TextBlock FontSize="11.5" FontFamily="Consolas" FontWeight="Bold" Foreground="{DynamicResource AccentWarnBrush}" Text="{Binding PublicIp}"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" ToolTip="Default Gateway Router IP">
+                                <TextBlock FontSize="10" Foreground="{DynamicResource FgMutedBrush}" Text="GATEWAY:"/>
+                                <TextBlock FontSize="11.5" FontFamily="Consolas" FontWeight="Bold" Foreground="{DynamicResource FgPrimaryBrush}" Text="{Binding Gateway}"/>
+                            </StackPanel>
+                        </Grid>
 
-                            <!-- Security Badges -->
-                            <Border BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="0,1.5,0,0" Padding="0,8,0,0">
-                                <StackPanel>
-                                    <TextBlock Text="SECURITY COMPLIANCE" Style="{StaticResource SectionTextStyle}" FontSize="13" Margin="0,0,0,6"/>
-                                    <UniformGrid Columns="3">
-                                        <Border Background="{DynamicResource InputBgBrush}" CornerRadius="6" Padding="6,4" Margin="2" BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1" ToolTip="Windows Defender Antivirus Protection Status">
-                                            <StackPanel HorizontalAlignment="Center">
-                                                <TextBlock Text="DEFENDER" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource FgMutedBrush}" HorizontalAlignment="Center"/>
-                                                <TextBlock Text="ACTIVE" FontSize="12" FontWeight="Bold" Foreground="{StaticResource AccentGreenBrush}" HorizontalAlignment="Center"/>
-                                            </StackPanel>
-                                        </Border>
-                                        <Border Background="{DynamicResource InputBgBrush}" CornerRadius="6" Padding="6,4" Margin="2" BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1" ToolTip="Windows Firewall Protection State">
-                                            <StackPanel HorizontalAlignment="Center">
-                                                <TextBlock Text="FIREWALL" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource FgMutedBrush}" HorizontalAlignment="Center"/>
-                                                <TextBlock Text="ENABLED" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource AccentCyanBrush}" HorizontalAlignment="Center"/>
-                                            </StackPanel>
-                                        </Border>
-                                        <Border Background="{DynamicResource InputBgBrush}" CornerRadius="6" Padding="6,4" Margin="2" BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1" ToolTip="Windows Update Compliance Status">
-                                            <StackPanel HorizontalAlignment="Center">
-                                                <TextBlock Text="UPDATES" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource FgMutedBrush}" HorizontalAlignment="Center"/>
-                                                <TextBlock Text="CURRENT" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource FgPrimaryBrush}" HorizontalAlignment="Center"/>
-                                            </StackPanel>
-                                        </Border>
-                                    </UniformGrid>
-                                </StackPanel>
-                            </Border>
-                        </StackPanel>
-                    </ScrollViewer>
+                        <!-- Security Badges -->
+                        <Border BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="0,1.5,0,0" Padding="0,6,0,0">
+                            <StackPanel>
+                                <TextBlock Text="SECURITY COMPLIANCE" Style="{StaticResource SectionTextStyle}" FontSize="12.5" Margin="0,0,0,4"/>
+                                <UniformGrid Columns="3">
+                                    <Border Background="{DynamicResource InputBgBrush}" CornerRadius="6" Padding="4,3" Margin="2" BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1" ToolTip="Windows Defender Antivirus Protection Status">
+                                        <StackPanel HorizontalAlignment="Center">
+                                            <TextBlock Text="DEFENDER" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource FgMutedBrush}" HorizontalAlignment="Center"/>
+                                            <TextBlock Text="ACTIVE" FontSize="11" FontWeight="Bold" Foreground="{StaticResource AccentGreenBrush}" HorizontalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Border>
+                                    <Border Background="{DynamicResource InputBgBrush}" CornerRadius="6" Padding="4,3" Margin="2" BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1" ToolTip="Windows Firewall Protection State">
+                                        <StackPanel HorizontalAlignment="Center">
+                                            <TextBlock Text="FIREWALL" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource FgMutedBrush}" HorizontalAlignment="Center"/>
+                                            <TextBlock Text="ENABLED" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource AccentCyanBrush}" HorizontalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Border>
+                                    <Border Background="{DynamicResource InputBgBrush}" CornerRadius="6" Padding="4,3" Margin="2" BorderBrush="{DynamicResource CardBorderBrush}" BorderThickness="1" ToolTip="Windows Update Compliance Status">
+                                        <StackPanel HorizontalAlignment="Center">
+                                            <TextBlock Text="UPDATES" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource FgMutedBrush}" HorizontalAlignment="Center"/>
+                                            <TextBlock Text="CURRENT" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource FgPrimaryBrush}" HorizontalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Border>
+                                </UniformGrid>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
                 </Border>
 
                 <!-- BOTTOM CARD 4: QUICK NOTES -->
