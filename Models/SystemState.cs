@@ -88,8 +88,14 @@ namespace Wingman.Models
         public string PublicIp { get; set; } = "...";
         public string Mac { get; set; } = "...";
         public string Gateway { get; set; } = "...";
+        public string LanName { get; set; } = "Ethernet";
+        public string LanIp { get; set; } = "N/A";
+        public string LanMac { get; set; } = "N/A";
+        public string LanStatus { get; set; } = "DISCONNECTED";
         public string WifiSsid { get; set; } = "N/A";
         public string WifiSignal { get; set; } = "0%";
+        public string WifiIp { get; set; } = "N/A";
+        public string WifiMac { get; set; } = "N/A";
         public string WifiRadio { get; set; } = "...";
         public string WifiAuth { get; set; } = "...";
 

@@ -130,8 +130,14 @@ namespace Wingman.ViewModels
         private string _publicIp = "...";
         private string _mac = "...";
         private string _gateway = "...";
+        private string _lanName = "Ethernet";
+        private string _lanIp = "N/A";
+        private string _lanMac = "N/A";
+        private string _lanStatus = "DISCONNECTED";
         private string _wifiSsid = "N/A";
         private string _wifiSignal = "0%";
+        private string _wifiIp = "N/A";
+        private string _wifiMac = "N/A";
         private string _wifiRadio = "...";
         private string _wifiAuth = "...";
 
@@ -199,8 +205,14 @@ namespace Wingman.ViewModels
         public string PublicIp { get => _publicIp; set => SetProperty(ref _publicIp, value); }
         public string Mac { get => _mac; set => SetProperty(ref _mac, value); }
         public string Gateway { get => _gateway; set => SetProperty(ref _gateway, value); }
+        public string LanName { get => _lanName; set => SetProperty(ref _lanName, value); }
+        public string LanIp { get => _lanIp; set => SetProperty(ref _lanIp, value); }
+        public string LanMac { get => _lanMac; set => SetProperty(ref _lanMac, value); }
+        public string LanStatus { get => _lanStatus; set => SetProperty(ref _lanStatus, value); }
         public string WifiSsid { get => _wifiSsid; set => SetProperty(ref _wifiSsid, value); }
         public string WifiSignal { get => _wifiSignal; set => SetProperty(ref _wifiSignal, value); }
+        public string WifiIp { get => _wifiIp; set => SetProperty(ref _wifiIp, value); }
+        public string WifiMac { get => _wifiMac; set => SetProperty(ref _wifiMac, value); }
         public string WifiRadio { get => _wifiRadio; set => SetProperty(ref _wifiRadio, value); }
         public string WifiAuth { get => _wifiAuth; set => SetProperty(ref _wifiAuth, value); }
 
@@ -409,8 +421,16 @@ namespace Wingman.ViewModels
                 PublicIp = _state.PublicIp;
                 Mac = _state.Mac;
                 Gateway = _state.Gateway;
+
+                LanName = _state.LanName;
+                LanIp = _state.LanIp;
+                LanMac = _state.LanMac;
+                LanStatus = _state.LanStatus;
+
                 WifiSsid = _state.WifiSsid;
                 WifiSignal = _state.WifiSignal;
+                WifiIp = _state.WifiIp;
+                WifiMac = _state.WifiMac;
                 WifiRadio = _state.WifiRadio;
                 WifiAuth = _state.WifiAuth;
 

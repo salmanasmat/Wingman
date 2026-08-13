@@ -27,7 +27,7 @@ namespace Wingman.Services
         {
             try
             {
-                // 1. Local IP & MAC
+                // 1. Local IP & MAC (Primary active)
                 string localIp = GetLocalIpAddress();
                 string mac = GetMacAddress();
 
@@ -37,8 +37,8 @@ namespace Wingman.Services
                 // 3. Default Gateway
                 string gateway = GetDefaultGateway();
 
-                // 4. WiFi Info
-                var (ssid, signal, radio, auth) = GetWifiDetails();
+                // 4. Detailed LAN & WiFi Interfaces
+                GetAdaptersDetails(out var lanInfo, out var wifiInfo);
 
                 lock (state.Lock)
                 {
@@ -46,16 +46,88 @@ namespace Wingman.Services
                     state.PublicIp = publicIp;
                     state.Mac = mac;
                     state.Gateway = gateway;
-                    state.WifiSsid = ssid;
-                    state.WifiSignal = signal;
-                    state.WifiRadio = radio;
-                    state.WifiAuth = auth;
+
+                    state.LanName = lanInfo.name;
+                    state.LanStatus = lanInfo.status;
+                    state.LanIp = lanInfo.ip;
+                    state.LanMac = lanInfo.mac;
+
+                    state.WifiSsid = wifiInfo.ssid;
+                    state.WifiSignal = wifiInfo.signal;
+                    state.WifiIp = wifiInfo.ip;
+                    state.WifiMac = wifiInfo.mac;
                 }
             }
             catch (Exception ex)
             {
                 LoggingService.WriteLog($"Net Info Fetch Error: {ex.Message}", "ERROR");
             }
+        }
+
+        private void GetAdaptersDetails(out (string name, string status, string ip, string mac) lan, out (string ssid, string signal, string ip, string mac) wifi)
+        {
+            lan = ("Ethernet", "DISCONNECTED", "N/A", "N/A");
+            wifi = ("N/A", "0%", "N/A", "N/A");
+
+            try
+            {
+                var (ssid, signal, _, _) = GetWifiDetails();
+
+                foreach (var nic in NetworkInterface.GetAllNetworkInterfaces())
+                {
+                    if (nic.NetworkInterfaceType == NetworkInterfaceType.Loopback ||
+                        nic.NetworkInterfaceType == NetworkInterfaceType.Tunnel)
+                        continue;
+
+                    string name = nic.Name;
+                    string desc = nic.Description.ToLower();
+                    string mac = FormatMac(nic.GetPhysicalAddress().ToString());
+
+                    string ip = "N/A";
+                    try
+                    {
+                        var ipProps = nic.GetIPProperties();
+                        foreach (var unicast in ipProps.UnicastAddresses)
+                        {
+                            if (unicast.Address.AddressFamily == AddressFamily.InterNetwork && !IPAddress.IsLoopback(unicast.Address))
+                            {
+                                ip = unicast.Address.ToString();
+                                break;
+                            }
+                        }
+                    }
+                    catch { }
+
+                    bool isWireless = nic.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 ||
+                                       desc.Contains("wi-fi") || desc.Contains("wireless") || desc.Contains("wlan");
+
+                    if (isWireless)
+                    {
+                        string wifiIp = ip != "N/A" ? ip : "N/A";
+                        wifi = (ssid, signal, wifiIp, mac.Length > 0 ? mac : "N/A");
+                    }
+                    else
+                    {
+                        if (nic.OperationalStatus == OperationalStatus.Up && ip != "N/A")
+                        {
+                            long speedMb = nic.Speed > 0 ? nic.Speed / 1_000_000 : 0;
+                            string speedText = speedMb >= 1000 ? $"{speedMb / 1000} Gbps" : (speedMb > 0 ? $"{speedMb} Mbps" : "UP");
+                            lan = (name, $"CONNECTED ({speedText})", ip, mac);
+                        }
+                        else if (lan.status == "DISCONNECTED")
+                        {
+                            lan = (name, "DISCONNECTED", "N/A", mac.Length > 0 ? mac : "N/A");
+                        }
+                    }
+                }
+            }
+            catch { }
+        }
+
+        private static string FormatMac(string rawMac)
+        {
+            if (string.IsNullOrEmpty(rawMac) || rawMac.Length != 12) return rawMac;
+            return Regex.Replace(rawMac, ".{2}", "$0:").TrimEnd(':');
         }
 
         private string GetLocalIpAddress()
