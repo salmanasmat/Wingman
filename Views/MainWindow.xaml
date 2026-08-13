@@ -32,7 +32,7 @@
 
                 <!-- Left Machine Info -->
                 <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                    <Border Background="{StaticResource AccentCyanBrush}" CornerRadius="4" Padding="8,3" Margin="0,0,12,0" ToolTip="Wingman WPF System Dashboard v1.0">
+                    <Border Background="{DynamicResource AccentCyanBrush}" CornerRadius="4" Padding="8,3" Margin="0,0,12,0" ToolTip="Wingman WPF System Dashboard v1.0">
                         <TextBlock Text="WINGMAN v1.0" FontSize="12" FontWeight="Bold" Foreground="White"/>
                     </Border>
                     <TextBlock Text="{Binding HostnameText}" FontSize="17" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" Margin="0,0,18,0" ToolTip="Current Computer Name / Hostname"/>
@@ -43,10 +43,15 @@
                 <TextBlock Grid.Column="1" Text="{Binding ClockText}" HorizontalAlignment="Center" VerticalAlignment="Center"
                            FontFamily="Consolas" FontSize="18" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" ToolTip="Current System Date &amp; Time"/>
 
-                <!-- Right Config -->
+                <!-- Right Config & Toolbar -->
                 <StackPanel Grid.Column="2" Orientation="Horizontal">
+                    <Border Background="{StaticResource InputBgBrush}" CornerRadius="4" Padding="6,2" Margin="0,0,8,0" VerticalAlignment="Center" ToolTip="Press F5 to toggle Fullscreen mode | Esc to exit">
+                        <TextBlock Text="[ 🗖 F5 ]" FontSize="11" FontWeight="Bold" Foreground="{StaticResource FgMutedBrush}"/>
+                    </Border>
+                    <Button Content="[ 🎨 THEME ]" Command="{Binding ToggleThemeCommand}"
+                            Style="{StaticResource ActionButtonStyle}" FontSize="12" Foreground="{StaticResource AccentGreenBrush}" Margin="0,0,6,0" ToolTip="Quick Toggle Accent Color Palette"/>
                     <Button Content="[ CONFIGURATION ]" Command="{Binding OpenConfigCommand}"
-                            Style="{StaticResource ActionButtonStyle}" FontSize="13" Foreground="{StaticResource AccentCyanBrush}" ToolTip="Open Dashboard Configuration &amp; Target Host Settings"/>
+                            Style="{StaticResource ActionButtonStyle}" FontSize="12" Foreground="{DynamicResource AccentCyanBrush}" ToolTip="Open Dashboard Configuration &amp; Target Host Settings"/>
                 </StackPanel>
             </Grid>
         </Border>
@@ -60,11 +65,11 @@
                 <ColumnDefinition Width="1.1*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- ================= COLUMN 1 (FAR LEFT: EXPANDED MULTI-DRIVES & COMPACT PROCESS MANAGER) ================= -->
+            <!-- ================= COLUMN 1 (FAR LEFT: ADJUSTED MULTI-DRIVES & EXPANDED PROCESS MANAGER) ================= -->
             <Grid Grid.Column="0" Margin="0,0,5,0">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="1.45*"/>
-                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1.15*"/>
+                    <RowDefinition Height="1.3*"/>
                 </Grid.RowDefinitions>
 
                 <!-- TOP CARD 1: MULTI-DRIVES MONITOR (EXPANDED HEIGHT - NO SCROLLBAR) -->
@@ -94,7 +99,7 @@
                                                         <Run Text=" ("/><Run Text="{Binding VolumeLabel, Mode=OneWay}"/><Run Text=")"/>
                                                     </TextBlock>
                                                 </Grid>
-                                                <controls:LinearGauge Value="{Binding Percent}" Label="{Binding Label}" BarColor="{StaticResource AccentCyanBrush}" Height="22"/>
+                                                <controls:LinearGauge Value="{Binding Percent}" Label="{Binding Label}" BarColor="{DynamicResource AccentCyanBrush}" Height="22"/>
                                             </StackPanel>
                                         </Border>
                                     </DataTemplate>
@@ -104,13 +109,26 @@
                     </DockPanel>
                 </Border>
 
-                <!-- BOTTOM CARD 1: PROCESS MANAGER (REDUCED HEIGHT - COMPACT FIT) -->
-                <Border Grid.Row="1" Style="{StaticResource CardStyle}" ToolTip="Live Top Memory Processes with One-Click Termination">
+                <!-- BOTTOM CARD 1: PROCESS MANAGER (WITH REAL-TIME FILTER) -->
+                <Border Grid.Row="1" Style="{StaticResource CardStyle}" ToolTip="Live Top Memory Processes with Real-Time Filtering &amp; One-Click Termination">
                     <DockPanel>
                         <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
                             <TextBlock Text="PROCESS MANAGER" Style="{StaticResource HeaderTextStyle}" FontSize="18" DockPanel.Dock="Left" ToolTip="Process Manager Engine"/>
                             <TextBlock Text="RAM TOP 10" FontSize="11" FontWeight="Bold" Foreground="{StaticResource FgMutedBrush}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                         </DockPanel>
+
+                        <!-- Filter Search Input -->
+                        <Border DockPanel.Dock="Top" Margin="0,0,0,6" Background="{StaticResource InputBgBrush}" CornerRadius="4" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1" Padding="4,2">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="🔍 " FontSize="11" VerticalAlignment="Center" Foreground="{StaticResource FgMutedBrush}"/>
+                                <TextBox Grid.Column="1" Text="{Binding ProcessFilterText, UpdateSourceTrigger=PropertyChanged}"
+                                         Background="Transparent" BorderThickness="0" FontSize="11" Foreground="{StaticResource FgPrimaryBrush}" VerticalAlignment="Center" ToolTip="Type process name or PID to filter in real-time..."/>
+                            </Grid>
+                        </Border>
                         <ScrollViewer VerticalScrollBarVisibility="Auto">
                             <ItemsControl ItemsSource="{Binding DetailedProcesses}">
                                 <ItemsControl.ItemTemplate>
@@ -126,7 +144,7 @@
 
                                                 <TextBlock Grid.Column="0" Text="{Binding Pid}" FontFamily="Consolas" FontSize="11" Foreground="{StaticResource FgMutedBrush}" Width="48" VerticalAlignment="Center" ToolTip="Process Identifier (PID)"/>
                                                 <TextBlock Grid.Column="1" Text="{Binding Name}" FontSize="12" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}" VerticalAlignment="Center" ToolTip="Executable Process Name"/>
-                                                <TextBlock Grid.Column="2" FontFamily="Consolas" FontSize="11.5" FontWeight="Bold" Foreground="{StaticResource AccentCyanBrush}" Margin="0,0,8,0" VerticalAlignment="Center" ToolTip="RAM Working Set Memory in MB">
+                                                <TextBlock Grid.Column="2" FontFamily="Consolas" FontSize="11.5" FontWeight="Bold" Foreground="{DynamicResource AccentCyanBrush}" Margin="0,0,8,0" VerticalAlignment="Center" ToolTip="RAM Working Set Memory in MB">
                                                     <TextBlock.Text>
                                                         <MultiBinding StringFormat="{}{0:F0} MB">
                                                             <Binding Path="RamMb"/>
@@ -163,7 +181,7 @@
 
                             <!-- 3 ENLARGED CIRCULAR GAUGES (145x145 EACH) -->
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,8">
-                                <controls:CircularGauge Value="{Binding CpuPercent}" Title="CPU LOAD" GaugeColor="{StaticResource AccentCyanBrush}" Width="145" Height="145" Margin="0,0,10,0" ToolTip="Real-Time Total Processor Load Percentage"/>
+                                <controls:CircularGauge Value="{Binding CpuPercent}" Title="CPU LOAD" GaugeColor="{DynamicResource AccentCyanBrush}" Width="145" Height="145" Margin="0,0,10,0" ToolTip="Real-Time Total Processor Load Percentage"/>
                                 <controls:CircularGauge Value="{Binding RamPercent}" Title="MEMORY" GaugeColor="{StaticResource AccentWarnBrush}" Width="145" Height="145" Margin="0,0,10,0" ToolTip="Real-Time Physical Memory (RAM) Utilization"/>
                                 <controls:CircularGauge Value="{Binding DiskPercent}" Title="DISK LOAD" GaugeColor="{StaticResource AccentGreenBrush}" Width="145" Height="145" ToolTip="Real-Time Physical Disk Active Load Percentage"/>
                             </StackPanel>
@@ -171,7 +189,7 @@
                             <!-- OS Drive Capacity Bar Under Gauges -->
                             <StackPanel HorizontalAlignment="Center" Width="430" Margin="0,0,0,8" ToolTip="Primary System OS Drive Space Usage">
                                 <TextBlock Text="OS DRIVE CAPACITY" Style="{StaticResource SectionTextStyle}" FontSize="11.5" Margin="0,0,0,2" HorizontalAlignment="Center"/>
-                                <controls:LinearGauge Value="{Binding DiskCapacityPercent}" Label="{Binding DiskLabel}" BarColor="{StaticResource AccentCyanBrush}" Height="25" Width="430"/>
+                                <controls:LinearGauge Value="{Binding DiskCapacityPercent}" Label="{Binding DiskLabel}" BarColor="{DynamicResource AccentCyanBrush}" Height="25" Width="430"/>
                             </StackPanel>
 
                             <!-- Network & Disk IO Row -->
@@ -312,13 +330,7 @@
                                             <StackPanel>
                                                 <Grid Margin="0,0,0,3">
                                                     <TextBlock Text="{Binding Name}" FontSize="13.5" FontWeight="Bold" Foreground="{StaticResource FgPrimaryBrush}"/>
-                                                    <TextBlock HorizontalAlignment="Right" FontFamily="Consolas" FontSize="12.5" FontWeight="Bold" Foreground="{StaticResource FgMutedBrush}" ToolTip="Last Ping Response Latency in Milliseconds">
-                                                        <TextBlock.Text>
-                                                            <MultiBinding StringFormat="{}{0}ms">
-                                                                <Binding Path="LastMs"/>
-                                                            </MultiBinding>
-                                                        </TextBlock.Text>
-                                                    </TextBlock>
+                                                    <TextBlock Text="{Binding SummaryText}" HorizontalAlignment="Right" FontFamily="Consolas" FontSize="11.5" FontWeight="Bold" Foreground="{StaticResource FgMutedBrush}" ToolTip="Host Latency (Last | Avg | Peak)"/>
                                                 </Grid>
                                                 <controls:SparklineChart History="{Binding History}" Status="{Binding Status}" Height="26"/>
                                             </StackPanel>
@@ -345,18 +357,28 @@
                             <TextBlock Text="POWER UTILS &amp; TERMINAL" Style="{StaticResource HeaderTextStyle}" FontSize="17" DockPanel.Dock="Left" ToolTip="Power Utilities &amp; CLI Drawer"/>
                         </DockPanel>
 
-                        <!-- Action Buttons -->
-                        <UniformGrid Grid.Row="1" Columns="4" Margin="0,0,0,6">
-                            <Button Content="THIS PC" Command="{Binding LaunchThisPcCommand}" Style="{StaticResource ActionButtonStyle}" Margin="1" FontSize="10" Padding="3" ToolTip="Open Windows 'This PC' System Folder in Explorer"/>
-                            <Button Content="DISK CLEAN" Command="{Binding LaunchDiskCleanupCommand}" Style="{StaticResource ActionButtonStyle}" Margin="1" FontSize="10" Padding="3" ToolTip="Launch Windows Disk Cleanup Utility (cleanmgr.exe)"/>
-                            <Button Content="EMPTY BIN" Command="{Binding EmptyRecycleBinCommand}" Style="{StaticResource ActionButtonStyle}" Margin="1" FontSize="10" Padding="3" ToolTip="Empty Windows Recycle Bin (SHEmptyRecycleBin)"/>
-                            <Button Content="LOCK PC" Command="{Binding LockWorkstationCommand}" Style="{StaticResource ActionButtonStyle}" Margin="1" FontSize="10" Padding="3" ToolTip="Lock Current Windows User Session (LockWorkStation)"/>
-                        </UniformGrid>
+                        <!-- Action Buttons & Terminal Presets -->
+                        <StackPanel Grid.Row="1" Margin="0,0,0,4">
+                            <UniformGrid Columns="4" Margin="0,0,0,4">
+                                <Button Content="THIS PC" Command="{Binding LaunchThisPcCommand}" Style="{StaticResource ActionButtonStyle}" Margin="1" FontSize="10" Padding="3" ToolTip="Open Windows 'This PC' System Folder in Explorer"/>
+                                <Button Content="DISK CLEAN" Command="{Binding LaunchDiskCleanupCommand}" Style="{StaticResource ActionButtonStyle}" Margin="1" FontSize="10" Padding="3" ToolTip="Launch Windows Disk Cleanup Utility (cleanmgr.exe)"/>
+                                <Button Content="EMPTY BIN" Command="{Binding EmptyRecycleBinCommand}" Style="{StaticResource ActionButtonStyle}" Margin="1" FontSize="10" Padding="3" ToolTip="Empty Windows Recycle Bin (SHEmptyRecycleBin)"/>
+                                <Button Content="LOCK PC" Command="{Binding LockWorkstationCommand}" Style="{StaticResource ActionButtonStyle}" Margin="1" FontSize="10" Padding="3" ToolTip="Lock Current Windows User Session (LockWorkStation)"/>
+                            </UniformGrid>
+                            <WrapPanel HorizontalAlignment="Center" Margin="0,0,0,2">
+                                <Button Content="PING 8.8.8.8" Command="{Binding RunPresetTerminalCommand}" CommandParameter="ping 8.8.8.8" Style="{StaticResource ActionButtonStyle}" Margin="1" FontSize="9" Padding="4,2" Foreground="{DynamicResource AccentCyanBrush}"/>
+                                <Button Content="IPCONFIG" Command="{Binding RunPresetTerminalCommand}" CommandParameter="ipconfig" Style="{StaticResource ActionButtonStyle}" Margin="1" FontSize="9" Padding="4,2" Foreground="{DynamicResource AccentCyanBrush}"/>
+                                <Button Content="NETSTAT" Command="{Binding RunPresetTerminalCommand}" CommandParameter="netstat -ano" Style="{StaticResource ActionButtonStyle}" Margin="1" FontSize="9" Padding="4,2" Foreground="{DynamicResource AccentCyanBrush}"/>
+                                <Button Content="SYSINFO" Command="{Binding RunPresetTerminalCommand}" CommandParameter="systeminfo" Style="{StaticResource ActionButtonStyle}" Margin="1" FontSize="9" Padding="4,2" Foreground="{DynamicResource AccentCyanBrush}"/>
+                                <Button Content="CLEAR" Command="{Binding ClearTerminalCommand}" Style="{StaticResource ActionButtonStyle}" Margin="1" FontSize="9" Padding="4,2" Foreground="{StaticResource AccentWarnBrush}"/>
+                            </WrapPanel>
+                        </StackPanel>
 
                         <!-- Light Slate-Grey Terminal Output -->
                         <Border Grid.Row="2" Background="{StaticResource InputBgBrush}" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1.5" CornerRadius="6" Padding="6" Margin="0,0,0,4" ToolTip="Command Output Console Window (Redirects stdout and stderr)">
                             <TextBox Text="{Binding TerminalOutput, Mode=OneWay}" IsReadOnly="True"
                                      AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"
+                                     TextChanged="TerminalOutput_TextChanged"
                                      FontFamily="Consolas" FontSize="11.5" Foreground="{StaticResource FgPrimaryBrush}" Background="Transparent" BorderThickness="0"/>
                         </Border>
 
@@ -367,7 +389,8 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <TextBox Grid.Column="0" Text="{Binding TerminalInput, UpdateSourceTrigger=PropertyChanged}"
-                                     FontFamily="Consolas" FontSize="11.5" Padding="5" Background="{StaticResource InputBgBrush}" Foreground="{StaticResource FgPrimaryBrush}" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1.5" Margin="0,0,4,0" ToolTip="Type a PowerShell or CMD command to execute"/>
+                                     KeyDown="TerminalInput_KeyDown"
+                                     FontFamily="Consolas" FontSize="11.5" Padding="5" Background="{StaticResource InputBgBrush}" Foreground="{StaticResource FgPrimaryBrush}" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1.5" Margin="0,0,4,0" ToolTip="Type a command and press Enter or Run (Use Up/Down arrows for history)"/>
                             <Button Grid.Column="1" Content="RUN" Command="{Binding RunTerminalCommand}" Style="{StaticResource ActionButtonStyle}" FontSize="11" Padding="10,3" ToolTip="Execute command asynchronously in background"/>
                         </Grid>
                     </Grid>
@@ -398,7 +421,7 @@
                                 </Grid.ColumnDefinitions>
                                 <StackPanel Grid.Column="0" ToolTip="Total Dedicated Video RAM (VRAM) in MB">
                                     <TextBlock FontSize="11" Foreground="{StaticResource FgMutedBrush}" Text="VRAM TOTAL:"/>
-                                    <TextBlock FontSize="14" FontFamily="Consolas" FontWeight="Bold" Foreground="{StaticResource AccentCyanBrush}" Text="{Binding VramText}"/>
+                                    <TextBlock FontSize="14" FontFamily="Consolas" FontWeight="Bold" Foreground="{DynamicResource AccentCyanBrush}" Text="{Binding VramText}"/>
                                 </StackPanel>
                                 <StackPanel Grid.Column="1" ToolTip="Primary Display Screen Resolution">
                                     <TextBlock FontSize="11" Foreground="{StaticResource FgMutedBrush}" Text="DISPLAY:"/>
@@ -431,7 +454,7 @@
                                         <Border Background="{StaticResource InputBgBrush}" CornerRadius="6" Padding="6,4" Margin="2" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1" ToolTip="Windows Firewall Protection State">
                                             <StackPanel HorizontalAlignment="Center">
                                                 <TextBlock Text="FIREWALL" FontSize="11" FontWeight="Bold" Foreground="{StaticResource FgMutedBrush}" HorizontalAlignment="Center"/>
-                                                <TextBlock Text="ENABLED" FontSize="12" FontWeight="Bold" Foreground="{StaticResource AccentCyanBrush}" HorizontalAlignment="Center"/>
+                                                <TextBlock Text="ENABLED" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource AccentCyanBrush}" HorizontalAlignment="Center"/>
                                             </StackPanel>
                                         </Border>
                                         <Border Background="{StaticResource InputBgBrush}" CornerRadius="6" Padding="6,4" Margin="2" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1" ToolTip="Windows Update Compliance Status">
@@ -469,7 +492,7 @@
         <Border Grid.Row="2" Margin="0,8,0,0" Padding="12,6" Style="{StaticResource CardStyle}" Cursor="Hand" MouseLeftButtonDown="BottomBar_MouseLeftButtonDown" ToolTip="Click to open interactive Event Log Viewer">
             <Grid>
                 <TextBlock Text="{Binding StatusText}" Foreground="{Binding StatusBrush}" FontFamily="Consolas" FontSize="13" FontWeight="Bold" VerticalAlignment="Center" ToolTip="Live System Telemetry Alert Status"/>
-                <TextBlock Text="[ VIEW SYSTEM EVENT LOGS ]" Foreground="{StaticResource AccentCyanBrush}" FontSize="13" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center" ToolTip="Open System Event Log Viewer Window"/>
+                <TextBlock Text="[ VIEW SYSTEM EVENT LOGS ]" Foreground="{DynamicResource AccentCyanBrush}" FontSize="13" FontWeight="Bold" HorizontalAlignment="Right" VerticalAlignment="Center" ToolTip="Open System Event Log Viewer Window"/>
             </Grid>
         </Border>
     </Grid>

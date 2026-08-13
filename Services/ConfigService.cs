@@ -37,6 +37,7 @@ namespace Wingman.Services
                     {
                         EnsureDefaults(loaded);
                         Current = loaded;
+                        ApplyThemeResources(Current.Theme);
                         return Current;
                     }
                 }
@@ -61,6 +62,7 @@ namespace Wingman.Services
                 };
                 string json = JsonSerializer.Serialize(Current, options);
                 File.WriteAllText(ConfigFile, json);
+                ApplyThemeResources(Current.Theme);
                 ConfigChanged?.Invoke(this, EventArgs.Empty);
                 return true;
             }
@@ -69,6 +71,28 @@ namespace Wingman.Services
                 LoggingService.WriteLog($"Failed to save config: {ex.Message}", "ERROR");
                 return false;
             }
+        }
+
+        public static void ApplyThemeResources(ThemeConfig? theme)
+        {
+            if (theme == null || string.IsNullOrWhiteSpace(theme.AccentCyan)) return;
+
+            try
+            {
+                var color = (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(theme.AccentCyan);
+                var brush = new System.Windows.Media.SolidColorBrush(color);
+                brush.Freeze();
+
+                if (System.Windows.Application.Current != null)
+                {
+                    System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        System.Windows.Application.Current.Resources["AccentCyanBrush"] = brush;
+                        System.Windows.Application.Current.Resources["AccentCyanColor"] = color;
+                    });
+                }
+            }
+            catch { }
         }
 
         private void EnsureDefaults(DashboardConfig cfg)

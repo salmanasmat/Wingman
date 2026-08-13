@@ -24,12 +24,20 @@ namespace Wingman.Controls
 
         private static readonly Typeface BoldTypeface = new Typeface("Segoe UI Bold");
         private static readonly Brush TrackBrush;
+        private static readonly Brush WarnGaugeBrush;
+        private static readonly Brush CritGaugeBrush;
         private static readonly Pen TrackPen;
 
         static CircularGauge()
         {
             TrackBrush = new SolidColorBrush(Color.FromRgb(226, 232, 240));
             TrackBrush.Freeze();
+
+            WarnGaugeBrush = new SolidColorBrush(Color.FromRgb(245, 158, 11));
+            WarnGaugeBrush.Freeze();
+
+            CritGaugeBrush = new SolidColorBrush(Color.FromRgb(239, 68, 68));
+            CritGaugeBrush.Freeze();
 
             TrackPen = new Pen(TrackBrush, 14)
             {
@@ -86,7 +94,8 @@ namespace Wingman.Controls
 
             if (valueSweep > 0)
             {
-                var valuePen = new Pen(GaugeColor, 14)
+                Brush activeBrush = clampedVal >= 90 ? CritGaugeBrush : (clampedVal >= 75 ? WarnGaugeBrush : GaugeColor);
+                var valuePen = new Pen(activeBrush, 14)
                 {
                     StartLineCap = PenLineCap.Round,
                     EndLineCap = PenLineCap.Round

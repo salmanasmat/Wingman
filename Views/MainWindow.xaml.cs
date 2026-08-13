@@ -47,6 +47,28 @@ namespace Wingman.Views
             ShowLogsDialog();
         }
 
+        private void TerminalInput_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Up)
+            {
+                _viewModel.NavigateHistoryUp();
+                e.Handled = true;
+            }
+            else if (e.Key == Key.Down)
+            {
+                _viewModel.NavigateHistoryDown();
+                e.Handled = true;
+            }
+        }
+
+        private void TerminalOutput_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            if (sender is System.Windows.Controls.TextBox tb)
+            {
+                tb.ScrollToEnd();
+            }
+        }
+
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.F5)

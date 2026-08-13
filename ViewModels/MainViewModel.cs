@@ -64,36 +64,20 @@ namespace Wingman.ViewModels
         private int _lastMs;
         private string _status = "init";
         private List<double> _history = new List<double>();
+        private int _avgMs;
+        private int _minMs;
+        private int _maxMs;
+        private string _summaryText = "0ms";
 
-        public string Name
-        {
-            get => _name;
-            set => SetProperty(ref _name, value);
-        }
-
-        public string Host
-        {
-            get => _host;
-            set => SetProperty(ref _host, value);
-        }
-
-        public int LastMs
-        {
-            get => _lastMs;
-            set => SetProperty(ref _lastMs, value);
-        }
-
-        public string Status
-        {
-            get => _status;
-            set => SetProperty(ref _status, value);
-        }
-
-        public List<double> History
-        {
-            get => _history;
-            set => SetProperty(ref _history, value);
-        }
+        public string Name { get => _name; set => SetProperty(ref _name, value); }
+        public string Host { get => _host; set => SetProperty(ref _host, value); }
+        public int LastMs { get => _lastMs; set => SetProperty(ref _lastMs, value); }
+        public string Status { get => _status; set => SetProperty(ref _status, value); }
+        public List<double> History { get => _history; set => SetProperty(ref _history, value); }
+        public int AvgMs { get => _avgMs; set => SetProperty(ref _avgMs, value); }
+        public int MinMs { get => _minMs; set => SetProperty(ref _minMs, value); }
+        public int MaxMs { get => _maxMs; set => SetProperty(ref _maxMs, value); }
+        public string SummaryText { get => _summaryText; set => SetProperty(ref _summaryText, value); }
     }
 
     public class LaunchpadCategoryViewModel
@@ -166,6 +150,10 @@ namespace Wingman.ViewModels
         private string _terminalInput = string.Empty;
         private string _terminalOutput = "Wingman Power Terminal v1.0 ready.\nType a command (e.g. ping 8.8.8.8) and press Run.\n";
 
+        private string _processFilterText = string.Empty;
+        private readonly List<string> _terminalHistory = new List<string>();
+        private int _terminalHistoryIndex = -1;
+
         public ObservableCollection<WatchtowerItemViewModel> WatchtowerItems { get; } = new ObservableCollection<WatchtowerItemViewModel>();
         public ObservableCollection<LaunchpadCategoryViewModel> LaunchpadCategories { get; } = new ObservableCollection<LaunchpadCategoryViewModel>();
         public ObservableCollection<string> TopProcesses { get; } = new ObservableCollection<string>();
@@ -180,6 +168,9 @@ namespace Wingman.ViewModels
         public ICommand EmptyRecycleBinCommand { get; }
         public ICommand LockWorkstationCommand { get; }
         public ICommand RunTerminalCommand { get; }
+        public ICommand ClearTerminalCommand { get; }
+        public ICommand RunPresetTerminalCommand { get; }
+        public ICommand ToggleThemeCommand { get; }
 
         public string ClockText { get => _clockText; set => SetProperty(ref _clockText, value); }
         public string HostnameText { get => _hostnameText; set => SetProperty(ref _hostnameText, value); }
@@ -221,6 +212,18 @@ namespace Wingman.ViewModels
         public string VramText { get => _vramText; set => SetProperty(ref _vramText, value); }
         public string DisplayRes { get => _displayRes; set => SetProperty(ref _displayRes, value); }
 
+        public string ProcessFilterText
+        {
+            get => _processFilterText;
+            set
+            {
+                if (SetProperty(ref _processFilterText, value))
+                {
+                    ApplyProcessFilter();
+                }
+            }
+        }
+
         public string TerminalInput { get => _terminalInput; set => SetProperty(ref _terminalInput, value); }
         public string TerminalOutput { get => _terminalOutput; set => SetProperty(ref _terminalOutput, value); }
 
@@ -259,6 +262,9 @@ namespace Wingman.ViewModels
             EmptyRecycleBinCommand = new RelayCommand(ExecuteEmptyRecycleBin);
             LockWorkstationCommand = new RelayCommand(ExecuteLockWorkstation);
             RunTerminalCommand = new RelayCommand(ExecuteTerminalCommand);
+            ClearTerminalCommand = new RelayCommand(ExecuteClearTerminal);
+            RunPresetTerminalCommand = new RelayCommand(ExecutePresetTerminal);
+            ToggleThemeCommand = new RelayCommand(ExecuteToggleTheme);
 
             LoadNotes();
             RefreshLaunchpad();
@@ -365,33 +371,7 @@ namespace Wingman.ViewModels
                     }
                 }
 
-                // In-place update for DetailedProcesses to prevent tooltip blinking
-                if (DetailedProcesses.Count == _state.TopProcDetails.Count)
-                {
-                    for (int i = 0; i < _state.TopProcDetails.Count; i++)
-                    {
-                        var pData = _state.TopProcDetails[i];
-                        var pItem = DetailedProcesses[i];
-                        pItem.Pid = pData.Pid;
-                        pItem.Name = pData.Name;
-                        pItem.RamMb = pData.RamMb;
-                    }
-                }
-                else
-                {
-                    DetailedProcesses.Clear();
-                    foreach (var proc in _state.TopProcDetails)
-                    {
-                        var pItem = new ProcessItemViewModel
-                        {
-                            Pid = proc.Pid,
-                            Name = proc.Name,
-                            RamMb = proc.RamMb
-                        };
-                        pItem.KillCommand = new RelayCommand(() => KillProcess(pItem.Pid, pItem.Name));
-                        DetailedProcesses.Add(pItem);
-                    }
-                }
+                ApplyProcessFilter();
 
                 // In-place update for NetworkConnections
                 if (NetworkConnections.Count == _state.ActiveConnections.Count)
@@ -542,6 +522,20 @@ namespace Wingman.ViewModels
             if (string.IsNullOrWhiteSpace(TerminalInput)) return;
 
             string cmd = TerminalInput.Trim();
+
+            if (cmd.Equals("cls", StringComparison.OrdinalIgnoreCase) || cmd.Equals("clear", StringComparison.OrdinalIgnoreCase))
+            {
+                ExecuteClearTerminal();
+                TerminalInput = string.Empty;
+                return;
+            }
+
+            if (_terminalHistory.Count == 0 || _terminalHistory[^1] != cmd)
+            {
+                _terminalHistory.Add(cmd);
+            }
+            _terminalHistoryIndex = _terminalHistory.Count;
+
             TerminalOutput += $"\n> {cmd}\n";
             TerminalInput = string.Empty;
 
@@ -604,11 +598,21 @@ namespace Wingman.ViewModels
             {
                 if (_state.Pings.TryGetValue(item.Name, out var status))
                 {
-                    if (item.LastMs != status.LastMs || item.Status != status.Status)
+                    item.LastMs = status.LastMs;
+                    item.Status = status.Status;
+                    item.History = new List<double>(status.History);
+
+                    var activeMs = status.History.Where(x => x > 0).ToList();
+                    if (activeMs.Count > 0)
                     {
-                        item.LastMs = status.LastMs;
-                        item.Status = status.Status;
-                        item.History = new List<double>(status.History);
+                        item.AvgMs = (int)Math.Round(activeMs.Average());
+                        item.MinMs = (int)Math.Round(activeMs.Min());
+                        item.MaxMs = (int)Math.Round(activeMs.Max());
+                        item.SummaryText = $"{item.LastMs}ms (Avg: {item.AvgMs}ms | Max: {item.MaxMs}ms)";
+                    }
+                    else
+                    {
+                        item.SummaryText = $"{item.LastMs}ms";
                     }
                 }
             }
@@ -742,6 +746,79 @@ namespace Wingman.ViewModels
             }
             catch { }
             return cwd;
+        }
+
+        private void ApplyProcessFilter()
+        {
+            var rawList = _state.TopProcDetails;
+            if (!string.IsNullOrWhiteSpace(ProcessFilterText))
+            {
+                string query = ProcessFilterText.Trim();
+                rawList = rawList.Where(x => x.Name.Contains(query, StringComparison.OrdinalIgnoreCase) || x.Pid.ToString().Contains(query)).ToList();
+            }
+
+            DetailedProcesses.Clear();
+            foreach (var proc in rawList)
+            {
+                var pItem = new ProcessItemViewModel
+                {
+                    Pid = proc.Pid,
+                    Name = proc.Name,
+                    RamMb = proc.RamMb
+                };
+                pItem.KillCommand = new RelayCommand(() => KillProcess(pItem.Pid, pItem.Name));
+                DetailedProcesses.Add(pItem);
+            }
+        }
+
+        private void ExecuteClearTerminal()
+        {
+            TerminalOutput = "Wingman Power Terminal v1.0 ready.\nType a command (e.g. ping 8.8.8.8) and press Run.\n";
+        }
+
+        private void ExecutePresetTerminal(object? param)
+        {
+            if (param is string cmdText && !string.IsNullOrWhiteSpace(cmdText))
+            {
+                TerminalInput = cmdText;
+                ExecuteTerminalCommand();
+            }
+        }
+
+        public void NavigateHistoryUp()
+        {
+            if (_terminalHistory.Count == 0) return;
+            if (_terminalHistoryIndex > 0)
+            {
+                _terminalHistoryIndex--;
+                TerminalInput = _terminalHistory[_terminalHistoryIndex];
+            }
+        }
+
+        public void NavigateHistoryDown()
+        {
+            if (_terminalHistory.Count == 0) return;
+            if (_terminalHistoryIndex < _terminalHistory.Count - 1)
+            {
+                _terminalHistoryIndex++;
+                TerminalInput = _terminalHistory[_terminalHistoryIndex];
+            }
+            else
+            {
+                _terminalHistoryIndex = _terminalHistory.Count;
+                TerminalInput = string.Empty;
+            }
+        }
+
+        private void ExecuteToggleTheme()
+        {
+            var themeOptions = new[] { "#0284C7", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6", "#0F172A" };
+            string current = _configService.Current.Theme.AccentCyan ?? "#0284C7";
+            int idx = Array.IndexOf(themeOptions, current);
+            int nextIdx = (idx + 1) % themeOptions.Length;
+            _configService.Current.Theme.AccentCyan = themeOptions[nextIdx];
+            _configService.SaveConfig();
+            LoggingService.WriteLog($"Toggled Accent Theme to: {themeOptions[nextIdx]}", "THEME");
         }
 
         private void LoadNotes()

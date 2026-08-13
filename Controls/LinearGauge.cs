@@ -24,6 +24,8 @@ namespace Wingman.Controls
         private static readonly Brush TrackBrush;
         private static readonly Pen BorderPen;
         private static readonly Brush DarkTextBrush;
+        private static readonly Brush WarnBarBrush;
+        private static readonly Brush CritBarBrush;
 
         static LinearGauge()
         {
@@ -35,6 +37,12 @@ namespace Wingman.Controls
 
             DarkTextBrush = new SolidColorBrush(Color.FromRgb(15, 23, 42));
             DarkTextBrush.Freeze();
+
+            WarnBarBrush = new SolidColorBrush(Color.FromRgb(245, 158, 11));
+            WarnBarBrush.Freeze();
+
+            CritBarBrush = new SolidColorBrush(Color.FromRgb(239, 68, 68));
+            CritBarBrush.Freeze();
         }
 
         public double Value
@@ -76,7 +84,8 @@ namespace Wingman.Controls
             double fillWidth = (pct / 100.0) * w;
             if (fillWidth > 0)
             {
-                dc.DrawRoundedRectangle(BarColor, null, new Rect(0, 0, fillWidth, h), 6, 6);
+                Brush activeBarColor = pct >= 90 ? CritBarBrush : (pct >= 80 ? WarnBarBrush : BarColor);
+                dc.DrawRoundedRectangle(activeBarColor, null, new Rect(0, 0, fillWidth, h), 6, 6);
             }
 
             // Label Text
