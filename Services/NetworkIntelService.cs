@@ -15,6 +15,14 @@ namespace Wingman.Services
     {
         private static readonly HttpClient HttpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(3) };
 
+        private string _cachedPublicIp = "...";
+        private DateTime _lastPublicIpFetch = DateTime.MinValue;
+        private static readonly TimeSpan PublicIpCacheTtl = TimeSpan.FromMinutes(5);
+
+        private (string ssid, string signal, string radio, string auth) _cachedWifiDetails = ("N/A", "0%", "N/A", "N/A");
+        private DateTime _lastWifiFetch = DateTime.MinValue;
+        private static readonly TimeSpan WifiCacheTtl = TimeSpan.FromSeconds(30);
+
         public async Task FetchNetworkDetailsAsync(SystemState state)
         {
             try
@@ -102,13 +110,21 @@ namespace Wingman.Services
 
         private async Task<string> GetPublicIpAddressAsync()
         {
+            if (DateTime.Now - _lastPublicIpFetch < PublicIpCacheTtl && _cachedPublicIp != "Offline")
+            {
+                return _cachedPublicIp;
+            }
+
             try
             {
                 string ip = await HttpClient.GetStringAsync("https://api.ipify.org");
-                return ip.Trim();
+                _cachedPublicIp = ip.Trim();
+                _lastPublicIpFetch = DateTime.Now;
+                return _cachedPublicIp;
             }
             catch
             {
+                if (_cachedPublicIp != "..." && _cachedPublicIp != "Offline") return _cachedPublicIp;
                 return "Offline";
             }
         }
@@ -138,6 +154,11 @@ namespace Wingman.Services
 
         private (string ssid, string signal, string radio, string auth) GetWifiDetails()
         {
+            if (DateTime.Now - _lastWifiFetch < WifiCacheTtl && _cachedWifiDetails.ssid != "N/A")
+            {
+                return _cachedWifiDetails;
+            }
+
             string ssid = "N/A";
             string signal = "0%";
             string radio = "N/A";
@@ -190,7 +211,10 @@ namespace Wingman.Services
             }
             catch { }
 
-            return (ssid, signal, radio, auth);
+            _cachedWifiDetails = (ssid, signal, radio, auth);
+            _lastWifiFetch = DateTime.Now;
+
+            return _cachedWifiDetails;
         }
     }
 }

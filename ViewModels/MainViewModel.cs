@@ -116,9 +116,11 @@ namespace Wingman.ViewModels
         private readonly SystemState _state;
         private readonly ConfigService _configService;
         private readonly SystemMonitorService _monitorService;
+        private readonly IDialogService _dialogService;
         private readonly DispatcherTimer _uiTimer;
         private readonly Dictionary<string, Process> _runningProcesses = new Dictionary<string, Process>();
         private readonly Dictionary<string, DateTime> _launchCooldowns = new Dictionary<string, DateTime>();
+        private static readonly string NotesFilePath = Path.Combine(AppContext.BaseDirectory, "notes.txt");
 
         private string _clockText = string.Empty;
         private string _hostnameText = string.Empty;
@@ -240,9 +242,10 @@ namespace Wingman.ViewModels
         [DllImport("user32.dll")]
         private static extern bool LockWorkStation();
 
-        public MainViewModel(ConfigService configService, Action openConfigDialogAction, Action showLogsDialogAction)
+        public MainViewModel(ConfigService configService, Action openConfigDialogAction, Action showLogsDialogAction, IDialogService? dialogService = null)
         {
             _configService = configService;
+            _dialogService = dialogService ?? new DialogService();
             _state = new SystemState();
             _monitorService = new SystemMonitorService(_state, _configService);
 
@@ -463,15 +466,14 @@ namespace Wingman.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to open drive: {ex.Message}", "Drive Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                _dialogService.ShowError($"Failed to open drive: {ex.Message}", "Drive Error");
             }
         }
 
         private void KillProcess(int pid, string name)
         {
-            var res = MessageBox.Show($"Are you sure you want to terminate process '{name}' (PID: {pid})?",
-                "CONFIRM PROCESS KILL", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-            if (res != MessageBoxResult.Yes) return;
+            if (!_dialogService.Confirm($"Are you sure you want to terminate process '{name}' (PID: {pid})?", "CONFIRM PROCESS KILL"))
+                return;
 
             try
             {
@@ -481,7 +483,7 @@ namespace Wingman.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to kill process: {ex.Message}", "Kill Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                _dialogService.ShowError($"Failed to kill process: {ex.Message}", "Kill Failed");
             }
         }
 
@@ -494,7 +496,7 @@ namespace Wingman.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"This PC launch error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                _dialogService.ShowError($"This PC launch error: {ex.Message}", "Error");
             }
         }
 
@@ -507,7 +509,7 @@ namespace Wingman.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Disk Cleanup error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                _dialogService.ShowError($"Disk Cleanup error: {ex.Message}", "Error");
             }
         }
 
@@ -516,12 +518,12 @@ namespace Wingman.ViewModels
             try
             {
                 SHEmptyRecycleBin(IntPtr.Zero, null, 7); // SHERB_NOCONFIRMATION | SHERB_NOPROGRESSUI | SHERB_NOSOUND
-                MessageBox.Show("Recycle Bin emptied.", "Empty Recycle Bin", MessageBoxButton.OK, MessageBoxImage.Information);
+                _dialogService.ShowInformation("Recycle Bin emptied.", "Empty Recycle Bin");
                 LoggingService.WriteLog("Emptied Recycle Bin", "UTIL");
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Empty Recycle Bin error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                _dialogService.ShowError($"Empty Recycle Bin error: {ex.Message}", "Error");
             }
         }
 
@@ -564,7 +566,7 @@ namespace Wingman.ViewModels
                         proc.WaitForExit();
 
                         string result = !string.IsNullOrEmpty(outStr) ? outStr : errStr;
-                        Application.Current.Dispatcher.Invoke(() =>
+                        Application.Current?.Dispatcher?.Invoke(() =>
                         {
                             TerminalOutput += result + "\n";
                         });
@@ -572,7 +574,7 @@ namespace Wingman.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    Application.Current.Dispatcher.Invoke(() =>
+                    Application.Current?.Dispatcher?.Invoke(() =>
                     {
                         TerminalOutput += $"Error: {ex.Message}\n";
                     });
@@ -643,9 +645,8 @@ namespace Wingman.ViewModels
         {
             if (category == "Scripts")
             {
-                var result = MessageBox.Show($"Are you sure you want to execute this script?\n\nCommand:\n{cmd}",
-                    "CONFIRM SCRIPT LAUNCH", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-                if (result != MessageBoxResult.Yes) return;
+                if (!_dialogService.Confirm($"Are you sure you want to execute this script?\n\nCommand:\n{cmd}", "CONFIRM SCRIPT LAUNCH"))
+                    return;
             }
 
             if (_launchCooldowns.TryGetValue(cmd, out var lastTime) && (DateTime.Now - lastTime).TotalSeconds < 1.0)
@@ -656,7 +657,7 @@ namespace Wingman.ViewModels
 
             if (_runningProcesses.TryGetValue(cmd, out var proc) && !proc.HasExited)
             {
-                MessageBox.Show($"This application is already running.\n\nCommand: {cmd}", "Launchpad", MessageBoxButton.OK, MessageBoxImage.Information);
+                _dialogService.ShowInformation($"This application is already running.\n\nCommand: {cmd}", "Launchpad");
                 LoggingService.WriteLog($"Blocked duplicate launch: {cmd}", "WARN");
                 return;
             }
@@ -682,7 +683,7 @@ namespace Wingman.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Launch error: {ex.Message}", "Launch Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                _dialogService.ShowError($"Launch error: {ex.Message}", "Launch Error");
                 LoggingService.WriteLog($"Launch Failed: {cmd} | Error: {ex.Message}", "ERROR");
             }
         }
@@ -691,9 +692,8 @@ namespace Wingman.ViewModels
         {
             if (category == "Scripts")
             {
-                var result = MessageBox.Show($"Are you sure you want to RUN AS ADMINISTRATOR?\n\nCommand:\n{cmd}",
-                    "CONFIRM ELEVATED LAUNCH", MessageBoxButton.YesNo, MessageBoxImage.Warning);
-                if (result != MessageBoxResult.Yes) return;
+                if (!_dialogService.Confirm($"Are you sure you want to RUN AS ADMINISTRATOR?\n\nCommand:\n{cmd}", "CONFIRM ELEVATED LAUNCH"))
+                    return;
             }
 
             string cwd = DetermineCwd(cmd);
@@ -714,7 +714,7 @@ namespace Wingman.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Elevated Launch Error: {ex.Message}", "Launch Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                _dialogService.ShowError($"Elevated Launch Error: {ex.Message}", "Launch Error");
                 LoggingService.WriteLog($"Launch Failed (Admin): {cmd} | Error: {ex.Message}", "ERROR");
             }
         }
@@ -746,11 +746,11 @@ namespace Wingman.ViewModels
 
         private void LoadNotes()
         {
-            if (File.Exists("notes.txt"))
+            if (File.Exists(NotesFilePath))
             {
                 try
                 {
-                    _notesText = File.ReadAllText("notes.txt");
+                    _notesText = File.ReadAllText(NotesFilePath);
                 }
                 catch { }
             }
@@ -760,7 +760,7 @@ namespace Wingman.ViewModels
         {
             try
             {
-                File.WriteAllText("notes.txt", _notesText);
+                File.WriteAllText(NotesFilePath, _notesText);
             }
             catch { }
         }

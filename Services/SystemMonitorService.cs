@@ -29,21 +29,6 @@ namespace Wingman.Services
         private int _pollCount = 0;
         private bool _fetchingNetInfo = false;
 
-        [DllImport("kernel32.dll", SetLastError = true)]
-        private static extern bool SetProcessWorkingSetSize(IntPtr proc, IntPtr min, IntPtr max);
-
-        public static void TrimWorkingSet()
-        {
-            try
-            {
-                GC.Collect(2, GCCollectionMode.Forced, true, true);
-                GC.WaitForPendingFinalizers();
-                GC.Collect(2, GCCollectionMode.Forced, true, true);
-                SetProcessWorkingSetSize(Process.GetCurrentProcess().Handle, new IntPtr(-1), new IntPtr(-1));
-            }
-            catch { }
-        }
-
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
         private class MEMORYSTATUSEX
         {
@@ -146,10 +131,13 @@ namespace Wingman.Services
                 string primaryRes = "1920x1080";
                 try
                 {
-                    Application.Current.Dispatcher.Invoke(() =>
+                    if (Application.Current?.Dispatcher != null)
                     {
-                        primaryRes = $"{SystemParameters.PrimaryScreenWidth}x{SystemParameters.PrimaryScreenHeight}";
-                    });
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            primaryRes = $"{SystemParameters.PrimaryScreenWidth}x{SystemParameters.PrimaryScreenHeight}";
+                        });
+                    }
                 }
                 catch { }
 
@@ -240,11 +228,6 @@ namespace Wingman.Services
                         }, token);
                     }
 
-                    // Perform working set trim every 30 seconds
-                    if (_pollCount % 60 == 0)
-                    {
-                        TrimWorkingSet();
-                    }
 
                     (string name, string host)? targetData = null;
                     lock (_state.Lock)
